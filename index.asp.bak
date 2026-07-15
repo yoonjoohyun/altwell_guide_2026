@@ -1,0 +1,2546 @@
+﻿<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>ALTWELL SMART GUIDE</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#EE3338;--red2:#c82020;
+  --bg:#F6F7FA;--fg:#111827;
+  --card:#ffffff;--border:rgba(0,0,0,.08);
+  --sub:#6B7280;--muted:#F1F2F6;
+  --radius:14px;
+  --nav:54px;
+
+  /* ── ALTWELL Motion Tokens §7 ── */
+  --motion-fast:300ms;
+  --motion-normal:600ms;
+  --motion-slow:900ms;
+  --ease-standard:ease-out;
+  --ease-emphasis:cubic-bezier(0.22,1,0.36,1);
+  --glow-red:0 0 20px rgba(238,51,56,.28);
+  --glow-green:0 0 20px rgba(18,184,134,.28);
+  --glow-blue:0 0 20px rgba(35,121,255,.28);
+  --glow-gold:0 0 24px rgba(218,170,55,.34);
+}
+html,body{font-family:'Noto Sans KR',sans-serif;color:var(--fg);height:100%;overflow:hidden}
+button{font-family:inherit;cursor:pointer}
+img{display:block}
+
+/* ??????????????????????????????
+   NAV  (adaptive by depth)
+?????????????????????????????? */
+#nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:var(--nav);
+  display:flex;align-items:center;padding:0 20px;gap:12px;
+  transition:background .3s,border-color .3s;
+}
+/* depth-1 (home): white frosted over light hero */
+body.d1 #nav{background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+/* depth-2 (list pages): white frosted */
+body.d2 #nav{
+  background:rgba(255,255,255,.93);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+}
+
+.nav-back{
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
+  color:#fff;font-size:16px;line-height:1;
+  display:none;align-items:center;justify-content:center;
+  transition:background .15s;flex-shrink:0;
+}
+body.d2 .nav-back{display:flex;background:var(--muted);border-color:var(--border);color:var(--fg)}
+.nav-back:hover{opacity:.8}
+
+.nav-logo{
+  font-size:16px;font-weight:900;letter-spacing:-.01em;
+  white-space:nowrap;flex-shrink:0;
+  transition:color .3s;
+}
+body.d1 .nav-logo{color:var(--red)}
+body.d1 .nav-logo span{color:var(--fg)}
+body.d2 .nav-logo{color:var(--red)}
+body.d2 .nav-logo span{color:var(--fg)}
+
+#nav-page-title{
+  font-size:16px;font-weight:700;color:var(--sub);
+  display:none;
+}
+body.d2 #nav-page-title{display:block}
+
+.nav-spacer{flex:1}
+
+/* ??????????????????????????????
+   PAGE SYSTEM
+?????????????????????????????? */
+.page{
+  position:fixed;inset:0;
+  overflow-y:auto;overflow-x:hidden;
+  display:none;
+}
+.page.on{display:block}
+
+/* ??????????????????????????????
+   DEPTH-1: HOME  (full viewport, no scroll)
+?????????????????????????????? */
+#home-page{overflow:hidden}
+#hero{
+  width:100%;height:100vh;
+  position:relative;overflow:hidden;
+  background:#ffffff;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:40px 24px;text-align:center;
+}
+#hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 70%,rgba(238,51,56,.07) 0%,transparent 52%),
+    radial-gradient(ellipse at 80% 25%,rgba(99,102,241,.06) 0%,transparent 52%);
+}
+#hero::after{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(rgba(0,0,0,.055) 1px,transparent 1px);
+  background-size:36px 36px;
+}
+.hero-badge{
+  position:relative;z-index:1;
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(238,51,56,.08);border:1px solid rgba(238,51,56,.22);
+  border-radius:99px;padding:6px 18px;
+  font-size:16px;font-weight:700;color:var(--red);letter-spacing:.07em;
+  margin-bottom:30px;
+}
+.hero-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--red);animation:hdot 2s ease-in-out infinite;
+}
+@keyframes hdot{0%,100%{opacity:1}50%{opacity:.25}}
+.hero-title{
+  position:relative;z-index:1;
+  font-size:clamp(26px,4.5vw,54px);font-weight:900;
+  color:#0f172a;line-height:1.16;letter-spacing:-.03em;margin-bottom:16px;
+}
+.hero-title em{color:var(--red);font-style:normal}
+.hero-desc{
+  position:relative;z-index:1;
+  font-size:clamp(16px,1.7vw,19px);color:#64748b;
+  line-height:2;max-width:440px;margin:0 auto 54px;
+}
+
+/* ── Big CTA boxes ── */
+.hero-ctas{
+  position:relative;z-index:1;
+  display:flex;gap:18px;justify-content:center;flex-wrap:wrap;
+}
+.hcta{
+  width:clamp(150px,20vw,210px);aspect-ratio:1;
+  border-radius:20px;border:none;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:20px;cursor:pointer;
+  transition:transform .22s cubic-bezier(.34,1.56,.64,1),box-shadow .22s;
+}
+.hcta:hover{transform:translateY(-7px) scale(1.03)}
+.hcta.p{
+  background:linear-gradient(148deg,#EE3338 0%,#b91c1c 100%);
+  box-shadow:0 6px 30px rgba(238,51,56,.32);color:#fff;
+}
+.hcta.p:hover{box-shadow:0 16px 42px rgba(238,51,56,.44)}
+.hcta.s{
+  background:#ffffff;
+  border:1.5px solid rgba(0,0,0,.1) !important;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);color:#1e293b;
+}
+.hcta.s:hover{background:#f8fafc;box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.hcta-icon{display:flex;align-items:center;justify-content:center}
+.hcta-icon svg{width:clamp(40px,5.5vw,52px);height:clamp(40px,5.5vw,52px)}
+.hcta-label{font-size:clamp(16px,1.5vw,18px);font-weight:700;line-height:1.5;text-align:center}
+
+/* ??????????????????????????????
+   DEPTH-2: LIST PAGES
+?????????????????????????????? */
+#guide-page,#sim-page{background:var(--bg);padding-top:var(--nav)}
+
+.list-wrap{max-width:1060px;margin:0 auto;padding:32px 22px 60px}
+
+.lp-head{margin-bottom:28px}
+.lp-title{font-size:21px;font-weight:900;letter-spacing:-.025em;margin-bottom:5px}
+.lp-desc{font-size:16px;color:var(--sub)}
+
+/* view mode toggles (guide only) */
+.view-tabs{display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap}
+.vt{
+  padding:8px 18px;border-radius:8px;font-size:16px;font-weight:600;
+  border:1px solid var(--border);background:var(--card);color:var(--sub);
+  transition:all .14s;
+}
+.vt:hover{border-color:var(--red);color:var(--red)}
+.vt.on{background:var(--red);color:#fff;border-color:var(--red)}
+
+/* ── Video cards ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.cards-list{display:flex;flex-direction:column;gap:11px}
+.cards-list .vcard{flex-direction:row}
+.cards-list .vc-thumb-inner{width:160px;min-width:160px;aspect-ratio:16/9;height:auto}
+
+.vcard{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+  transition:transform .2s,box-shadow .2s;
+  display:flex;flex-direction:column;
+}
+.vcard:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.1)}
+.vc-thumb{overflow:hidden;flex-shrink:0}
+.vc-thumb-inner{
+  aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;
+  font-size:34px;position:relative;overflow:hidden;
+}
+.vc-thumb-inner.g1{background:linear-gradient(135deg,#1e3a5f,#1e40af)}
+.vc-thumb-inner.g2{background:linear-gradient(135deg,#3b0764,#6d28d9)}
+.vc-thumb-inner.g3{background:linear-gradient(135deg,#064e3b,#065f46)}
+.vc-thumb-inner.g4{background:linear-gradient(135deg,#78350f,#92400e)}
+.vc-play{
+  position:absolute;bottom:10px;right:10px;
+  width:34px;height:34px;border-radius:50%;
+  background:rgba(238,51,56,.9);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,.3);transition:transform .15s;
+}
+.vcard:hover .vc-play{transform:scale(1.12)}
+.vc-body{padding:13px 15px 15px;flex:1}
+.vc-top{display:flex;align-items:center;gap:5px;margin-bottom:7px}
+.vc-step{font-size:13px;font-weight:700;letter-spacing:.06em;background:rgba(238,51,56,.1);color:var(--red);border-radius:5px;padding:3px 9px}
+.vc-new{font-size:13px;font-weight:700;background:#dcfce7;color:#16a34a;border-radius:5px;padding:3px 9px}
+.vc-done{font-size:13px;font-weight:700;background:#dbeafe;color:#2563eb;border-radius:5px;padding:3px 9px}
+.vc-soon{font-size:13px;font-weight:700;background:#f3f4f6;color:#9ca3af;border-radius:5px;padding:3px 9px}
+.vc-title{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:6px}
+.vc-desc{font-size:15px;color:var(--sub);line-height:1.65}
+.vc-meta{font-size:14px;color:var(--sub);margin-top:10px}
+.vc-prog{height:3px;background:var(--muted);border-radius:99px;margin-top:11px;overflow:hidden}
+.vc-prog-fill{height:100%;border-radius:99px;background:var(--red)}
+
+/* ── Simulator cards ── */
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.sc-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  transition:transform .2s,box-shadow .2s;
+}
+.sc-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12)}
+.sc-card.disabled{cursor:default}
+.sc-card.disabled:hover{transform:none;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.sc-thumb{
+  height:155px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.sc-thumb.t1{background:linear-gradient(135deg,#0c1016,#162036,#1e3a5f)}
+.sc-thumb.t2{background:linear-gradient(135deg,#0c1016,#1a0a2e,#3b0764)}
+.sc-thumb-glow{
+  position:absolute;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(238,51,56,.28),transparent 70%);
+}
+.sc-thumb-icon{font-size:46px;position:relative;z-index:1}
+.sc-badge{
+  position:absolute;top:11px;right:11px;
+  background:rgba(238,51,56,.9);color:#fff;
+  font-size:13px;font-weight:700;padding:4px 12px;
+  border-radius:99px;letter-spacing:.04em;
+}
+.sc-body{padding:18px 20px 20px}
+.sc-label{font-size:13px;font-weight:700;letter-spacing:.09em;color:var(--red);margin-bottom:8px}
+.sc-title{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
+.sc-desc{font-size:16px;color:var(--sub);line-height:1.7;margin-bottom:16px}
+.sc-footer{display:flex;align-items:center;justify-content:space-between}
+.sc-meta{font-size:14px;color:var(--sub)}
+.sc-go{
+  padding:10px 20px;border-radius:8px;font-size:16px;font-weight:700;
+  background:var(--red);color:#fff;border:none;transition:background .15s;
+}
+.sc-go:hover{background:var(--red2)}
+.sc-go.off{background:#d1d5db;color:#9ca3af;cursor:default}
+.sc-go.off:hover{background:#d1d5db}
+
+/* ??????????????????????????????
+   DEPTH-3: PLAYER OVERLAY
+?????????????????????????????? */
+#overlay{
+  position:fixed;inset:0;z-index:200;
+  background:#0C1016;
+  display:none;flex-direction:column;
+}
+#overlay.on{display:flex}
+#ov-bar{
+  height:48px;background:rgba(0,0,0,.55);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;padding:0 14px;gap:11px;flex-shrink:0;
+}
+#ov-back{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  color:#cbd5e1;font-size:15px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .14s;flex-shrink:0;
+}
+#ov-back:hover{background:rgba(255,255,255,.2)}
+#ov-breadcrumb{font-size:15px;color:#475569;flex-shrink:0}
+#ov-sep{font-size:14px;color:#334155;flex-shrink:0}
+#ov-title{font-size:16px;font-weight:700;color:#e2e8f0;flex:1}
+#ov-dot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pdot 2s ease-in-out infinite}
+#ov-type{font-size:14px;color:#475569;flex-shrink:0}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── PLAYER INTERNALS ── */
+#player-wrap{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+#main-area{display:flex;flex:1;overflow:hidden;min-height:0}
+#stage-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:16px;min-width:0}
+#stage{
+  position:relative;width:100%;max-width:920px;
+  background:radial-gradient(ellipse at 50% 38%,#19243a 0%,#0C1016 68%);
+  border-radius:14px;border:1px solid rgba(255,255,255,.1);overflow:visible;
+}
+#stage::before{content:'';display:block;padding-bottom:56.25%}
+#si{position:absolute;inset:0;overflow:visible}
+#svgl{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.gl{stroke-dasharray:300;stroke-dashoffset:300;transition:stroke-dashoffset 1s ease,stroke .4s,filter .4s}
+.gl.on{stroke-dashoffset:0}
+.gl.glow{stroke:#93C5FD;filter:drop-shadow(0 0 4px rgba(147,197,253,.85))}
+
+#hero-s{
+  position:absolute;inset:0;z-index:20;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:scale(.65);transition:opacity .7s,transform .7s;
+  pointer-events:none;text-align:center;padding:20px;
+}
+#hero-s.show{opacity:1;transform:scale(1)}
+.h-main{font-size:clamp(18px,3.4vw,36px);font-weight:900;letter-spacing:-.02em;color:#F8FAFC;text-shadow:0 2px 24px rgba(0,0,0,.7);line-height:1.25}
+.h-sub{font-size:clamp(13px,1.5vw,17px);color:#94A3B8;margin-top:10px}
+
+.mn{position:absolute;transform:translate(-50%,-50%);opacity:0;transition:opacity .5s;pointer-events:none}
+.mn.show{opacity:1}
+.mb{position:relative}
+.mb.lg{width:clamp(52px,8.5%,84px)}
+.mb.md{width:clamp(40px,6.5%,64px)}
+.mb.sm{width:clamp(28px,4.5%,44px)}
+.mi-wrap{position:relative;width:100%;padding-bottom:100%}
+.mi{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;transition:opacity .8s}
+.mi.gray{opacity:1}.mi.blue{opacity:0}
+.mi-wrap.blue .mi.gray{opacity:0}.mi-wrap.blue .mi.blue{opacity:1}
+
+.m-medal,.m-biz{position:absolute;left:50%;opacity:0;transform:translateX(-50%) scale(.3);transition:opacity .45s,transform .45s;pointer-events:none}
+.m-medal{top:-44%;width:54%}.m-medal.show{opacity:1;transform:translateX(-50%) scale(1)}
+.m-biz{top:-56%;width:74%}.m-biz.show{opacity:1;transform:translateX(-50%) scale(1)}
+.m-as{position:absolute;right:-28%;top:-28%;width:50%;opacity:0;transform:scale(.3);transition:opacity .4s,transform .4s;pointer-events:none}
+.m-as.show{opacity:1;transform:scale(1)}
+.m-as.glow{filter:drop-shadow(0 0 5px rgba(96,165,250,.9));animation:bglow 1.8s ease-in-out infinite}
+.m-sep{
+  position:absolute;left:-36%;top:-28%;
+  background:linear-gradient(135deg,#f97316,#dc2626);color:#fff;
+  font-size:9px;font-weight:900;padding:3px 4px;border-radius:5px;text-align:center;line-height:1.25;
+  border:1px solid rgba(255,255,255,.35);box-shadow:0 2px 8px rgba(220,38,38,.5);
+  opacity:0;transform:scale(.3);transition:opacity .4s,transform .4s;white-space:nowrap;pointer-events:none;
+}
+.m-sep.show{opacity:1;transform:scale(1)}.m-sep.glow{animation:bglow 1.8s ease-in-out infinite}
+.m-chk{
+  position:absolute;right:-14%;top:-14%;
+  background:#16A34A;color:#fff;border-radius:50%;width:28%;aspect-ratio:1;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;
+  border:1.5px solid rgba(255,255,255,.6);box-shadow:0 2px 8px rgba(22,163,74,.65);
+  opacity:0;transform:scale(.2);transition:opacity .3s,transform .35s;pointer-events:none;
+}
+.m-chk.show{opacity:1;transform:scale(1)}
+.m-ring{position:absolute;inset:-20%;border-radius:50%;border:2px solid #60A5FA;opacity:0;transition:opacity .5s;pointer-events:none}
+.m-ring.show{opacity:1;animation:rpulse 2s ease-in-out infinite}
+@keyframes rpulse{0%,100%{box-shadow:0 0 8px rgba(96,165,250,.25)}50%{box-shadow:0 0 22px rgba(96,165,250,.65)}}
+.m-plate{
+  text-align:center;margin-top:5px;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(4px);
+  border:1px solid rgba(255,255,255,.2);border-radius:20px;
+  padding:4px 12px;font-size:13px;font-weight:700;color:#E2E8F0;
+  opacity:0;transform:translateY(5px);transition:opacity .4s,transform .4s;white-space:nowrap;
+}
+.m-plate.show{opacity:1;transform:translateY(0)}
+@keyframes bglow{0%,100%{filter:drop-shadow(0 0 3px currentColor)}50%{filter:drop-shadow(0 0 9px currentColor)}}
+
+#bpw{position:absolute;left:50%;bottom:3%;transform:translateX(-50%);opacity:0;transition:opacity .6s;pointer-events:none}
+#bpw.show{opacity:1}
+#bpi{position:relative;width:clamp(130px,25%,210px)}
+#bpi img{width:100%;display:block}
+.bp-tx{position:absolute;top:50%;right:5%;transform:translateY(-50%);text-align:center;width:56%}
+.bp-t1{font-size:clamp(9px,1.05vw,13px);font-weight:700;color:#1e293b;letter-spacing:.04em;line-height:1.3}
+.bp-t2{font-size:clamp(11px,1.25vw,15px);font-weight:900;color:#dc2626;margin-top:2px;display:none}
+
+.bcoin{
+  position:absolute;z-index:30;pointer-events:none;
+  width:24px;height:24px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#FDE68A,#F59E0B 55%,#D97706);
+  border:1.5px solid #FBBF24;box-shadow:0 2px 10px rgba(245,158,11,.7);
+  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:#78350F;
+}
+
+#warn{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-52%);
+  background:rgba(239,68,68,.13);backdrop-filter:blur(10px);
+  border:1.5px solid rgba(239,68,68,.42);border-radius:14px;
+  padding:14px 18px;text-align:center;z-index:25;max-width:240px;
+  opacity:0;transition:opacity .5s;pointer-events:none;
+}
+#warn.show{opacity:1}
+.w-ico{font-size:24px;margin-bottom:8px}
+.w-ttl{font-size:16px;font-weight:900;color:#FCA5A5;margin-bottom:6px}
+.w-txt{font-size:14px;color:#FCA5A5;line-height:1.8}
+
+.sc{
+  position:absolute;left:50%;
+  background:rgba(255,255,255,.07);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.16);border-radius:40px;
+  padding:6px 16px;font-weight:700;color:#F1F5F9;
+  white-space:nowrap;pointer-events:none;
+  opacity:0;transition:opacity .4s,transform .4s;
+  transform:translateX(-50%) translateY(8px);
+  font-size:clamp(11px,1.3vw,15px);
+}
+.sc.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#sc1{bottom:12%}#sc2{bottom:22%}#sc3{bottom:33%}
+
+#ending{
+  position:absolute;inset:0;z-index:40;
+  background:rgba(12,16,22,.87);backdrop-filter:blur(10px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:24px;text-align:center;
+  opacity:0;transition:opacity .9s;pointer-events:none;
+}
+#ending.show{opacity:1;pointer-events:auto}
+.e-msg{font-size:clamp(16px,2vw,22px);font-weight:700;color:#E2E8F0;line-height:1.9;margin-bottom:26px}
+.e-msg .hl{color:var(--red)}
+#cta-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;opacity:0;transition:opacity .5s}
+#cta-row.show{opacity:1}
+.ecta{padding:13px 26px;border-radius:40px;font-size:16px;font-weight:700;cursor:pointer;transition:all .2s;border:none}
+.ecta.p{background:var(--red);color:#fff}.ecta.p:hover{background:#c82020}
+.ecta.s{background:rgba(255,255,255,.1);color:#CBD5E1;border:1px solid rgba(255,255,255,.2)}.ecta.s:hover{background:rgba(255,255,255,.18)}
+
+#info-panel{
+  width:264px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  padding:14px;border-left:1px solid rgba(255,255,255,.09);background:rgba(0,0,0,.2);
+}
+#icard{
+  width:100%;background:rgba(22,30,45,.96);border:1px solid rgba(255,255,255,.1);
+  border-radius:13px;padding:16px;
+  opacity:0;transform:translateY(6px);transition:opacity .35s,transform .35s;display:none;
+}
+#icard.show{opacity:1;transform:translateY(0);display:block}
+.ic-lbl{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--red);margin-bottom:10px;text-transform:uppercase}
+.ic-line{font-size:15px;color:#CBD5E1;line-height:1.8;margin-bottom:2px}
+.ic-line.b{font-weight:700;color:#F1F5F9;font-size:16px}
+
+#ctrl{
+  height:58px;background:rgba(0,0,0,.68);backdrop-filter:blur(10px);
+  border-top:1px solid rgba(255,255,255,.1);flex-shrink:0;
+  display:flex;flex-direction:column;justify-content:center;padding:0 16px;gap:7px;
+}
+#tl{height:4px;background:rgba(255,255,255,.12);border-radius:99px;position:relative;cursor:pointer;transition:height .12s}
+#tl:hover{height:6px}
+#tlf{height:100%;background:var(--red);border-radius:99px;width:0%;transition:width .1s linear}
+#tlt{
+  position:absolute;top:50%;transform:translate(-50%,-50%);
+  width:11px;height:11px;background:#fff;border-radius:50%;
+  box-shadow:0 0 5px rgba(0,0,0,.5);left:0%;pointer-events:none;
+}
+#cr{display:flex;align-items:center;gap:10px}
+.cb{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  color:#CBD5E1;font-size:12px;
+  display:flex;align-items:center;justify-content:center;transition:background .15s;
+}
+.cb:hover{background:rgba(255,255,255,.2)}
+#tdsp{font-size:15px;color:#94A3B8;font-variant-numeric:tabular-nums}
+#slbl{font-size:14px;color:#475569;flex:1;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+@media(max-width:700px){#info-panel{display:none}#stage-wrap{padding:8px}}
+@media(max-width:480px){.hcta{width:140px}.nav-logo{font-size:12px}}
+
+/* ??????????????????????????????
+   LAYOUT PREVIEW OVERLAY
+   (ALTWELL MOTION DESIGN BIBLE v1.0)
+?????????????????????????????? */
+#layout-ov{
+  position:fixed;inset:0;z-index:200;
+  display:none;flex-direction:column;
+  background:#e8f4fb;
+}
+#layout-ov.on{display:flex}
+
+/* ── 헤더 (64px, 블랙) ── */
+#lo-bar{
+  height:64px;background:#000;flex-shrink:0;position:relative;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+#lo-bar-left{display:flex;align-items:center;gap:6px}
+#lo-back{
+  width:30px;height:30px;border-radius:50%;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  color:#e2e8f0;font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .14s;margin-right:6px;
+}
+#lo-back:hover{background:rgba(255,255,255,.18)}
+#lo-breadcrumb{font-size:13px;color:#6b7280;font-weight:500}
+.lo-hd-sep{color:#374151;font-size:13px;margin:0 2px}
+#lo-scene-label{font-size:14px;font-weight:700;color:#f1f5f9}
+#lo-bar-right{display:flex;align-items:center;gap:8px}
+#lo-brand{font-size:12px;font-weight:700;letter-spacing:.1em;color:#4b5563;text-transform:uppercase}
+#lo-brand-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#EE3338;box-shadow:0 0 6px rgba(238,51,56,.5);
+}
+
+/* ── 메인 레이아웃: 공유 배경 위에 두 패널 flex ── */
+#lo-main{
+  flex:1;display:flex;overflow:hidden;min-height:0;
+  background:linear-gradient(160deg,#c8e8f8 0%,#b0d8f0 100%);
+}
+
+/* ── 모션 캔버스 (65%) ── */
+#lo-canvas{
+  flex:0 0 65%;position:relative;overflow:hidden;
+  background:transparent;
+}
+/* 배경 데코 서클 */
+.scene-bg-circle{position:absolute;border-radius:50%;pointer-events:none}
+#bg-circle-1{
+  width:62%;aspect-ratio:1;
+  background:radial-gradient(circle,rgba(255,255,255,.4) 0%,transparent 65%);
+  top:-20%;left:-12%;
+}
+#bg-circle-2{
+  width:50%;aspect-ratio:1;
+  background:radial-gradient(circle,rgba(255,255,255,.25) 0%,transparent 65%);
+  bottom:-25%;right:-10%;
+}
+#bg-circle-3{
+  width:32%;aspect-ratio:1;
+  background:radial-gradient(circle,rgba(150,210,255,.3) 0%,transparent 65%);
+  top:8%;right:15%;
+}
+/* 도트 패턴 */
+#dot-pattern{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(255,255,255,.3) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+/* SVG 관계 연결선 */
+#lo-connectors{
+  position:absolute;inset:0;width:100%;height:100%;
+  pointer-events:none;overflow:visible;
+}
+#connector-left,#connector-right{
+  stroke:rgba(30,90,180,.15);stroke-width:0.6;
+  stroke-dasharray:3 3;stroke-linecap:round;fill:none;
+}
+
+/* ─────────────────────────────
+   MEMBER UNIT  (Design Bible §7)
+───────────────────────────────*/
+.member-unit{
+  position:absolute;transform:translate(-50%,-50%);
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* member-visual: 이미지 + 앰블럼 레이어 */
+.member-visual{position:relative;display:inline-flex}
+.member-image{display:block;object-fit:contain;border-radius:50%}
+.member-emblems{position:absolute;inset:0;pointer-events:none}
+
+/* rank-medal: 캐릭터 하단 겹침 */
+.rank-medal{position:absolute;bottom:0;right:0; z-index:3;}
+.rank-medal img{
+  width:clamp(60px,9vh,120px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 3px 8px rgba(0,0,0,.4));
+}
+/* qualification-badge (BASE BUSINESS): 캐릭터 하단 겹침 */
+.qualification-badge{position:absolute;bottom:0; left:30%; z-index:2;}
+.qualification-badge img{
+  width:clamp(50px,7.5vh,100px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.35));
+}
+/* condition-emblem (AUTOSHIP): 캐릭터 하단 겹침 */
+.condition-emblem{position:absolute;bottom:0;left:0; z-index:1;}
+.condition-emblem img{
+  width:clamp(50px,7.5vh,100px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.3));
+}
+
+/* 메인 멤버 이미지 크기 */
+#member-unit-main .member-image{
+  width:clamp(150px,21vh,255px);height:clamp(150px,21vh,255px);
+}
+/* 자식 멤버 이미지 크기 */
+.member-child .member-image{
+  width:clamp(100px,14vh,188px);height:clamp(100px,14vh,188px);
+}
+
+/* 메인 멤버 위치 */
+#member-unit-main{left:50%;top:30%}
+/* 자식 멤버 위치 */
+#member-unit-left{left:20%;top:72%}
+#member-unit-right{left:80%;top:72%}
+
+/* ─────────────────────────────
+   METRIC BADGE ? SEP (Design Bible §6-5)
+   HTML div component, NOT image
+───────────────────────────────*/
+.member-metrics{margin-top:clamp(6px,.8%,10px)}
+.metric-badge{
+  display:inline-flex;align-items:center;gap:clamp(5px,.6vw,8px);
+  background:rgba(255,255,255,.9);
+  border:1.5px solid rgba(30,90,180,.22);
+  border-radius:6px;
+  padding:clamp(4px,.5%,6px) clamp(10px,1.2vw,15px);
+  white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.06);
+}
+.metric-label{
+  font-size:clamp(11px,1.1vw,14px);font-weight:700;
+  color:#1e3a5f;
+}
+.metric-value{
+  font-size:clamp(11px,1.1vw,14px);font-weight:700;
+  color:#EE3338;
+}
+
+/* ─────────────────────────────
+   BONUS STACK + PLATE (Design Bible §6-7)
+   HTML div component, NOT image
+───────────────────────────────*/
+.bonus-stack{
+  margin-top:clamp(10px,1.4%,18px);
+  display:flex;flex-direction:column;align-items:center;
+  gap:clamp(5px,.7%,9px);
+}
+.bonus-plate{
+  display:flex;align-items:center;gap:clamp(8px,1vw,14px);
+  background:rgba(255,255,255,.92);
+  border:1.5px solid rgba(30,90,180,.16);
+  border-radius:8px;
+  padding:clamp(7px,.9%,12px) clamp(14px,1.7vw,24px);
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.bonus-indicator{
+  width:clamp(9px,1.1vw,13px);height:clamp(9px,1.1vw,13px);
+  border-radius:50%;flex-shrink:0;
+}
+.support-bonus .bonus-indicator{background:#EE3338}
+.recommend-bonus .bonus-indicator{background:#10b981}
+.bonus-label{
+  font-size:clamp(13px,1.5vw,19px);font-weight:600;color:#1e3a5f;
+}
+.bonus-value{
+  font-size:clamp(14px,1.6vw,21px);font-weight:900;
+}
+.support-bonus .bonus-value{color:#EE3338}
+.recommend-bonus .bonus-value{color:#10b981}
+
+/* ── 정보 패널 (35%, 화이트) ── */
+#lo-panel{
+  flex:1;
+  background:rgba(255,255,255,.72);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;
+  padding:clamp(24px,4%,52px) clamp(28px,4vw,60px);
+  overflow-y:auto;
+  border-left:1px solid rgba(255,255,255,.5);
+}
+/* 패널 고정 타이틀 (좌상단) */
+#panel-fixed-title{
+  position:absolute;top:clamp(16px,2.2%,28px);left:clamp(28px,4vw,60px);
+  font-size:clamp(10px,1vw,13px);font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:rgba(15,23,42,.38);
+  white-space:nowrap;
+}
+.scene-title{
+  font-size:clamp(18px,2.1vw,34px);font-weight:900;
+  color:#0f172a;line-height:1.4;letter-spacing:-.02em;
+  margin:0 0 clamp(20px,2.8%,36px) 0;
+}
+.scene-bullet-list{
+  list-style:none;padding:0;margin:0;
+  display:flex;flex-direction:column;gap:clamp(12px,1.6%,22px);
+}
+.bullet-item{
+  display:flex;align-items:flex-start;gap:clamp(10px,1.2vw,16px);
+}
+.bullet-dot{
+  width:clamp(7px,.8vw,11px);height:clamp(7px,.8vw,11px);
+  border-radius:50%;background:#0f172a;
+  flex-shrink:0;margin-top:.52em;
+}
+.bullet-text{
+  font-size:clamp(14px,1.6vw,24px);font-weight:500;
+  color:#1e293b;line-height:1.55;
+}
+
+/* ── 비디오 컨트롤러 (블랙) ── */
+#lo-ctrl{
+  height:56px;background:#000;flex-shrink:0;
+  border-top:1px solid rgba(255,255,255,.07);
+  display:flex;flex-direction:column;
+  justify-content:center;padding:0 24px;gap:6px;
+}
+#lo-progress-wrap{width:100%}
+#lo-tl{
+  height:3px;background:rgba(255,255,255,.15);
+  border-radius:99px;position:relative;cursor:pointer;
+}
+#lo-tlf{height:100%;background:#EE3338;border-radius:99px;width:1.2%}
+#lo-tlt{
+  position:absolute;top:50%;transform:translate(-50%,-50%);
+  width:10px;height:10px;background:#fff;border-radius:50%;
+  box-shadow:0 0 0 2px rgba(238,51,56,.8);pointer-events:none;left:1.2%;
+}
+#lo-cr{display:flex;align-items:center;gap:12px}
+#btn-play{
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+  color:#f1f5f9;font-size:8px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:background .14s;
+}
+#btn-play:hover{background:rgba(255,255,255,.22)}
+#time-current,#time-total{
+  font-size:12px;color:#6b7280;font-variant-numeric:tabular-nums;
+}
+.lo-time-sep{color:#374151;font-size:12px;margin:0 1px}
+#scene-number{font-size:11px;color:#374151;letter-spacing:.04em}
+#btn-help{
+  margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.06em;
+  color:#6b7280;background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.1);border-radius:4px;
+  padding:3px 10px;cursor:pointer;transition:background .14s;
+}
+#btn-help:hover{color:#e2e8f0;background:rgba(255,255,255,.14)}
+
+/* Responsive */
+/* ??????????????????????????????????????????????????????
+   ALTWELL OBJECT & MOTION LIBRARY  (§3 Object Library)
+???????????????????????????????????????????????????????? */
+
+/* ── §3-1/3-2 Member Units ── */
+.member-unit{
+  position:relative;
+  display:inline-flex;flex-direction:column;align-items:center;
+}
+.member-visual{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.member-image{display:block;object-fit:contain}
+/* Layer containers ? stacked over member-visual */
+.member-emblem-layer,
+.member-marker-layer,
+.member-metric-layer,
+.member-bonus-layer{
+  position:absolute;inset:0;pointer-events:none;
+}
+/* Emblem group wrapper (bottom-center) */
+.member-emblem-group{
+  position:absolute;bottom:-14%;left:50%;transform:translateX(-50%);
+  display:flex;align-items:flex-end;gap:3px;
+}
+/* Main Member */
+.member-main .member-image{
+  width:clamp(120px,17vh,210px);height:clamp(120px,17vh,210px);
+}
+/* Child Member ? ~70% of main */
+.member-child .member-image{
+  width:clamp(84px,12vh,148px);height:clamp(84px,12vh,148px);
+}
+
+/* ── §3-3 Rank Medal ── */
+.rank-medal{
+  position:relative;z-index:3;
+  display:inline-flex;
+}
+.rank-medal img{
+  width:clamp(40px,6.5vh,82px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 2px 6px rgba(0,0,0,.35));
+}
+
+/* ── §3-4 Autoship Badge (condition-emblem) ── */
+.condition-emblem.autoship-badge{
+  position:relative;z-index:1;
+  display:inline-flex;
+}
+.condition-emblem.autoship-badge img{
+  width:clamp(26px,3.8vh,52px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 1px 4px rgba(0,0,0,.25));
+}
+
+/* ── §3-5 BASE Badge (qualification-badge) ── */
+.qualification-badge.base-badge{
+  position:relative;z-index:2;
+  display:inline-flex;
+}
+.qualification-badge.base-badge img{
+  width:clamp(32px,5vh,66px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 2px 5px rgba(0,0,0,.3));
+}
+
+/* ── §3-6/3-7 Bonus Plates ── */
+.bonus-plate{
+  display:inline-flex;align-items:center;gap:8px;
+  background:#fff;
+  border:1.5px solid rgba(30,90,180,.14);
+  border-radius:10px;
+  padding:6px 14px;
+  white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.bonus-dot{
+  width:10px;height:10px;border-radius:50%;flex-shrink:0;
+}
+.support-bonus .bonus-dot{background:var(--red)}
+.recommend-bonus .bonus-dot{background:#10b981}
+.bonus-label{font-size:clamp(11px,1.3vw,15px);font-weight:600;color:#1e3a5f}
+.bonus-value{font-size:clamp(11px,1.3vw,15px);font-weight:900}
+.support-bonus .bonus-value{color:var(--red)}
+.recommend-bonus .bonus-value{color:#10b981}
+
+/* ── §3-8 SEP Badge (metric-badge) ── */
+.metric-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:#fff;
+  border:1.5px solid rgba(238,51,56,.22);
+  border-radius:6px;
+  padding:3px 10px;
+  white-space:nowrap;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);
+  transition:border-color var(--motion-fast) var(--ease-standard),
+             box-shadow var(--motion-fast) var(--ease-standard);
+}
+.metric-badge[data-status="complete"]{
+  border-color:rgba(238,51,56,.5);
+  box-shadow:0 0 0 2px rgba(238,51,56,.1);
+}
+.metric-badge[data-status="highlighted"]{
+  border-color:var(--red);
+  box-shadow:var(--glow-red);
+}
+.metric-label{font-size:clamp(9px,.95vw,12px);font-weight:700;color:#1e3a5f}
+.metric-value{font-size:clamp(9px,.95vw,12px);font-weight:900;color:var(--red)}
+
+/* ── §3-9/3-10 Markers (Leader Crown / Recommend Star) ── */
+.member-marker{
+  position:absolute;top:-20%;left:50%;transform:translateX(-50%);
+  z-index:4;display:inline-flex;
+}
+.member-marker img{
+  width:clamp(18px,2.6vh,36px);height:auto;object-fit:contain;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.2));
+}
+
+/* ── Status Check §5-5 ── */
+.status-check{
+  position:absolute;top:-10px;right:-10px;
+  width:clamp(16px,2.2vh,26px);height:clamp(16px,2.2vh,26px);
+  border-radius:50%;
+  background:var(--red);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(9px,1.2vh,14px);font-weight:900;
+  box-shadow:0 2px 6px rgba(238,51,56,.4);
+  opacity:0;z-index:5;
+  transition:opacity var(--motion-fast) var(--ease-standard);
+}
+.status-check.is-visible{opacity:1}
+
+/* ── §8 Object States ── */
+.is-hidden{opacity:0!important;pointer-events:none}
+.is-inactive{opacity:.32;filter:grayscale(.55)}
+.is-active{opacity:1;filter:none}
+
+/* ??????????????????????????????????????????????????????
+   ALTWELL MOTION LIBRARY  (§5 Keyframes + Classes)
+???????????????????????????????????????????????????????? */
+
+/* §5-1 Fade + Scale */
+@keyframes kf-enter{
+  from{opacity:0;transform:scale(.9)}
+  to  {opacity:1;transform:scale(1)}
+}
+/* §5-2 Glow + Bounce */
+@keyframes kf-acquire{
+  0%  {opacity:0;transform:scale(.75)}
+  50% {opacity:1;transform:scale(1.08)}
+  70% {transform:scale(.97)}
+  85% {transform:scale(1.03)}
+  100%{transform:scale(1)}
+}
+@keyframes kf-glow-once{
+  0%  {filter:drop-shadow(0 0 0 transparent)}
+  40% {filter:drop-shadow(0 0 14px rgba(238,51,56,.5))}
+  100%{filter:drop-shadow(0 0 0 transparent)}
+}
+/* §5-3 Rank Replace */
+@keyframes kf-rank-out{
+  from{opacity:1;transform:scale(1)}
+  to  {opacity:0;transform:scale(.88)}
+}
+@keyframes kf-rank-in{
+  from{opacity:0;transform:scale(.88)}
+  to  {opacity:1;transform:scale(1)}
+}
+/* §5-4 Slide Up */
+@keyframes kf-slide-up{
+  from{opacity:0;transform:translateY(20px)}
+  to  {opacity:1;transform:translateY(0)}
+}
+/* §5-5 Check Pop */
+@keyframes kf-check-pop{
+  0%  {opacity:0;transform:scale(.5)}
+  55% {transform:scale(1.15)}
+  80% {transform:scale(.95)}
+  100%{opacity:1;transform:scale(1)}
+}
+/* §5-6 Stagger */
+@keyframes kf-stagger-item{
+  from{opacity:0;transform:translateY(12px) scale(.97)}
+  to  {opacity:1;transform:translateY(0) scale(1)}
+}
+/* §6 Idle Float */
+@keyframes kf-idle-float{
+  0%,100%{transform:translateY(0)}
+  50%    {transform:translateY(-4px)}
+}
+/* §6 Highlight Pulse */
+@keyframes kf-highlight-pulse{
+  0%  {box-shadow:0 0 0 0 rgba(238,51,56,.4)}
+  50% {box-shadow:0 0 0 7px rgba(238,51,56,.12)}
+  100%{box-shadow:0 0 0 0 rgba(238,51,56,0)}
+}
+
+/* Reusable CSS classes */
+.motion-enter{
+  animation:kf-enter var(--motion-normal) var(--ease-emphasis) both;
+}
+.motion-acquire{
+  animation:kf-acquire 800ms var(--ease-emphasis) both;
+}
+.motion-slide-up{
+  animation:kf-slide-up 550ms var(--ease-standard) both;
+}
+.motion-check{
+  animation:kf-check-pop 600ms var(--ease-emphasis) both;
+}
+.motion-idle-float{
+  animation:kf-idle-float 3000ms ease-in-out infinite;
+}
+.is-entering{animation:kf-enter var(--motion-normal) var(--ease-emphasis) both}
+
+/* §11 prefers-reduced-motion */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:1ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:1ms!important;
+  }
+}
+
+/* ??????????????????????????????????????????????????????
+   COMPONENT PREVIEW PAGE  (§9)
+???????????????????????????????????????????????????????? */
+#lib-preview{
+  position:fixed;inset:0;z-index:500;
+  display:none;flex-direction:column;
+  background:#0e1117;font-family:'Noto Sans KR',sans-serif;
+}
+#lib-preview.on{display:flex}
+/* Header */
+#lib-hd{
+  height:56px;background:#000;flex-shrink:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;border-bottom:1px solid rgba(255,255,255,.08);
+}
+#lib-hd-title{
+  font-size:13px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;color:#94a3b8;
+}
+#lib-hd-badge{
+  font-size:10px;font-weight:700;padding:2px 8px;
+  border-radius:99px;background:rgba(238,51,56,.18);
+  color:var(--red);border:1px solid rgba(238,51,56,.3);
+  margin-left:10px;letter-spacing:.08em;
+}
+#lib-close{
+  width:30px;height:30px;border-radius:50%;border:none;
+  background:rgba(255,255,255,.07);color:#e2e8f0;font-size:14px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+}
+#lib-close:hover{background:rgba(255,255,255,.16)}
+/* Tabs */
+#lib-tabs{
+  height:44px;background:#000;flex-shrink:0;
+  display:flex;align-items:flex-end;
+  padding:0 24px;gap:0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.lib-tab{
+  height:40px;padding:0 20px;border:none;
+  background:transparent;color:#6b7280;font-size:13px;font-weight:600;
+  cursor:pointer;position:relative;transition:color .15s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.lib-tab::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:transparent;transition:background .15s;
+}
+.lib-tab.active{color:#f1f5f9}
+.lib-tab.active::after{background:var(--red)}
+.lib-tab:hover:not(.active){color:#cbd5e1}
+/* Body */
+#lib-body{
+  flex:1;overflow-y:auto;padding:32px 28px;
+}
+.lib-tab-pane{display:none}
+.lib-tab-pane.active{display:block}
+/* Section headings */
+.lib-section{margin-bottom:40px}
+.lib-section-title{
+  font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:#475569;margin-bottom:16px;padding-bottom:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+/* Object grid */
+.lib-obj-grid{
+  display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;
+}
+/* Object card */
+.lib-obj-card{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;padding:20px 16px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  min-width:120px;
+}
+.lib-obj-card-label{
+  font-size:10px;font-weight:600;color:#64748b;letter-spacing:.06em;
+  text-transform:uppercase;text-align:center;
+}
+/* Motion buttons */
+.lib-motion-grid{
+  display:flex;flex-wrap:wrap;gap:10px;
+}
+.lib-btn{
+  padding:10px 20px;border-radius:8px;border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.05);color:#cbd5e1;font-size:13px;font-weight:600;
+  cursor:pointer;transition:background .14s,border-color .14s;
+  font-family:'Noto Sans KR',sans-serif;
+}
+.lib-btn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2)}
+.lib-btn.btn-reset{border-color:rgba(238,51,56,.3);color:var(--red)}
+.lib-btn.btn-reset:hover{background:rgba(238,51,56,.1)}
+/* Combo stage */
+#lib-combo-stage{
+  background:linear-gradient(160deg,#c8e8f8 0%,#b0d8f0 100%);
+  border-radius:16px;padding:40px 20px;
+  display:flex;flex-direction:column;align-items:center;
+  gap:20px;min-height:320px;justify-content:center;
+  position:relative;overflow:hidden;
+}
+#lib-combo-members{
+  display:flex;align-items:flex-end;justify-content:center;gap:40px;
+}
+#lib-combo-bonuses{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+
+/* Dev launcher button (floating) */
+#lib-launcher{
+  position:fixed;bottom:72px;right:16px;z-index:190;
+  width:40px;height:40px;border-radius:50%;
+  background:#000;border:1px solid rgba(255,255,255,.15);
+  color:#475569;font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;letter-spacing:.04em;
+  transition:color .14s,border-color .14s;
+}
+#lib-launcher:hover{color:#94a3b8;border-color:rgba(255,255,255,.3)}
+
+/* 세로 모드: layout-ov 자체를 90도 회전하여 가로처럼 강제 표시 */
+@media(orientation:portrait){
+  #layout-ov.on{
+    display:flex;
+    position:fixed;
+    top:0;left:0;
+    width:100vh;
+    height:100vw;
+    transform:rotate(90deg) translateY(-100%);
+    transform-origin:top left;
+  }
+}
+</style>
+</head>
+<body class="d1">
+
+<!-- ?????????? ADAPTIVE NAV ?????????? -->
+<nav id="nav">
+  <button class="nav-back" onclick="goBack()">&#8592;</button>
+  <div class="nav-logo">ALTWELL<span> SMART GUIDE</span></div>
+  <span id="nav-page-title"></span>
+  <div class="nav-spacer"></div>
+</nav>
+
+<!-- ?????????? DEPTH-1: HOME ?????????? -->
+<div id="home-page" class="page on">
+  <section id="hero">
+    <div class="hero-badge">ALTWELL SMART GUIDE</div>
+    <h1 class="hero-title">앨트웰 비즈니스,<br><em>스마트하게</em> 시작하세요</h1>
+    <p class="hero-desc">가이드 영상과 인터랙티브 시뮬레이터로<br>복잡한 구조를 쉽고 빠르게 이해하세요.</p>
+    <div class="hero-ctas">
+      <button class="hcta p" onclick="goto('guide')">
+        <span class="hcta-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- projector body -->
+            <rect x="8" y="16" width="36" height="22" rx="4" fill="rgba(255,255,255,.18)" stroke="rgba(255,255,255,.7)" stroke-width="1.8"/>
+            <!-- lens circle -->
+            <circle cx="26" cy="27" r="7" fill="rgba(255,255,255,.12)" stroke="rgba(255,255,255,.85)" stroke-width="1.8"/>
+            <!-- inner lens -->
+            <circle cx="26" cy="27" r="3.2" fill="rgba(255,255,255,.35)"/>
+            <!-- film reel left -->
+            <circle cx="13" cy="20" r="3.2" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="1.5"/>
+            <circle cx="13" cy="20" r="1.1" fill="rgba(255,255,255,.65)"/>
+            <!-- film reel right -->
+            <circle cx="39" cy="20" r="3.2" fill="none" stroke="rgba(255,255,255,.65)" stroke-width="1.5"/>
+            <circle cx="39" cy="20" r="1.1" fill="rgba(255,255,255,.65)"/>
+            <!-- stand -->
+            <line x1="22" y1="38" x2="20" y2="44" stroke="rgba(255,255,255,.6)" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="30" y1="38" x2="32" y2="44" stroke="rgba(255,255,255,.6)" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="17" y1="44" x2="35" y2="44" stroke="rgba(255,255,255,.6)" stroke-width="1.8" stroke-linecap="round"/>
+            <!-- beam rays -->
+            <line x1="33" y1="25" x2="45" y2="20" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="33" y1="27" x2="46" y2="27" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/>
+            <line x1="33" y1="29" x2="45" y2="34" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="hcta-label">가이드 영상<br>시청하기</span>
+      </button>
+      <button class="hcta s" onclick="goto('sim')">
+        <span class="hcta-icon">
+          <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- tablet body -->
+            <rect x="10" y="7" width="32" height="40" rx="5" fill="rgba(238,51,56,.06)" stroke="#EE3338" stroke-width="1.9"/>
+            <!-- screen area -->
+            <rect x="13.5" y="11" width="25" height="27" rx="2.5" fill="rgba(238,51,56,.08)" stroke="rgba(238,51,56,.3)" stroke-width="1.2"/>
+            <!-- home button -->
+            <circle cx="26" cy="43" r="2" fill="none" stroke="#EE3338" stroke-width="1.5"/>
+            <!-- screen content ? play icon -->
+            <circle cx="26" cy="24.5" r="7" fill="rgba(238,51,56,.12)" stroke="#EE3338" stroke-width="1.4"/>
+            <path d="M24 21.5 L30 24.5 L24 27.5 Z" fill="#EE3338"/>
+            <!-- camera dot -->
+            <circle cx="26" cy="9.2" r="1" fill="#EE3338" opacity=".5"/>
+          </svg>
+        </span>
+        <span class="hcta-label">시뮬레이터로<br>복습하기</span>
+      </button>
+    </div>
+  </section>
+</div>
+
+<!-- ?????????? DEPTH-2: GUIDE LIST ?????????? -->
+<div id="guide-page" class="page">
+  <div class="list-wrap">
+    <div class="lp-head">
+      <div class="lp-title">가이드 영상</div>
+      <div class="lp-desc">단계별로 앨트웰 비즈니스 구조를 배워보세요.</div>
+    </div>
+    <div class="view-tabs">
+      <button class="vt on" onclick="setView('grid',this)">단계별</button>
+      <button class="vt" onclick="setView('list',this)">리스트</button>
+    </div>
+    <div class="cards-grid" id="vcards">
+      <div class="vcard" onclick="openLayout()">
+        <div class="vc-thumb"><div class="vc-thumb-inner g1">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">STEP 1</span><span class="vc-done">완료</span></div>
+          <div class="vc-title">앨트웰 시작하기</div>
+          <div class="vc-desc">디슈머로 시작해 사업자로 성장하는 여정의 첫 단계</div>
+          <div class="vc-meta">? 12분</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="vcard" onclick="openPlayer('guide')">
+        <div class="vc-thumb"><div class="vc-thumb-inner g2">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">STEP 2</span><span class="vc-new">NEW</span></div>
+          <div class="vc-title">BASE사업자 이해하기</div>
+          <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자</div>
+          <div class="vc-meta">? 3분</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><div class="vc-thumb-inner g3">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">STEP 3</span><span class="vc-soon">준비 중</span></div>
+          <div class="vc-title">SEP 성장하기</div>
+          <div class="vc-desc">실적을 쌓고 조직을 성장시키는 SEP 전략</div>
+          <div class="vc-meta">? 18분</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><div class="vc-thumb-inner g4">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">STEP 4</span><span class="vc-soon">준비 중</span></div>
+          <div class="vc-title">권리 소득 시스템 구축하기</div>
+          <div class="vc-desc">리더십 보너스와 장기적 수동 소득 시스템 완성</div>
+          <div class="vc-meta">? 24분</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ?????????? DEPTH-2: SIMULATOR LIST ?????????? -->
+<div id="sim-page" class="page">
+  <div class="list-wrap">
+    <div class="lp-head">
+      <div class="lp-title">시뮬레이터</div>
+      <div class="lp-desc">인터랙티브 애니메이션으로 비즈니스 구조를 직접 체험하세요.</div>
+    </div>
+    <div class="sim-grid">
+      <div class="sc-card" onclick="openPlayer('sim')">
+        <div class="sc-thumb t1">
+          <div class="sc-thumb-glow"></div>
+          <div class="sc-thumb-icon">?</div>
+          <div class="sc-badge">NEW</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-label">인터랙티브 시뮬레이터</div>
+          <div class="sc-title">BASE사업자 이해하기</div>
+          <div class="sc-desc">오토십, SEP, 추천 보너스 조건부터 권리 소득 구조까지. 12개 장면 · 약 3분 애니메이션으로 학습하세요.</div>
+          <div class="sc-footer">
+            <span class="sc-meta">? 3분 · 12장면</span>
+            <button class="sc-go">▶ 시작하기</button>
+          </div>
+        </div>
+      </div>
+      <div class="sc-card disabled">
+        <div class="sc-thumb t2">
+          <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(124,58,237,.28),transparent 70%)"></div>
+          <div class="sc-thumb-icon">?</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-label">성장 시뮬레이터</div>
+          <div class="sc-title">SEP 성장 계산기</div>
+          <div class="sc-desc">나의 추천 현황과 SEP를 입력하면 예상 보너스와 다음 목표 레벨을 계산해드립니다.</div>
+          <div class="sc-footer">
+            <span class="sc-meta">곧 출시 예정</span>
+            <button class="sc-go off">준비 중</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ?????????? LAYOUT PREVIEW OVERLAY ?????????? -->
+<div id="layout-ov">
+
+  <!-- ① 헤더 (64px, 블랙) -->
+  <div id="lo-bar">
+    <div id="lo-bar-left">
+      <button id="lo-back" onclick="closeLayout()">&#8592;</button>
+      <span id="lo-breadcrumb">가이드 영상</span>
+      <span class="lo-hd-sep"> &rsaquo; </span>
+      <span id="lo-scene-label">BASE사업자 이해하기</span>
+    </div>
+    <div id="lo-bar-right">
+      <span id="lo-brand">ALTWELL SMART GUIDE</span>
+      <span id="lo-brand-dot"></span>
+    </div>
+  </div>
+
+  <!-- ② 메인 콘텐츠 -->
+  <div id="lo-main">
+
+    <!-- 모션 캔버스 (65%) -->
+    <section id="lo-canvas">
+      <div class="scene-bg-circle" id="bg-circle-1"></div>
+      <div class="scene-bg-circle" id="bg-circle-2"></div>
+      <div class="scene-bg-circle" id="bg-circle-3"></div>
+      <div id="dot-pattern"></div>
+
+      <!-- SVG 관계 연결선 -->
+      <svg id="lo-connectors" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <line id="connector-left"  x1="50" y1="34" x2="20" y2="64"/>
+        <line id="connector-right" x1="50" y1="34" x2="80" y2="64"/>
+      </svg>
+
+      <!-- ─── 메인 멤버: BASE사업자 (Design Bible §7) ─── -->
+      <div class="member-unit" id="member-unit-main">
+        <div class="member-visual" id="member-visual-main">
+          <img class="member-image" id="member-image-main" src="${memberImg}" alt="BASE사업자"/>
+          <div class="member-emblems" id="member-emblems-main">
+            <div class="rank-medal" id="rank-medal-main">
+              <img src="${lev01Img}" alt="D 지위"/>
+            </div>
+            <div class="qualification-badge base-business" id="base-business-badge-main">
+              <img src="${basebizImg}" alt="BASE사업자 자격"/>
+            </div>
+            <div class="condition-emblem autoship-emblem" id="autoship-emblem-main">
+              <img src="${autoshipImg}" alt="오토십 이용"/>
+            </div>
+          </div>
+        </div>
+        <!-- bonus-stack: HTML div 컴포넌트, 이미지 아님 -->
+        <div class="member-income bonus-stack" id="bonus-stack-main">
+          <div class="bonus-plate support-bonus" id="support-bonus-main">
+            <span class="bonus-indicator"></span>
+            <span class="bonus-label">후원 보너스</span>
+            <strong class="bonus-value">3%</strong>
+          </div>
+          <div class="bonus-plate recommend-bonus" id="recommend-bonus-main">
+            <span class="bonus-indicator"></span>
+            <span class="bonus-label">추천 보너스</span>
+            <strong class="bonus-value">10,000원×2</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── 왼쪽 자식 멤버: SEP 회원 (Design Bible §7) ─── -->
+      <div class="member-unit member-child" id="member-unit-left">
+        <div class="member-visual" id="member-visual-left">
+          <img class="member-image" id="member-image-left" src="${peopleImg}" alt="SEP 회원 좌"/>
+          <div class="member-emblems" id="member-emblems-left">
+            <div class="condition-emblem autoship-emblem" id="autoship-emblem-left">
+              <img src="${autoshipImg}" alt="오토십 이용"/>
+            </div>
+          </div>
+        </div>
+        <!-- metric-badge: HTML div 컴포넌트 -->
+        <div class="member-metrics" id="member-metrics-left">
+          <div class="metric-badge sep-badge" id="sep-badge-left">
+            <span class="metric-label">SEP</span>
+            <strong class="metric-value">30만↑</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── 오른쪽 자식 멤버: SEP 회원 (Design Bible §7) ─── -->
+      <div class="member-unit member-child" id="member-unit-right">
+        <div class="member-visual" id="member-visual-right">
+          <img class="member-image" id="member-image-right" src="${peopleImg}" alt="SEP 회원 우"/>
+          <div class="member-emblems" id="member-emblems-right">
+            <div class="condition-emblem autoship-emblem" id="autoship-emblem-right">
+              <img src="${autoshipImg}" alt="오토십 이용"/>
+            </div>
+          </div>
+        </div>
+        <div class="member-metrics" id="member-metrics-right">
+          <div class="metric-badge sep-badge" id="sep-badge-right">
+            <span class="metric-label">SEP</span>
+            <strong class="metric-value">30만↑</strong>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 정보 패널 (35%, 화이트) -->
+    <aside id="lo-panel">
+      <p id="panel-fixed-title">BASE 사업자 이해하기</p>
+      <h2 class="scene-title" id="scene-title-main">BASE사업자가 되면<br>무엇이 달라질까요?</h2>
+      <ul class="scene-bullet-list" id="scene-bullets">
+        <li class="bullet-item" id="bullet-1">
+          <span class="bullet-dot"></span>
+          <span class="bullet-text">권리 소득의 출발점</span>
+        </li>
+        <li class="bullet-item" id="bullet-2">
+          <span class="bullet-dot"></span>
+          <span class="bullet-text">추천 보너스 지급</span>
+        </li>
+      </ul>
+    </aside>
+
+  </div><!-- /lo-main -->
+
+  <!-- ③ 컨트롤러 (블랙) -->
+  <div id="lo-ctrl">
+    <div id="lo-progress-wrap">
+      <div id="lo-tl">
+        <div id="lo-tlf"></div>
+        <div id="lo-tlt"></div>
+      </div>
+    </div>
+    <div id="lo-cr">
+      <button id="btn-play">&#9654;</button>
+      <span id="time-current">0:02</span>
+      <span class="lo-time-sep">/</span>
+      <span id="time-total">3:00</span>
+      <span id="scene-number">· Scene 05</span>
+      <button id="btn-help">HELP</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ?????????? DEPTH-3: PLAYER OVERLAY ?????????? -->
+<div id="overlay">
+  <div id="ov-bar">
+    <button id="ov-back" onclick="closePlayer()">&#8592;</button>
+    <span id="ov-breadcrumb">홈</span>
+    <span id="ov-sep"> &rsaquo; </span>
+    <span id="ov-title">BASE사업자 이해하기</span>
+    <span id="ov-dot"></span>
+    <span id="ov-type">ALTWELL SMART GUIDE</span>
+  </div>
+
+  <div id="player-wrap">
+    <div id="main-area">
+      <div id="stage-wrap">
+        <div id="stage">
+          <div id="si">
+            <svg id="svgl" viewBox="0 0 160 90" preserveAspectRatio="none">
+              <line id="gl-l"  class="gl" x1="80" y1="34" x2="43"  y2="47" stroke="#60A5FA" stroke-width=".7"  stroke-linecap="round"/>
+              <line id="gl-r"  class="gl" x1="80" y1="34" x2="117" y2="47" stroke="#60A5FA" stroke-width=".7"  stroke-linecap="round"/>
+              <line id="gl-lc" class="gl" x1="43" y1="61" x2="26"  y2="69" stroke="#60A5FA" stroke-width=".55" stroke-linecap="round"/>
+              <line id="gl-rc" class="gl" x1="117" y1="61" x2="134" y2="69" stroke="#60A5FA" stroke-width=".55" stroke-linecap="round"/>
+            </svg>
+
+            <div id="hero-s">
+              <div class="h-main">BASE사업자란 무엇인가?</div>
+              <div class="h-sub">권리 소득이 시작되는 첫 번째 전환점</div>
+            </div>
+
+            <div id="mm" class="mn" style="left:50%;top:30%">
+              <div class="mb lg">
+                <div class="mi-wrap" id="mm-imgs">
+                  <img class="mi gray" src="${peopleImg}" alt=""/>
+                  <img class="mi blue" src="${memberImg}" alt=""/>
+                </div>
+                <div class="m-ring" id="mm-ring"></div>
+                <img class="m-medal" id="mm-med" src="${lev01Img}" alt=""/>
+                <img class="m-biz"   id="mm-biz" src="${basebizImg}" alt=""/>
+                <img class="m-as"    id="mm-as"  src="${autoshipImg}" alt=""/>
+                <div class="m-sep"   id="mm-sep">SEP<br>30만</div>
+                <div class="m-chk"   id="mm-chk">&#10003;</div>
+              </div>
+              <div class="m-plate" id="mm-pl"></div>
+            </div>
+
+            <div id="dl-l" class="mn" style="left:27%;top:58%">
+              <div class="mb md">
+                <div class="mi-wrap"><img class="mi gray" src="${peopleImg}" alt=""/></div>
+                <img class="m-as"  id="dl-l-as"  src="${autoshipImg}" alt=""/>
+                <div class="m-sep" id="dl-l-sep">SEP<br>30만</div>
+                <div class="m-chk" id="dl-l-chk">&#10003;</div>
+              </div>
+            </div>
+
+            <div id="dl-r" class="mn" style="left:73%;top:58%">
+              <div class="mb md">
+                <div class="mi-wrap"><img class="mi gray" src="${peopleImg}" alt=""/></div>
+                <img class="m-as"  id="dl-r-as"  src="${autoshipImg}" alt=""/>
+                <div class="m-sep" id="dl-r-sep">SEP<br>30만</div>
+                <div class="m-chk" id="dl-r-chk">&#10003;</div>
+              </div>
+            </div>
+
+            <div id="ex-m" class="mn" style="left:12%;top:30%">
+              <div class="mb md">
+                <div class="mi-wrap"><img class="mi gray" src="${peopleImg}" alt=""/></div>
+              </div>
+            </div>
+
+            <div id="dl-lc" class="mn" style="left:16%;top:79%">
+              <div class="mb sm">
+                <div class="mi-wrap"><img class="mi gray" src="${peopleImg}" alt=""/></div>
+              </div>
+            </div>
+
+            <div id="dl-rc" class="mn" style="left:84%;top:79%">
+              <div class="mb sm">
+                <div class="mi-wrap"><img class="mi gray" src="${peopleImg}" alt=""/></div>
+              </div>
+            </div>
+
+            <div id="bpw">
+              <div id="bpi">
+                <img src="${bonusPlImg}" alt=""/>
+                <div class="bp-tx">
+                  <div class="bp-t1" id="bp-t1">권리 소득 시작</div>
+                  <div class="bp-t2" id="bp-t2">&#8361;0</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="warn">
+              <div class="w-ico">&#9888;&#65039;</div>
+              <div class="w-ttl">조건 유지 필수</div>
+              <div class="w-txt">본인을 포함한 세 사람 모두<br>조건을 유지해야<br>BASE사업자 자격도 유지됩니다.</div>
+            </div>
+
+            <div class="sc" id="sc1">&#9312; 권리 소득 시작</div>
+            <div class="sc" id="sc2">&#9313; 오토십 + SEP 30만 유지</div>
+            <div class="sc" id="sc3">&#9314; 추천 보너스 지급</div>
+
+            <div id="ending">
+              <div class="e-msg">
+                BASE사업자는 권리 소득의 시작이자,<br>
+                함께 성장하는 앨트웰 비즈니스의<br>
+                <span class="hl">가장 중요한 첫걸음입니다.</span>
+              </div>
+              <div id="cta-row">
+                <button class="ecta s" onclick="doRestart()">&#8635; 다시 보기</button>
+                <button class="ecta p" onclick="closePlayer()">&#8592; 목록으로</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="info-panel">
+        <div id="icard">
+          <div class="ic-lbl" id="ic-lbl">안내</div>
+          <div id="ic-body"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="ctrl">
+      <div id="tl" onclick="onSeek(event)">
+        <div id="tlf"></div>
+        <div id="tlt"></div>
+      </div>
+      <div id="cr">
+        <button class="cb" id="btn-p" onclick="togglePlay()">&#9654;</button>
+        <button class="cb" onclick="doRestart()" title="처음부터">&#8635;</button>
+        <span id="tdsp">0:00 / 3:00</span>
+        <span id="slbl">장면 1 &middot; 시작</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ?????????? DEV LAUNCHER ?????????? -->
+<button id="lib-launcher" title="Object &amp; Motion Library" onclick="openLibPreview()">LIB</button>
+
+<!-- ?????????? COMPONENT PREVIEW PAGE (§9) ?????????? -->
+<div id="lib-preview">
+
+  <!-- Header -->
+  <div id="lib-hd">
+    <div style="display:flex;align-items:center">
+      <span id="lib-hd-title">ALTWELL Object &amp; Motion Library</span>
+      <span id="lib-hd-badge">DEV</span>
+    </div>
+    <button id="lib-close" onclick="closeLibPreview()">&#10005;</button>
+  </div>
+
+  <!-- Tabs -->
+  <div id="lib-tabs">
+    <button class="lib-tab active" onclick="switchLibTab('objects',this)">Object Preview</button>
+    <button class="lib-tab" onclick="switchLibTab('motions',this)">Motion Preview</button>
+    <button class="lib-tab" onclick="switchLibTab('combo',this)">Combination Preview</button>
+  </div>
+
+  <!-- Body -->
+  <div id="lib-body">
+
+    <!-- ① Object Preview -->
+    <section id="lib-tab-objects" class="lib-tab-pane active">
+
+      <div class="lib-section">
+        <div class="lib-section-title">Members</div>
+        <div class="lib-obj-grid">
+          <div class="lib-obj-card">
+            <div class="member-unit member-main" style="position:relative">
+              <div class="member-visual">
+                <img class="member-image" src="${memberImg}" alt="Main Member"/>
+              </div>
+            </div>
+            <div class="lib-obj-card-label">Main Member</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="member-unit member-child" style="position:relative">
+              <div class="member-visual">
+                <img class="member-image" src="${peopleImg}" alt="Child Member"/>
+              </div>
+            </div>
+            <div class="lib-obj-card-label">Child Member</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Rank Medals</div>
+        <div class="lib-obj-grid">
+          <div class="lib-obj-card">
+            <div class="rank-medal" data-rank="D"><img src="${lev01Img}" alt="D 지위"/></div>
+            <div class="lib-obj-card-label">D</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="rank-medal" data-rank="P"><img src="${lev02Img}" alt="P 지위"/></div>
+            <div class="lib-obj-card-label">P</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="rank-medal" data-rank="JP"><img src="${lev03Img}" alt="JP 지위"/></div>
+            <div class="lib-obj-card-label">JP</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="rank-medal" data-rank="SP"><img src="${lev04Img}" alt="SP 지위"/></div>
+            <div class="lib-obj-card-label">SP</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="rank-medal" data-rank="FC"><img src="${lev05Img}" alt="FC 지위"/></div>
+            <div class="lib-obj-card-label">FC</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Qualification &amp; Condition</div>
+        <div class="lib-obj-grid">
+          <div class="lib-obj-card">
+            <div class="qualification-badge base-badge" data-qualification="base">
+              <img src="${basebizImg}" alt="BASE사업자 자격"/>
+            </div>
+            <div class="lib-obj-card-label">BASE Badge</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="condition-emblem autoship-badge" data-condition="autoship">
+              <img src="${autoshipImg}" alt="오토십 이용"/>
+            </div>
+            <div class="lib-obj-card-label">Autoship Badge</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Bonus Plates</div>
+        <div class="lib-obj-grid" style="flex-direction:column;align-items:flex-start">
+          <div class="lib-obj-card" style="flex-direction:row;gap:12px;min-width:unset">
+            <div class="bonus-plate recommend-bonus" id="prev-recommend-bonus">
+              <span class="bonus-dot" aria-hidden="true"></span>
+              <span class="bonus-label">추천 보너스</span>
+              <strong class="bonus-value">10,000원 &times; 2</strong>
+            </div>
+            <div class="lib-obj-card-label" style="align-self:center">Recommend Bonus</div>
+          </div>
+          <div class="lib-obj-card" style="flex-direction:row;gap:12px;min-width:unset">
+            <div class="bonus-plate support-bonus" id="prev-support-bonus">
+              <span class="bonus-dot" aria-hidden="true"></span>
+              <span class="bonus-label">후원 보너스</span>
+              <strong class="bonus-value">3%</strong>
+            </div>
+            <div class="lib-obj-card-label" style="align-self:center">Support Bonus</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Performance &amp; Markers</div>
+        <div class="lib-obj-grid">
+          <div class="lib-obj-card">
+            <div class="metric-badge sep-badge" id="prev-sep" data-status="incomplete">
+              <span class="metric-label">SEP</span>
+              <strong class="metric-value">30만&#8593;</strong>
+            </div>
+            <div class="lib-obj-card-label">SEP Badge<br>(incomplete)</div>
+          </div>
+          <div class="lib-obj-card">
+            <div class="metric-badge sep-badge" data-status="complete">
+              <span class="metric-label">SEP</span>
+              <strong class="metric-value">30만&#8593;</strong>
+            </div>
+            <div class="lib-obj-card-label">SEP Badge<br>(complete)</div>
+          </div>
+          <div class="lib-obj-card">
+            <div style="position:relative;display:inline-block;width:28px;height:28px;background:rgba(255,255,255,.1);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <span style="font-size:18px">&#128081;</span>
+            </div>
+            <div class="lib-obj-card-label">Leader Crown<br>(SVG placeholder)</div>
+          </div>
+          <div class="lib-obj-card">
+            <div style="position:relative;display:inline-block;width:28px;height:28px;background:rgba(255,255,255,.1);border-radius:6px;display:flex;align-items:center;justify-content:center">
+              <span style="font-size:18px">&#11088;</span>
+            </div>
+            <div class="lib-obj-card-label">Recommend Star<br>(SVG placeholder)</div>
+          </div>
+        </div>
+      </div>
+
+    </section><!-- /lib-tab-objects -->
+
+    <!-- ② Motion Preview -->
+    <section id="lib-tab-motions" class="lib-tab-pane">
+
+      <div class="lib-section">
+        <div class="lib-section-title">Motion Test ? 대상: 아래 카드</div>
+        <div id="motion-test-target" style="
+          width:80px;height:80px;border-radius:12px;
+          background:rgba(238,51,56,.15);border:1.5px solid rgba(238,51,56,.35);
+          display:flex;align-items:center;justify-content:center;
+          font-size:11px;font-weight:700;color:var(--red);
+          margin-bottom:20px;
+        ">TARGET</div>
+        <div class="lib-motion-grid">
+          <button class="lib-btn" onclick="testMotion('enter')">&#9654; Fade + Scale 등장</button>
+          <button class="lib-btn" onclick="testMotion('acquire')">&#9654; Glow + Bounce 획득</button>
+          <button class="lib-btn" onclick="testMotion('rank-replace')">&#9654; Rank Replace D→P</button>
+          <button class="lib-btn" onclick="testMotion('slide-up')">&#9654; Slide Up 텍스트</button>
+          <button class="lib-btn" onclick="testMotion('check')">&#9654; Check 조건 충족</button>
+          <button class="lib-btn" onclick="testMotion('stagger')">&#9654; Stagger Fade 다중</button>
+          <button class="lib-btn" onclick="testMotion('idle')">&#9654; Idle Float 호흡</button>
+          <button class="lib-btn" onclick="testMotion('exit')">&#9654; Exit Fade Out</button>
+          <button class="lib-btn btn-reset" onclick="resetMotionTest()">&#8635; 전체 초기화</button>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Stagger Test ? 다중 요소</div>
+        <div id="stagger-test-wrap" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+          <div class="lib-obj-card stagger-test-item" style="opacity:0">카드 1</div>
+          <div class="lib-obj-card stagger-test-item" style="opacity:0">카드 2</div>
+          <div class="lib-obj-card stagger-test-item" style="opacity:0">카드 3</div>
+        </div>
+        <div class="lib-motion-grid">
+          <button class="lib-btn" onclick="testStagger()">&#9654; Stagger Fade 실행</button>
+          <button class="lib-btn btn-reset" onclick="resetStagger()">&#8635; 초기화</button>
+        </div>
+      </div>
+
+      <div class="lib-section">
+        <div class="lib-section-title">Rank Replace Test</div>
+        <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px">
+          <div id="rank-replace-medal" class="rank-medal" data-rank="D">
+            <img id="rank-replace-img" src="${lev01Img}" alt="D 지위"/>
+          </div>
+          <span style="color:#94a3b8;font-size:13px">현재: <span id="rank-replace-label">D</span></span>
+        </div>
+        <div class="lib-motion-grid">
+          <button class="lib-btn" onclick="testRankReplace('D')">D</button>
+          <button class="lib-btn" onclick="testRankReplace('P')">P</button>
+          <button class="lib-btn" onclick="testRankReplace('JP')">JP</button>
+          <button class="lib-btn" onclick="testRankReplace('SP')">SP</button>
+          <button class="lib-btn" onclick="testRankReplace('FC')">FC</button>
+        </div>
+      </div>
+
+    </section><!-- /lib-tab-motions -->
+
+    <!-- ③ Combination Preview -->
+    <section id="lib-tab-combo" class="lib-tab-pane">
+
+      <div class="lib-section">
+        <div class="lib-section-title">Full Combination ? Main Member + Emblems + Bonuses</div>
+        <div id="lib-combo-stage">
+          <div id="lib-combo-members">
+            <!-- Main Member -->
+            <div class="member-unit member-main" id="combo-main" style="position:relative">
+              <div class="member-visual" id="combo-main-visual">
+                <img class="member-image" src="${memberImg}" alt="메인 멤버"/>
+                <div class="member-emblem-layer">
+                  <div class="member-emblem-group">
+                    <div class="condition-emblem autoship-badge" id="combo-autoship-main" data-condition="autoship">
+                      <img src="${autoshipImg}" alt="오토십"/>
+                    </div>
+                    <div class="qualification-badge base-badge" id="combo-base-main" data-qualification="base">
+                      <img src="${basebizImg}" alt="BASE"/>
+                    </div>
+                    <div class="rank-medal" id="combo-rank-main" data-rank="D">
+                      <img id="combo-rank-img" src="${lev01Img}" alt="D 지위"/>
+                    </div>
+                  </div>
+                </div>
+                <div class="member-metric-layer">
+                  <div class="metric-badge sep-badge" id="combo-sep-main" data-status="incomplete"
+                       style="position:absolute;bottom:-32px;left:50%;transform:translateX(-50%)">
+                    <span class="metric-label">SEP</span>
+                    <strong class="metric-value">30만&#8593;</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="lib-combo-bonuses">
+            <div class="bonus-plate recommend-bonus" id="combo-recommend">
+              <span class="bonus-dot" aria-hidden="true"></span>
+              <span class="bonus-label">추천 보너스</span>
+              <strong class="bonus-value">10,000원 &times; 2</strong>
+            </div>
+            <div class="bonus-plate support-bonus" id="combo-support">
+              <span class="bonus-dot" aria-hidden="true"></span>
+              <span class="bonus-label">후원 보너스</span>
+              <strong class="bonus-value">3%</strong>
+            </div>
+          </div>
+        </div>
+        <div class="lib-motion-grid" style="margin-top:14px">
+          <button class="lib-btn" onclick="testComboEnter()">&#9654; 전체 등장 시퀀스</button>
+          <button class="lib-btn" onclick="testComboAcquire()">&#9654; 뱃지 획득 시퀀스</button>
+          <button class="lib-btn" onclick="testComboCheck()">&#9654; SEP 조건 충족</button>
+          <button class="lib-btn btn-reset" onclick="resetCombo()">&#8635; 초기화</button>
+        </div>
+      </div>
+
+    </section><!-- /lib-tab-combo -->
+
+  </div><!-- /lib-body -->
+</div><!-- /lib-preview -->
+
+<script>
+/* ??????????????????????????????
+   ROUTING
+?????????????????????????????? */
+var prevPage = 'home'; // tracks where to go back from player
+
+function setDepth(d){
+  document.body.className = 'd'+d;
+}
+
+function goto(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('on')});
+  var pageMap={home:'home-page',guide:'guide-page',sim:'sim-page'};
+  var pg=document.getElementById(pageMap[id]);
+  if(pg){pg.classList.add('on');pg.scrollTop=0}
+  var titles={guide:'가이드 영상',sim:'시뮬레이터'};
+  var t=document.getElementById('nav-page-title');
+  if(t)t.textContent=titles[id]||'';
+  setDepth(id==='home'?1:2);
+}
+
+function goBack(){
+  goto('home');
+}
+
+function openLayout(){
+  document.getElementById('layout-ov').classList.add('on');
+}
+function closeLayout(){
+  document.getElementById('layout-ov').classList.remove('on');
+  goto('guide');
+}
+
+function setView(mode,btn){
+  var vc=document.getElementById('vcards');
+  if(!vc)return;
+  document.querySelectorAll('.vt').forEach(function(t){t.classList.remove('on')});
+  btn.classList.add('on');
+  vc.className=mode==='list'?'cards-list':'cards-grid';
+}
+
+/* ??????????????????????????????
+   PLAYER
+?????????????????????????????? */
+function openPlayer(from){
+  prevPage=from||'home';
+  var breadcrumbs={guide:'가이드 영상',sim:'시뮬레이터',home:'홈'};
+  var bc=document.getElementById('ov-breadcrumb');
+  if(bc)bc.textContent=breadcrumbs[prevPage]||'홈';
+  var ov=document.getElementById('overlay');
+  ov.classList.add('on');
+  doRestart();
+  setTimeout(function(){togglePlay()},400);
+}
+
+function closePlayer(){
+  var ov=document.getElementById('overlay');
+  ov.classList.remove('on');
+  cancelAnimationFrame(rafId);
+  playing=false;
+  var btn=document.getElementById('btn-p');
+  if(btn)btn.innerHTML='&#9654;';
+  goto(prevPage);
+}
+
+/* ??????????????????????????????
+   PLAYER ENGINE
+?????????????????????????????? */
+var TOTAL=180,T=0,playing=false,rafId=null,lastTS=null,fired=new Set(),FF=false;
+var E=function(id){return document.getElementById(id)};
+var add=function(id,c){var e=E(id);if(e)e.classList.add(c)};
+var rem=function(id,c){var e=E(id);if(e)e.classList.remove(c)};
+var txt=function(id,v){var e=E(id);if(e)e.textContent=v};
+
+function show(id){
+  var e=E(id);if(!e)return;
+  e.classList.remove('hidden');
+  if(FF){e.classList.add('show');return}
+  requestAnimationFrame(function(){requestAnimationFrame(function(){e.classList.add('show')})});
+}
+function hide(id){var e=E(id);if(!e)return;e.classList.remove('show')}
+function drawLine(id){
+  if(FF){add(id,'on');return}
+  requestAnimationFrame(function(){add(id,'on')});
+}
+function setInfo(label,lines){
+  var ic=E('icard'),bd=E('ic-body');if(!ic)return;
+  txt('ic-lbl',label);
+  var h='';
+  for(var i=0;i<lines.length;i++){
+    var l=lines[i],bold=typeof l==='object'&&l.b,t=typeof l==='object'?l.t:l;
+    h+='<div class="ic-line'+(bold?' b':'')+'">'+t+'</div>';
+  }
+  bd.innerHTML=h;ic.style.display='block';
+  if(FF){ic.classList.add('show');return}
+  ic.classList.remove('show');
+  requestAnimationFrame(function(){requestAnimationFrame(function(){ic.classList.add('show')})});
+}
+function bonusAnim(fromId){
+  if(FF)return;
+  var si=E('si'),from=E(fromId),to=E('mm');
+  if(!si||!from||!to)return;
+  var sr=si.getBoundingClientRect(),fr=from.getBoundingClientRect(),tr=to.getBoundingClientRect();
+  var coin=document.createElement('div');
+  coin.className='bcoin';coin.textContent='&#8361;';
+  var x1=fr.left-sr.left+fr.width/2-12,y1=fr.top-sr.top+fr.height*.28-12;
+  var x2=tr.left-sr.left+tr.width/2-12,y2=tr.top-sr.top+tr.height*.28-12;
+  coin.style.cssText='left:'+x1+'px;top:'+y1+'px;';
+  si.appendChild(coin);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    coin.style.transition='left 1.2s ease-in-out,top 1.2s ease-in-out,opacity .4s .8s';
+    coin.style.left=x2+'px';coin.style.top=y2+'px';coin.style.opacity='0';
+  })});
+  setTimeout(function(){if(coin.parentNode)coin.parentNode.removeChild(coin)},1900);
+}
+function countUp(id,to,dur){
+  var e=E(id);if(!e)return;
+  e.style.display='block';
+  if(FF){e.textContent='&#8361;'+to.toLocaleString('ko-KR');return}
+  var s=performance.now();
+  function tick(n){
+    var p=Math.min((n-s)/(dur*1000),1);
+    e.textContent='&#8361;'+Math.floor(to*p).toLocaleString('ko-KR');
+    if(p<1)requestAnimationFrame(tick);else e.textContent='&#8361;'+to.toLocaleString('ko-KR');
+  }
+  requestAnimationFrame(tick);
+}
+
+var EVS=[
+  {t:.2,  f:function(){show('hero-s')}},
+  {t:8.5, f:function(){hide('hero-s');show('mm')}},
+  {t:10.5,f:function(){add('mm-imgs','blue')}},
+  {t:12.5,f:function(){add('mm-med','show')}},
+  {t:14.5,f:function(){txt('mm-pl','디슈머');add('mm-pl','show')}},
+  {t:16,  f:function(){setInfo('디슈머란?',['앨트웰을 처음 시작하면 누구나 디슈머가 됩니다.','좋은 제품을 할인받아 이용하는 똑똑한 소비자입니다.'])}},
+  {t:22.5,f:function(){add('mm-as','show');add('mm-as','glow')}},
+  {t:25.5,f:function(){add('mm-sep','show')}},
+  {t:28,  f:function(){setInfo('BASE사업자 조건',[{t:'오토십 이용',b:true},{t:'SEP 30만 이상 유지',b:true}])}},
+  {t:36.5,f:function(){show('dl-l')}},
+  {t:38.5,f:function(){drawLine('gl-l')}},
+  {t:41,  f:function(){add('dl-l-as','show')}},
+  {t:44,  f:function(){add('dl-l-sep','show')}},
+  {t:47,  f:function(){setInfo('첫 번째 추천',['내가 누리는 혜택을 소개하고','그 사람도 오토십을 이용합니다.'])}},
+  {t:53.5,f:function(){show('dl-r')}},
+  {t:55.5,f:function(){drawLine('gl-r')}},
+  {t:57.5,f:function(){add('dl-r-as','show')}},
+  {t:60.5,f:function(){add('dl-r-sep','show')}},
+  {t:63,  f:function(){add('mm-chk','show');add('dl-l-chk','show');add('dl-r-chk','show')}},
+  {t:65.5,f:function(){add('gl-l','glow');add('gl-r','glow');setInfo('조건 충족!',['세 사람 모두 조건을 충족하면','BASE사업자 조건이 완성됩니다.'])}},
+  {t:70.5,f:function(){add('mm-biz','show')}},
+  {t:72.5,f:function(){rem('mm-med','show')}},
+  {t:74,  f:function(){add('mm-ring','show')}},
+  {t:76,  f:function(){add('bpw','show');txt('bp-t1','권리 소득 시작')}},
+  {t:79,  f:function(){setInfo('BASE사업자 달성!',['BASE사업자는 권리 소득을','받을 수 있는 자격입니다.'])}},
+  {t:84.5,f:function(){setInfo('추천 보너스',['추천 보너스는 직접 추천한','사업자 1명당 발생합니다.'])}},
+  {t:86,  f:function(){bonusAnim('dl-l')}},
+  {t:89,  f:function(){bonusAnim('dl-r')}},
+  {t:91.5,f:function(){txt('bp-t1','추천 보너스')}},
+  {t:93,  f:function(){countUp('bp-t2',10000,3)}},
+  {t:99,  f:function(){bonusAnim('dl-l');bonusAnim('dl-r')}},
+  {t:105.5,f:function(){show('ex-m');setInfo('직접 추천 보너스',['추천 보너스는 내 하위 그룹이 아니어도','직접 추천한 사업자라면 계속 발생합니다.'])}},
+  {t:109,f:function(){bonusAnim('ex-m')}},
+  {t:115,f:function(){bonusAnim('ex-m')}},
+  {t:125.5,f:function(){
+    add('mm-as','glow');add('mm-sep','glow');
+    add('dl-l-as','glow');add('dl-l-sep','glow');
+    add('dl-r-as','glow');add('dl-r-sep','glow');
+  }},
+  {t:129,f:function(){add('warn','show')}},
+  {t:141.5,f:function(){rem('warn','show');show('dl-lc');show('dl-rc');drawLine('gl-lc');drawLine('gl-rc')}},
+  {t:147,f:function(){txt('bp-t1','권리 소득 시스템 구축')}},
+  {t:154,f:function(){txt('bp-t1','조직이 성장할수록 더 큰 권리')}},
+  {t:160.5,f:function(){add('sc1','show')}},
+  {t:163,  f:function(){add('sc2','show')}},
+  {t:166,  f:function(){add('sc3','show')}},
+  {t:170.5,f:function(){rem('sc1','show');rem('sc2','show');rem('sc3','show');add('ending','show')}},
+  {t:176,  f:function(){add('cta-row','show')}},
+];
+
+var SCENES=[
+  [0,'장면 1 · 시작'],[8,'장면 2 · 디슈머'],[22,'장면 3 · 조건'],
+  [36,'장면 4 · 첫 번째 추천'],[53,'장면 5 · 두 번째 추천'],[70,'장면 6 · BASE 달성'],
+  [84,'장면 7 · 추천 보너스'],[105,'장면 8 · 직접 추천'],[125,'장면 9 · 조건 유지'],
+  [141,'장면 10 · 조직 성장'],[160,'장면 11 · 정리'],[170,'장면 12 · 마무리'],
+];
+function sceneLabel(t){var l=SCENES[0][1];for(var i=0;i<SCENES.length;i++){if(t>=SCENES[i][0])l=SCENES[i][1]}return l}
+function fmt(s){var m=Math.floor(s/60),sec=Math.floor(s%60);return m+':'+(sec<10?'0':'')+sec}
+
+function updateUI(t){
+  var p=t/TOTAL*100;
+  E('tlf').style.width=p+'%';
+  E('tlt').style.left=p+'%';
+  E('tdsp').textContent=fmt(t)+' / 3:00';
+  E('slbl').textContent=sceneLabel(t);
+}
+function process(t){
+  for(var i=0;i<EVS.length;i++){if(t>=EVS[i].t&&!fired.has(i)){fired.add(i);EVS[i].f()}}
+}
+function rafTick(ts){
+  if(!playing){lastTS=null;return}
+  if(lastTS)T+=(ts-lastTS)/1000;
+  lastTS=ts;
+  if(T>=TOTAL){T=TOTAL;playing=false;E('btn-p').innerHTML='&#9654;'}
+  process(T);updateUI(T);
+  if(playing)rafId=requestAnimationFrame(rafTick);
+}
+function togglePlay(){
+  playing=!playing;
+  E('btn-p').innerHTML=playing?'&#9646;&#9646;':'&#9654;';
+  if(playing){lastTS=null;rafId=requestAnimationFrame(rafTick)}
+  else cancelAnimationFrame(rafId);
+}
+
+var TRANS_SEL='.mn,.gl,.m-medal,.m-biz,.m-as,.m-sep,.m-chk,.m-ring,.m-plate,#bpw,#warn,#ending,#icard';
+
+function resetDOM(){
+  var ids=['mm','dl-l','dl-r','ex-m','dl-lc','dl-rc','hero-s','bpw','warn','ending'];
+  for(var i=0;i<ids.length;i++){var e=E(ids[i]);if(e)e.classList.remove('show','hidden')}
+  var pairs=[
+    ['mm-imgs','blue'],['mm-med','show'],['mm-biz','show'],['mm-ring','show'],
+    ['mm-as','show'],['mm-as','glow'],['mm-sep','show'],['mm-sep','glow'],['mm-chk','show'],
+    ['dl-l-as','show'],['dl-l-sep','show'],['dl-l-as','glow'],['dl-l-sep','glow'],['dl-l-chk','show'],
+    ['dl-r-as','show'],['dl-r-sep','show'],['dl-r-as','glow'],['dl-r-sep','glow'],['dl-r-chk','show'],
+    ['gl-l','on'],['gl-l','glow'],['gl-r','on'],['gl-r','glow'],
+    ['gl-lc','on'],['gl-rc','on'],
+    ['sc1','show'],['sc2','show'],['sc3','show'],
+    ['cta-row','show'],['mm-pl','show'],
+  ];
+  for(var i=0;i<pairs.length;i++){rem(pairs[i][0],pairs[i][1])}
+  txt('mm-pl','');txt('bp-t1','권리 소득 시작');
+  var t2=E('bp-t2');if(t2){t2.style.display='none';t2.textContent='&#8361;'}
+  var ic=E('icard');if(ic){ic.style.display='none';ic.classList.remove('show')}
+  var coins=document.querySelectorAll('.bcoin');
+  for(var i=0;i<coins.length;i++){if(coins[i].parentNode)coins[i].parentNode.removeChild(coins[i])}
+}
+
+function doRestart(){
+  cancelAnimationFrame(rafId);
+  playing=false;T=0;lastTS=null;fired.clear();
+  E('btn-p').innerHTML='&#9654;';
+  var tels=document.querySelectorAll(TRANS_SEL);
+  for(var i=0;i<tels.length;i++)tels[i].style.transition='none';
+  resetDOM();
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    for(var i=0;i<tels.length;i++)tels[i].style.transition='';
+    updateUI(0);
+  })});
+}
+
+function onSeek(ev){
+  var r=E('tl').getBoundingClientRect();
+  var pct=Math.max(0,Math.min(1,(ev.clientX-r.left)/r.width));
+  var target=pct*TOTAL,was=playing;
+  cancelAnimationFrame(rafId);playing=false;T=0;lastTS=null;fired.clear();
+  var tels=document.querySelectorAll(TRANS_SEL);
+  for(var i=0;i<tels.length;i++)tels[i].style.transition='none';
+  resetDOM();FF=true;T=target;
+  for(var i=0;i<EVS.length;i++){if(target>=EVS[i].t){fired.add(i);try{EVS[i].f()}catch(e){}}}
+  FF=false;updateUI(target);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){
+    for(var i=0;i<tels.length;i++)tels[i].style.transition='';
+    if(was){playing=true;E('btn-p').innerHTML='&#9646;&#9646;';lastTS=null;rafId=requestAnimationFrame(rafTick)}
+  })});
+}
+
+/* ??????????????????????????????????????????????????????
+   ALTWELL OBJECT & MOTION LIBRARY  ? JavaScript API §8
+???????????????????????????????????????????????????????? */
+
+/* ── Rank image map ── */
+var RANK_IMGS = {
+  D:  '${lev01Img}',
+  P:  '${lev02Img}',
+  JP: '${lev03Img}',
+  SP: '${lev04Img}',
+  FC: '${lev05Img}'
+};
+
+/* ── Utility ── */
+function wait(ms){ return new Promise(function(r){setTimeout(r,ms);}); }
+
+function _el(target){
+  if(typeof target === 'string') return document.querySelector(target);
+  return target;
+}
+function _els(target){
+  if(typeof target === 'string') return Array.from(document.querySelectorAll(target));
+  if(NodeList && target instanceof NodeList) return Array.from(target);
+  if(Array.isArray(target)) return target;
+  return [target];
+}
+function _clearAnim(el){
+  el.style.animation = 'none';
+  void el.offsetWidth; // reflow
+  el.style.animation = '';
+}
+
+/* ── §8 Object State ── */
+function showElement(target){
+  var el = _el(target);
+  if(!el) return;
+  el.classList.remove('is-hidden');
+}
+function hideElement(target){
+  var el = _el(target);
+  if(!el) return;
+  el.classList.add('is-hidden');
+}
+function activateElement(target){
+  var el = _el(target);
+  if(!el) return;
+  el.classList.remove('is-inactive');
+  el.classList.add('is-active');
+}
+function deactivateElement(target){
+  var el = _el(target);
+  if(!el) return;
+  el.classList.remove('is-active');
+  el.classList.add('is-inactive');
+}
+
+/* ── §5-1 Enter / §6 Exit ── */
+function enterElement(target, options){
+  options = options || {};
+  var el = _el(target);
+  if(!el) return Promise.resolve();
+  var dur = options.duration || 600;
+  var delay = options.delay || 0;
+  return new Promise(function(resolve){
+    el.classList.remove('is-hidden');
+    _clearAnim(el);
+    el.style.animationDuration = dur + 'ms';
+    el.style.animationDelay = delay + 'ms';
+    el.classList.add('is-entering');
+    function onEnd(){
+      el.removeEventListener('animationend', onEnd);
+      el.classList.remove('is-entering');
+      el.style.animationDuration = '';
+      el.style.animationDelay = '';
+      resolve();
+    }
+    el.addEventListener('animationend', onEnd);
+  });
+}
+
+function exitElement(target, options){
+  options = options || {};
+  var el = _el(target);
+  if(!el) return Promise.resolve();
+  var dur = options.duration || 400;
+  return new Promise(function(resolve){
+    el.style.transition = 'opacity '+dur+'ms var(--ease-standard), transform '+dur+'ms var(--ease-standard)';
+    el.style.opacity = '0';
+    el.style.transform = 'scale(0.97)';
+    setTimeout(function(){
+      el.classList.add('is-hidden');
+      el.style.transition = '';
+      el.style.opacity = '';
+      el.style.transform = '';
+      resolve();
+    }, dur);
+  });
+}
+
+/* ── §5-2 Acquire (Glow + Bounce) ── */
+function acquireElement(target, options){
+  options = options || {};
+  var el = _el(target);
+  if(!el) return Promise.resolve();
+  return new Promise(function(resolve){
+    el.classList.remove('is-hidden');
+    _clearAnim(el);
+    el.style.animationDuration = '800ms';
+    el.classList.add('motion-acquire');
+    if(options.glow !== false){
+      setTimeout(function(){
+        var glowEl = el.querySelector('img') || el;
+        _clearAnim(glowEl);
+        glowEl.style.animation = 'kf-glow-once 700ms ease forwards';
+        setTimeout(function(){ glowEl.style.animation = ''; }, 700);
+      }, 500);
+    }
+    function onEnd(){
+      el.removeEventListener('animationend', onEnd);
+      el.classList.remove('motion-acquire');
+      el.style.animationDuration = '';
+      resolve();
+    }
+    el.addEventListener('animationend', onEnd);
+  });
+}
+
+/* ── §5-3 Rank Replace ── */
+function setRank(memberId, rank){
+  var unit = document.getElementById(memberId);
+  if(!unit) return;
+  var medal = unit.querySelector('.rank-medal');
+  if(!medal) return;
+  var img = medal.querySelector('img');
+  if(!img) return;
+  medal.setAttribute('data-rank', rank);
+  img.src = RANK_IMGS[rank] || '';
+  img.alt = rank + ' 지위';
+}
+
+function replaceRank(memberId, fromRank, toRank){
+  var unit = document.getElementById(memberId);
+  if(!unit) return Promise.resolve();
+  var medal = unit.querySelector('.rank-medal');
+  if(!medal) return Promise.resolve();
+  var img = medal.querySelector('img');
+  if(!img) return Promise.resolve();
+  return new Promise(function(resolve){
+    // Out
+    _clearAnim(medal);
+    medal.style.animation = 'kf-rank-out 300ms var(--ease-standard) forwards';
+    setTimeout(function(){
+      img.src = RANK_IMGS[toRank] || '';
+      img.alt = toRank + ' 지위';
+      medal.setAttribute('data-rank', toRank);
+      // In
+      _clearAnim(medal);
+      medal.style.animation = 'kf-rank-in 400ms var(--ease-emphasis) forwards';
+      // Glow
+      setTimeout(function(){
+        _clearAnim(img);
+        img.style.animation = 'kf-glow-once 700ms ease forwards';
+        setTimeout(function(){
+          img.style.animation = '';
+          medal.style.animation = '';
+          resolve();
+        }, 700);
+      }, 200);
+    }, 320);
+  });
+}
+
+/* ── §8 Condition ── */
+function setAutoship(memberId, state){
+  var unit = document.getElementById(memberId);
+  if(!unit) return;
+  var badge = unit.querySelector('.autoship-badge');
+  if(!badge) return;
+  if(state === 'active' || state === true){
+    activateElement(badge);
+    badge.setAttribute('data-condition', 'autoship');
+  } else {
+    deactivateElement(badge);
+  }
+}
+
+function setSEP(targetId, value, isComplete){
+  var el = document.getElementById(targetId);
+  if(!el) return;
+  var valEl = el.querySelector('.metric-value');
+  if(valEl){
+    if(value >= 1000000) valEl.textContent = (value/10000).toFixed(0)+'만↑';
+    else if(value >= 10000) valEl.textContent = (value/10000).toFixed(0)+'만↑';
+    else valEl.textContent = value.toLocaleString();
+  }
+  el.setAttribute('data-status', isComplete ? 'complete' : 'incomplete');
+}
+
+/* ── §5-5 Condition Complete (Check) ── */
+function completeCondition(target, options){
+  options = options || {};
+  var el = _el(target);
+  if(!el) return Promise.resolve();
+  return new Promise(function(resolve){
+    // Update data-status
+    if(el.hasAttribute('data-status')) el.setAttribute('data-status','complete');
+    if(el.hasAttribute('data-condition')) el.setAttribute('data-condition','complete');
+    // Border highlight
+    el.style.animation = 'kf-highlight-pulse 700ms ease forwards';
+    // Find or create status-check
+    var check = el.querySelector('.status-check');
+    if(!check){
+      check = document.createElement('div');
+      check.className = 'status-check';
+      check.setAttribute('aria-label','조건 충족');
+      check.textContent = '?';
+      el.style.position = el.style.position || 'relative';
+      el.appendChild(check);
+    }
+    setTimeout(function(){
+      _clearAnim(check);
+      check.style.animation = 'kf-check-pop 600ms var(--ease-emphasis) forwards';
+      check.classList.add('is-visible');
+      setTimeout(function(){
+        check.style.animation = '';
+        el.style.animation = '';
+        resolve();
+      }, 700);
+    }, 200);
+  });
+}
+
+/* ── §8 Bonus ── */
+function setRecommendBonus(data){
+  var el = document.getElementById(data.target || 'recommend-bonus-main');
+  if(!el) return;
+  var valEl = el.querySelector('.bonus-value');
+  if(valEl) valEl.textContent = data.amount.toLocaleString()+'원 × '+data.count;
+}
+
+function setSupportBonus(targetId, rate){
+  var el = document.getElementById(targetId);
+  if(!el) return;
+  var valEl = el.querySelector('.bonus-value');
+  if(valEl) valEl.textContent = rate+'%';
+}
+
+/* ── §5-4 Text / Slide Up ── */
+function setSceneTitle(text){
+  var el = document.getElementById('scene-title-main');
+  if(!el) return;
+  el.innerHTML = text;
+}
+
+function setSceneBullets(items){
+  var list = document.getElementById('scene-bullets');
+  if(!list) return;
+  list.innerHTML = '';
+  items.forEach(function(item, i){
+    var li = document.createElement('li');
+    li.className = 'bullet-item';
+    li.id = 'bullet-'+(i+1);
+    li.innerHTML = '<span class="bullet-dot"></span><span class="bullet-text">'+item+'</span>';
+    list.appendChild(li);
+  });
+}
+
+function slideUpElement(target, options){
+  options = options || {};
+  var els = _els(target);
+  var delay = options.delay || 0;
+  var stagger = options.stagger || 0;
+  var dur = options.duration || 550;
+  var promises = els.map(function(el, i){
+    return new Promise(function(resolve){
+      var d = delay + i * stagger;
+      setTimeout(function(){
+        _clearAnim(el);
+        el.style.animationDuration = dur+'ms';
+        el.classList.add('motion-slide-up');
+        function onEnd(){
+          el.removeEventListener('animationend', onEnd);
+          el.classList.remove('motion-slide-up');
+          el.style.animationDuration = '';
+          resolve();
+        }
+        el.addEventListener('animationend', onEnd);
+      }, d);
+    });
+  });
+  return Promise.all(promises);
+}
+
+/* ── §5-6 Stagger Fade ── */
+function staggerFade(targets, options){
+  options = options || {};
+  var els = _els(targets);
+  var stagger = options.stagger || 200;
+  var dur = options.duration || 500;
+  var promises = els.map(function(el, i){
+    return new Promise(function(resolve){
+      setTimeout(function(){
+        el.style.opacity = '0';
+        _clearAnim(el);
+        el.style.animation = 'kf-stagger-item '+dur+'ms var(--ease-standard) forwards';
+        function onEnd(){
+          el.removeEventListener('animationend', onEnd);
+          el.style.animation = '';
+          resolve();
+        }
+        el.addEventListener('animationend', onEnd);
+      }, i * stagger);
+    });
+  });
+  return Promise.all(promises);
+}
+
+/* ── §8 Utility ── */
+function resetMotion(target){
+  var els = _els(target);
+  els.forEach(function(el){
+    el.style.animation = 'none';
+    el.style.opacity = '';
+    el.style.transform = '';
+    el.style.transition = '';
+    el.classList.remove(
+      'is-hidden','is-inactive','is-active',
+      'is-entering','motion-enter','motion-acquire',
+      'motion-slide-up','motion-check','motion-idle-float'
+    );
+    var check = el.querySelector('.status-check');
+    if(check){ check.classList.remove('is-visible'); check.style.animation = ''; }
+    void el.offsetWidth;
+    el.style.animation = '';
+  });
+}
+
+function resetScene(){
+  var allUnits = document.querySelectorAll('.member-unit, .rank-medal, .qualification-badge, .condition-emblem, .metric-badge, .bonus-plate, .status-check, .scene-title, .bullet-item');
+  allUnits.forEach(function(el){
+    el.style.cssText = '';
+    el.classList.remove(
+      'is-hidden','is-inactive','is-active',
+      'is-entering','motion-enter','motion-acquire',
+      'motion-slide-up','motion-check','motion-idle-float'
+    );
+  });
+  var checks = document.querySelectorAll('.status-check');
+  checks.forEach(function(c){ c.classList.remove('is-visible'); });
+}
+
+/* ??????????????????????????????
+   PREVIEW PAGE CONTROLS  (§9)
+?????????????????????????????? */
+function openLibPreview(){
+  document.getElementById('lib-preview').classList.add('on');
+}
+function closeLibPreview(){
+  document.getElementById('lib-preview').classList.remove('on');
+}
+function switchLibTab(name, btn){
+  document.querySelectorAll('.lib-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.lib-tab-pane').forEach(function(p){p.classList.remove('active')});
+  if(btn) btn.classList.add('active');
+  var pane = document.getElementById('lib-tab-'+name);
+  if(pane) pane.classList.add('active');
+}
+
+/* Motion test helpers */
+function testMotion(type){
+  var target = document.getElementById('motion-test-target');
+  if(!target) return;
+  resetMotion(target);
+  if(type === 'enter') enterElement(target);
+  else if(type === 'acquire') acquireElement(target, {glow:true});
+  else if(type === 'slide-up') slideUpElement(target);
+  else if(type === 'check') completeCondition(target);
+  else if(type === 'idle'){
+    target.classList.add('motion-idle-float');
+  }
+  else if(type === 'exit'){
+    target.style.opacity = '1';
+    target.style.transform = '';
+    exitElement(target);
+  }
+  else if(type === 'stagger') testStagger();
+  else if(type === 'rank-replace'){
+    switchLibTab('motions', document.querySelector('.lib-tab:nth-child(2)'));
+    testRankReplace('P');
+  }
+}
+function resetMotionTest(){
+  var target = document.getElementById('motion-test-target');
+  if(target) resetMotion(target);
+}
+
+/* Stagger test */
+function testStagger(){
+  var items = Array.from(document.querySelectorAll('.stagger-test-item'));
+  items.forEach(function(el){ el.style.opacity='0'; });
+  staggerFade(items, {stagger:220, duration:500});
+}
+function resetStagger(){
+  var items = Array.from(document.querySelectorAll('.stagger-test-item'));
+  items.forEach(function(el){ el.style.opacity='0'; el.style.animation=''; });
+}
+
+/* Rank Replace test */
+var _previewRankImgs = {
+  D:'${lev01Img}', P:'${lev02Img}', JP:'${lev03Img}', SP:'${lev04Img}', FC:'${lev05Img}'
+};
+function testRankReplace(toRank){
+  var medal = document.getElementById('rank-replace-medal');
+  var img   = document.getElementById('rank-replace-img');
+  var lbl   = document.getElementById('rank-replace-label');
+  if(!medal || !img) return;
+  var cur = medal.getAttribute('data-rank') || 'D';
+  if(cur === toRank) return;
+  _clearAnim(medal);
+  medal.style.animation = 'kf-rank-out 280ms var(--ease-standard) forwards';
+  setTimeout(function(){
+    img.src = _previewRankImgs[toRank];
+    img.alt = toRank + ' 지위';
+    medal.setAttribute('data-rank', toRank);
+    if(lbl) lbl.textContent = toRank;
+    _clearAnim(medal);
+    medal.style.animation = 'kf-rank-in 380ms var(--ease-emphasis) forwards';
+    setTimeout(function(){
+      _clearAnim(img);
+      img.style.animation = 'kf-glow-once 600ms ease forwards';
+      setTimeout(function(){ img.style.animation = ''; medal.style.animation = ''; }, 600);
+    }, 200);
+  }, 300);
+}
+
+/* Combination Preview sequences */
+async function testComboEnter(){
+  resetCombo();
+  await wait(100);
+  await enterElement('#combo-main', {duration:600});
+  await wait(200);
+  await acquireElement('#combo-autoship-main', {glow:true});
+  await wait(200);
+  await acquireElement('#combo-base-main', {glow:true});
+  await wait(200);
+  await acquireElement('#combo-rank-main', {glow:false});
+  await wait(200);
+  await staggerFade(['#combo-recommend','#combo-support'],{stagger:200,duration:500});
+}
+async function testComboAcquire(){
+  await acquireElement('#combo-base-main', {glow:true});
+  await wait(300);
+  await acquireElement('#combo-autoship-main', {glow:true});
+}
+async function testComboCheck(){
+  await completeCondition('#combo-sep-main');
+}
+function resetCombo(){
+  var els = ['#combo-main','#combo-autoship-main','#combo-base-main','#combo-rank-main','#combo-sep-main','#combo-recommend','#combo-support'];
+  els.forEach(function(s){
+    var el = document.querySelector(s);
+    if(el) resetMotion(el);
+  });
+  var img = document.getElementById('combo-rank-img');
+  if(img){ img.src = '${lev01Img}'; img.alt = 'D 지위'; }
+  var medal = document.getElementById('combo-rank-main');
+  if(medal){ medal.style.animation = ''; medal.setAttribute('data-rank','D'); }
+  var sep = document.getElementById('combo-sep-main');
+  if(sep){ sep.setAttribute('data-status','incomplete'); }
+}
+
+doRestart();
+</script>
+</body>

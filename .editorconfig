@@ -1,0 +1,12 @@
+﻿# guide_page ? UTF-8 (상위 폴더 미포함)
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+
+[*.asp]
+charset = utf-8
+
+[*.md]
+charset = utf-8
