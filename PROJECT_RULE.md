@@ -2,7 +2,8 @@
 
 > Classic ASP 기반 교육용 인터랙티브 웹 플랫폼  
 > Cursor AI / 개발자 작업 시 참고하는 단일 규칙 문서  
-> **시나리오 작성:** [부록 A](#부록-a-시나리오-작성-양식) (문서 맨 아래)
+> **시나리오 작성:** [부록 A](#부록-a-시나리오-작성-양식) (문서 맨 아래)  
+> **모션 배치 좌표:** [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md) — 7×7 존 · 안전 여백
 
 ---
 
@@ -451,6 +452,7 @@ guide.asp STEP 2 — **준비 중**.
 --- motion ---
 @0.0s  mount standardStage
 @0.3s  show asset.base_business #sceneNN-base
+       @zone d4
 @0.3s  animate asset.enter #sceneNN-base
 {필요 시 추가 이벤트 — hide, show, member, connector, highlight …}
 @END-0.8s animate canvas.fadeOut
@@ -483,6 +485,7 @@ panel: title hidden, desc hidden
 
 | 구문 | 용도 |
 |------|------|
+| `@zone {a~g}{1~7}` | 모션 박스 7×7 배치 — [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md) |
 | `show asset.{키} #id` | 지위·배지 에셋 ([A-3](#a-3-에셋-목록)) |
 | `show member.main` / `member.child` | 멤버 유닛 |
 | `animate asset.enter` / `member.enter` | 등장 |
