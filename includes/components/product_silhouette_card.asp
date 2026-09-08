@@ -3,5 +3,5 @@
     <div class="product_shape"></div>
     <div class="product_label">품목 A</div>
   </div>
-  <div class="product_tag">구독 방식 예시</div>
+  <div class="product_tag">구독 방식<br>예시</div>
 </div>

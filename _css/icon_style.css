@@ -636,41 +636,44 @@
     justify-content:center;
     align-items:center;
     width:fit-content;
-    height:var(--size) * 60 / 60;
-    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 7 / 36);
-    gap: calc(var(--size) * 5 / 36);
+    min-height:var(--size);
+    height:auto;
+    padding: calc(var(--size) * 6 / 36) calc(var(--size) * 10 / 36);
+    gap: calc(var(--size) * 6 / 36);
     background: linear-gradient(120deg, #ffd738, #ffeca0, #FFE373, #e6c92a, #ffd738);
     box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #C7A417;
     border-radius: calc(var(--size) * 10 / 36);
     font-family:var(--font-sans,'MinSansVF',sans-serif);
+    box-sizing:border-box;
 }
 .recommend_bonus_ex_label{
-    width: calc(var(--size) * 24 / 36);
-    height: calc(var(--size) * 24 / 36);
-    line-height: calc(var(--size) * 24 / 36);
+    width: calc(var(--size) * 26 / 36);
+    height: calc(var(--size) * 26 / 36);
+    line-height: calc(var(--size) * 26 / 36);
     text-align:center;
     border-radius: 50%;
     background-color:#C7A417;
     color:#FFEEA9;
     font-weight:900;
-    font-size: calc(var(--size) * 15 / 36);
+    font-size: max(15px, calc(var(--size) * 15 / 36));
     flex-shrink:0;
 }
 .recommend_bonus_ex_text{
     font-weight:700;
-    font-size: calc(var(--size) * 18 / 36);
-    line-height: calc(var(--size) * 18 / 36);
-    white-space: nowrap;
+    line-height: 1.25;
     text-align:center;
+    word-break: keep-all;
 }
 .recommend_bonus_text_1{
-    font-size: calc(var(--size) * 15 / 36);
+    font-size: max(15px, calc(var(--size) * 15 / 36));
     font-weight:600;
     color:#776313;
+    display:block;
 }
 .recommend_bonus_text_2{
-    font-size: calc(var(--size) * 18 / 36);
+    font-size: max(15px, calc(var(--size) * 16 / 36));
     color:#665308;
+    display:block;
 }
 
 /*************  PERSON  *******************************************************************************************************/
@@ -756,25 +759,27 @@
 
 
 /*************  SUB ASSET — 추천포인트 토큰  *******************************************************************************************************/
+/* 폰트 최소 15px: max(15px, calc(...)) · 텍스트는 line-height 1.25 + padding으로 여백 유지 */
 .point_token_icon {
-    --size: 40px;
+    --size: 48px;
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    width: var(--size);
-    height: var(--size);
+    width: max(var(--size), 48px);
+    height: max(var(--size), 48px);
     border-radius: 50%;
     background: linear-gradient(135deg, #ffd738, #ffeca0 45%, #e6c92a 80%, #ffd738);
-    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 40) #c7a417,
-                0 calc(var(--size) * 2 / 40) calc(var(--size) * 6 / 40) rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 48) #c7a417,
+                0 calc(var(--size) * 2 / 48) calc(var(--size) * 6 / 48) rgba(0, 0, 0, 0.2);
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 .point_token_inner {
-    font-size: calc(var(--size) * 16 / 40);
+    font-size: max(15px, calc(var(--size) * 16 / 48));
     font-weight: 900;
     color: #665308;
-    text-shadow: 0 calc(var(--size) * 1 / 40) calc(var(--size) * 1 / 40) rgba(255, 255, 255, 0.6);
+    text-shadow: 0 calc(var(--size) * 1 / 48) calc(var(--size) * 1 / 48) rgba(255, 255, 255, 0.6);
     line-height: 1;
 }
 
@@ -837,33 +842,38 @@
 
 /*************  SUB ASSET — 달력 월별 카드  *******************************************************************************************************/
 .calendar_month_card {
-    --size: 72px;
+    --size: 88px;
     display: inline-flex;
     flex-direction: column;
-    width: var(--size);
-    height: calc(var(--size) * 84 / 72);
-    border-radius: calc(var(--size) * 10 / 72);
+    width: max(var(--size), 88px);
+    min-height: calc(var(--size) * 96 / 88);
+    height: auto;
+    border-radius: calc(var(--size) * 10 / 88);
     background: #ffffff;
-    box-shadow: 0 calc(var(--size) * 3 / 72) calc(var(--size) * 8 / 72) rgba(0, 0, 0, 0.08);
-    border: calc(var(--size) * 1.5 / 72) solid #dce4f0;
+    box-shadow: 0 calc(var(--size) * 3 / 88) calc(var(--size) * 8 / 88) rgba(0, 0, 0, 0.08);
+    border: calc(var(--size) * 1.5 / 88) solid #dce4f0;
     overflow: hidden;
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 .calendar_month_card.is_active {
     border-color: #2c51ca;
-    box-shadow: 0 calc(var(--size) * 4 / 72) calc(var(--size) * 12 / 72) rgba(44, 81, 202, 0.2);
+    box-shadow: 0 calc(var(--size) * 4 / 88) calc(var(--size) * 12 / 88) rgba(44, 81, 202, 0.2);
 }
 .calendar_header {
-    height: calc(var(--size) * 24 / 72);
+    min-height: calc(var(--size) * 32 / 88);
+    padding: calc(var(--size) * 4 / 88) calc(var(--size) * 6 / 88);
     background-color: #9aaec7;
     color: #ffffff;
-    font-size: calc(var(--size) * 12 / 72);
+    font-size: max(15px, calc(var(--size) * 15 / 88));
     font-weight: 700;
+    line-height: 1.25;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-sizing: border-box;
 }
 .calendar_month_card.is_active .calendar_header {
     background: linear-gradient(120deg, #2c51ca, #1034ac);
@@ -873,10 +883,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: calc(var(--size) * 8 / 88) calc(var(--size) * 6 / 88);
+    box-sizing: border-box;
 }
 .calendar_title {
-    font-size: calc(var(--size) * 14 / 72);
+    font-size: max(15px, calc(var(--size) * 15 / 88));
     font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
     color: #334155;
 }
 .calendar_month_card.is_active .calendar_title {
@@ -887,18 +902,20 @@
 
 /*************  SUB ASSET — 상품 실루엣 카드  *******************************************************************************************************/
 .product_silhouette_card {
-    --size: 96px;
+    --size: 112px;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
-    width: var(--size);
-    height: calc(var(--size) * 128 / 96);
-    padding: calc(var(--size) * 8 / 96);
+    width: max(var(--size), 112px);
+    min-height: calc(var(--size) * 136 / 112);
+    height: auto;
+    padding: calc(var(--size) * 10 / 112);
+    gap: calc(var(--size) * 6 / 112);
     box-sizing: border-box;
     background-color: #ffffff;
-    border-radius: calc(var(--size) * 12 / 96);
-    border: calc(var(--size) * 1.5 / 96) solid #e2e8f0;
-    box-shadow: 0 calc(var(--size) * 3 / 96) calc(var(--size) * 8 / 96) rgba(0, 0, 0, 0.06);
+    border-radius: calc(var(--size) * 12 / 112);
+    border: calc(var(--size) * 1.5 / 112) solid #e2e8f0;
+    box-shadow: 0 calc(var(--size) * 3 / 112) calc(var(--size) * 8 / 112) rgba(0, 0, 0, 0.06);
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
 }
@@ -909,85 +926,96 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: calc(var(--size) * 6 / 96);
+    gap: calc(var(--size) * 6 / 112);
 }
 .product_shape {
     position: relative;
-    width: calc(var(--size) * 38 / 96);
-    height: calc(var(--size) * 54 / 96);
+    width: calc(var(--size) * 38 / 112);
+    height: calc(var(--size) * 54 / 112);
     background-color: #cbd5e1;
-    border-radius: calc(var(--size) * 6 / 96);
+    border-radius: calc(var(--size) * 6 / 112);
 }
 .product_shape::before {
     content: "";
     position: absolute;
-    top: calc(var(--size) * -6 / 96);
+    top: calc(var(--size) * -6 / 112);
     left: 50%;
     transform: translateX(-50%);
-    width: calc(var(--size) * 18 / 96);
-    height: calc(var(--size) * 6 / 96);
+    width: calc(var(--size) * 18 / 112);
+    height: calc(var(--size) * 6 / 112);
     background-color: #94a3b8;
-    border-radius: calc(var(--size) * 3 / 96) calc(var(--size) * 3 / 96) 0 0;
+    border-radius: calc(var(--size) * 3 / 112) calc(var(--size) * 3 / 112) 0 0;
 }
 .product_label {
-    font-size: calc(var(--size) * 14 / 96);
+    font-size: max(15px, calc(var(--size) * 15 / 112));
     font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
     color: #1e293b;
 }
 .product_tag {
-    font-size: calc(var(--size) * 9 / 96);
+    font-size: max(15px, calc(var(--size) * 15 / 112));
     font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
     color: #64748b;
     background-color: #f1f5f9;
-    padding: calc(var(--size) * 3 / 96) calc(var(--size) * 6 / 96);
-    border-radius: calc(var(--size) * 4 / 96);
-    white-space: nowrap;
+    padding: calc(var(--size) * 5 / 112) calc(var(--size) * 8 / 112);
+    border-radius: calc(var(--size) * 4 / 112);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 
 
 /*************  SUB ASSET — 3구획 배송 상자  *******************************************************************************************************/
 .delivery_box_icon {
-    --size: 72px;
+    --size: 88px;
     position: relative;
     display: inline-flex;
     flex-direction: column;
-    width: var(--size);
-    height: calc(var(--size) * 64 / 72);
+    width: max(var(--size), 88px);
+    height: calc(var(--size) * 72 / 88);
     background-color: #d4a373;
-    border-radius: calc(var(--size) * 4 / 72);
-    box-shadow: 0 calc(var(--size) * 4 / 72) calc(var(--size) * 10 / 72) rgba(0, 0, 0, 0.15);
+    border-radius: calc(var(--size) * 4 / 88);
+    box-shadow: 0 calc(var(--size) * 4 / 88) calc(var(--size) * 10 / 88) rgba(0, 0, 0, 0.15);
     box-sizing: border-box;
-    padding: calc(var(--size) * 6 / 72);
+    padding: calc(var(--size) * 8 / 88);
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
 }
 .delivery_box_lid {
     position: absolute;
-    top: calc(var(--size) * -6 / 72);
-    left: calc(var(--size) * -3 / 72);
-    width: calc(var(--size) + (var(--size) * 6 / 72));
-    height: calc(var(--size) * 10 / 72);
+    top: calc(var(--size) * -6 / 88);
+    left: calc(var(--size) * -3 / 88);
+    width: calc(var(--size) + (var(--size) * 6 / 88));
+    height: calc(var(--size) * 10 / 88);
     background-color: #bc8a5f;
-    border-radius: calc(var(--size) * 3 / 72);
+    border-radius: calc(var(--size) * 3 / 88);
 }
 .delivery_box_compartments {
-    margin-top: calc(var(--size) * 4 / 72);
+    margin-top: calc(var(--size) * 4 / 88);
     flex: 1;
     display: flex;
-    gap: calc(var(--size) * 3 / 72);
+    gap: calc(var(--size) * 4 / 88);
+    min-height: 0;
 }
 .delivery_box_cell {
     flex: 1;
+    min-width: 0;
     background-color: #faedcd;
-    border: calc(var(--size) * 1.5 / 72) dashed #bc8a5f;
-    border-radius: calc(var(--size) * 3 / 72);
+    border: calc(var(--size) * 1.5 / 88) dashed #bc8a5f;
+    border-radius: calc(var(--size) * 3 / 88);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(var(--size) * 11 / 72);
+    padding: calc(var(--size) * 2 / 88) calc(var(--size) * 1 / 88);
+    font-size: max(15px, calc(var(--size) * 15 / 88));
     font-weight: 700;
+    line-height: 1;
     color: #8c5b36;
+    box-sizing: border-box;
 }
 
 
@@ -1027,130 +1055,155 @@
 
 /*************  SUB ASSET — 선택 카운터 배지  *******************************************************************************************************/
 .select_counter_badge {
-    --size: 32px;
+    --size: 40px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    height: var(--size);
-    padding: 0 calc(var(--size) * 12 / 32);
-    gap: calc(var(--size) * 4 / 32);
+    min-height: max(var(--size), 40px);
+    height: auto;
+    padding: calc(var(--size) * 6 / 40) calc(var(--size) * 14 / 40);
+    gap: calc(var(--size) * 4 / 40);
     background-color: #0f172a;
     color: #ffffff;
-    border-radius: calc(var(--size) * 16 / 32);
+    border-radius: calc(var(--size) * 20 / 40);
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     font-weight: 700;
-    box-shadow: 0 calc(var(--size) * 2 / 32) calc(var(--size) * 6 / 32) rgba(0, 0, 0, 0.15);
+    line-height: 1.25;
+    box-shadow: 0 calc(var(--size) * 2 / 40) calc(var(--size) * 6 / 40) rgba(0, 0, 0, 0.15);
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 .select_counter_current {
     color: #fdd503;
-    font-size: calc(var(--size) * 16 / 32);
+    font-size: max(15px, calc(var(--size) * 16 / 40));
 }
 .select_counter_divider {
     color: #64748b;
-    font-size: calc(var(--size) * 12 / 32);
+    font-size: max(15px, calc(var(--size) * 15 / 40));
 }
 .select_counter_max {
     color: #e2e8f0;
-    font-size: calc(var(--size) * 13 / 32);
+    font-size: max(15px, calc(var(--size) * 15 / 40));
+    word-break: keep-all;
 }
 
 
 
 /*************  SUB ASSET — 인정 EP 카드  *******************************************************************************************************/
 .ep_split_card {
-    --size: 74px;
+    --size: 92px;
     display: inline-flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: var(--size);
-    height: calc(var(--size) * 62 / 74);
-    padding: calc(var(--size) * 6 / 74);
-    gap: calc(var(--size) * 4 / 74);
+    width: fit-content;
+    min-width: max(var(--size), 92px);
+    min-height: calc(var(--size) * 72 / 92);
+    height: auto;
+    padding: calc(var(--size) * 8 / 92) calc(var(--size) * 10 / 92);
+    gap: calc(var(--size) * 6 / 92);
     box-sizing: border-box;
     background-color: #ffffff;
-    border-radius: calc(var(--size) * 8 / 74);
-    border: calc(var(--size) * 1.5 / 74) solid #cbd5e1;
-    box-shadow: 0 calc(var(--size) * 2 / 74) calc(var(--size) * 6 / 74) rgba(0, 0, 0, 0.05);
+    border-radius: calc(var(--size) * 8 / 92);
+    border: calc(var(--size) * 1.5 / 92) solid #cbd5e1;
+    box-shadow: 0 calc(var(--size) * 2 / 92) calc(var(--size) * 6 / 92) rgba(0, 0, 0, 0.05);
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
 }
 .ep_split_title {
-    font-size: calc(var(--size) * 12 / 74);
+    font-size: max(15px, calc(var(--size) * 15 / 92));
     color: #64748b;
     font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
 }
 .ep_split_token {
-    font-size: calc(var(--size) * 14 / 74);
+    font-size: max(15px, calc(var(--size) * 15 / 92));
     font-weight: 800;
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
     color: #09794d;
     background-color: #eaf6ee;
-    padding: calc(var(--size) * 3 / 74) calc(var(--size) * 8 / 74);
-    border-radius: calc(var(--size) * 4 / 74);
+    padding: calc(var(--size) * 4 / 92) calc(var(--size) * 10 / 92);
+    border-radius: calc(var(--size) * 4 / 92);
 }
 
 
 
 /*************  SUB ASSET — 캐시백 카드  *******************************************************************************************************/
 .cashback_card {
-    --size: 36px;
+    --size: 40px;
     display: inline-flex;
     align-items: center;
     width: fit-content;
-    height: var(--size);
-    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 10 / 36);
-    gap: calc(var(--size) * 6 / 36);
+    min-height: max(var(--size), 40px);
+    height: auto;
+    padding: calc(var(--size) * 6 / 40) calc(var(--size) * 12 / 40);
+    gap: calc(var(--size) * 8 / 40);
     background: #f8fafc;
-    border-radius: calc(var(--size) * 10 / 36);
-    box-shadow: inset 0 0 0 calc(var(--size) * 1.5 / 36) #94a3b8;
+    border-radius: calc(var(--size) * 10 / 40);
+    box-shadow: inset 0 0 0 calc(var(--size) * 1.5 / 40) #94a3b8;
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 .cashback_badge {
-    width: calc(var(--size) * 22 / 36);
-    height: calc(var(--size) * 22 / 36);
-    line-height: calc(var(--size) * 22 / 36);
+    width: calc(var(--size) * 28 / 40);
+    height: calc(var(--size) * 28 / 40);
+    line-height: calc(var(--size) * 28 / 40);
     border-radius: 50%;
     background-color: #475569;
     color: #ffffff;
-    font-size: calc(var(--size) * 11 / 36);
+    font-size: max(15px, calc(var(--size) * 15 / 40));
     font-weight: 800;
     text-align: center;
+    flex-shrink: 0;
 }
 .cashback_text {
-    font-size: calc(var(--size) * 15 / 36);
+    font-size: max(15px, calc(var(--size) * 15 / 40));
     font-weight: 700;
+    line-height: 1.25;
     color: #1e293b;
-    white-space: nowrap;
+    word-break: keep-all;
 }
 
 
 
 /*************  SUB ASSET — 가격 도식 단계 카드  *******************************************************************************************************/
 .price_step_card {
-    --size: 90px;
+    --size: 108px;
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: var(--size);
-    height: calc(var(--size) * 54 / 90);
-    border-radius: calc(var(--size) * 8 / 90);
+    width: max(var(--size), 108px);
+    min-height: calc(var(--size) * 68 / 108);
+    height: auto;
+    padding: calc(var(--size) * 10 / 108) calc(var(--size) * 8 / 108);
+    gap: calc(var(--size) * 4 / 108);
+    border-radius: calc(var(--size) * 8 / 108);
     background-color: #f1f5f9;
-    border: calc(var(--size) * 1.5 / 90) solid #cbd5e1;
+    border: calc(var(--size) * 1.5 / 108) solid #cbd5e1;
     font-family: var(--font-sans, 'MinSansVF', sans-serif);
     flex-shrink: 0;
+    box-sizing: border-box;
 }
 .price_step_label {
-    font-size: calc(var(--size) * 14 / 90);
+    font-size: max(15px, calc(var(--size) * 15 / 108));
     font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
     color: #475569;
 }
 .price_step_desc {
-    font-size: calc(var(--size) * 11 / 90);
+    font-size: max(15px, calc(var(--size) * 15 / 108));
+    line-height: 1.25;
+    text-align: center;
+    word-break: keep-all;
     color: #64748b;
-    margin-top: calc(var(--size) * 2 / 90);
 }
 .price_step_card.is_highlight {
     background-color: #ffffff;
