@@ -39,15 +39,15 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='series/season01/guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">STEP 2</span><span class="vc-new">NEW</span></div>
+          <div class="vc-top"><span class="vc-step">STEP 2</span><span class="vc-soon">제작 중</span></div>
           <div class="vc-title">오토십 알아보기</div>
           <div class="vc-desc">3개월 정기 구독 서비스의 혜택과 이용 기준</div>
-          <div class="vc-meta">? 7씬</div>
+          <div class="vc-meta">? —</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>

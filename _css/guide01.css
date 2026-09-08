@@ -9,15 +9,27 @@
 }
 
 .guide01-canvas .autoship_icon,
+.guide01-canvas .autoship_icon_o,
+.guide01-canvas .autoship_icon_c,
 .guide01-canvas .base_business_icon,
-.guide01-canvas .recommend_bonus_icon{
+.guide01-canvas .base_business_icon_o,
+.guide01-canvas .base_business_icon_c,
+.guide01-canvas .recommend_bonus_icon,
+.guide01-canvas .recommend_bonus_icon_o,
+.guide01-canvas .recommend_bonus_icon_c{
   transform:scale(1.15);
   transform-origin:center center;
 }
 
 .guide01-canvas .autoship_icon.asset-enter,
+.guide01-canvas .autoship_icon_o.asset-enter,
+.guide01-canvas .autoship_icon_c.asset-enter,
 .guide01-canvas .base_business_icon.asset-enter,
-.guide01-canvas .recommend_bonus_icon.asset-enter{
+.guide01-canvas .base_business_icon_o.asset-enter,
+.guide01-canvas .base_business_icon_c.asset-enter,
+.guide01-canvas .recommend_bonus_icon.asset-enter,
+.guide01-canvas .recommend_bonus_icon_o.asset-enter,
+.guide01-canvas .recommend_bonus_icon_c.asset-enter{
   animation:g01-badge-enter .5s cubic-bezier(.22,1,.36,1) both;
 }
 

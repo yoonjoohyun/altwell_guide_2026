@@ -13,6 +13,9 @@
   <div data-template="lev_srf"><!--#include file="lev_srf.asp"--></div>
   <div data-template="lev_irf"><!--#include file="lev_irf.asp"--></div>
   <div data-template="base_business_icon"><!--#include file="base_business_icon.asp"--></div>
+  <div data-template="base_business_icon_c"><!--#include file="base_business_icon_c.asp"--></div>
   <div data-template="autoship_icon"><!--#include file="autoship_icon.asp"--></div>
+  <div data-template="autoship_icon_c"><!--#include file="autoship_icon_c.asp"--></div>
   <div data-template="recommend_bonus_icon"><!--#include file="recommend_bonus_icon.asp"--></div>
+  <div data-template="recommend_bonus_icon_c"><!--#include file="recommend_bonus_icon_c.asp"--></div>
 </div>

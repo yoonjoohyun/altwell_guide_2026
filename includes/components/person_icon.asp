@@ -1,8 +1,4 @@
-<div class="person-icon" role="img" aria-label="사람"></div>
-
-<style>
-
-</style>
+<div class="person_icon" role="img" aria-label="일반"></div>
 
 
 

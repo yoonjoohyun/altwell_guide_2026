@@ -1,5 +1,5 @@
 <script>
-/* Series: guide01 — 오토십 알아보기 */
+/* Series: guide01 — 오토십 알아보기 (씬 순차 제작) */
 var SeriesGuide01 = {
   meta: {
     id: 'guide01',
@@ -9,13 +9,8 @@ var SeriesGuide01 = {
 
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
-    SceneRunner.registerScene(Guide01Scene01);
-    SceneRunner.registerScene(Guide01Scene02);
-    SceneRunner.registerScene(Guide01Scene03);
-    SceneRunner.registerScene(Guide01Scene04);
-    SceneRunner.registerScene(Guide01Scene05);
-    SceneRunner.registerScene(Guide01Scene06);
-    SceneRunner.registerScene(Guide01Scene07);
+
+    /* 씬 추가 시: SceneRunner.registerScene(Guide01SceneNN); */
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);

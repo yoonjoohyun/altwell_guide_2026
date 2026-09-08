@@ -223,6 +223,25 @@ var Guide01 = (function(){
     return el;
   }
 
+  var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
+
+  function badgeSetMode(el, mode){
+    if(!el) return el;
+    var suffix = mode === 'c' ? '_c' : '_o';
+    for(var i = 0; i < BADGE_BASES.length; i++){
+      var base = BADGE_BASES[i];
+      if(el.classList.contains(base) || el.classList.contains(base + '_o') || el.classList.contains(base + '_c')){
+        el.classList.remove(base, base + '_o', base + '_c');
+        el.classList.add(base + suffix);
+        break;
+      }
+    }
+    return el;
+  }
+
+  function badgeToOpen(el){ return badgeSetMode(el, 'o'); }
+  function badgeToClosed(el){ return badgeSetMode(el, 'c'); }
+
   return {
     CANVAS_CLS: CANVAS_CLS,
     setSceneDesc: setSceneDesc,
@@ -245,7 +264,10 @@ var Guide01 = (function(){
     panelAddBullet: panelAddBullet,
     panelHideBullets: panelHideBullets,
     endScene: endScene,
-    disclaimer: disclaimer
+    disclaimer: disclaimer,
+    badgeSetMode: badgeSetMode,
+    badgeToOpen: badgeToOpen,
+    badgeToClosed: badgeToClosed
   };
 })();
 </script>

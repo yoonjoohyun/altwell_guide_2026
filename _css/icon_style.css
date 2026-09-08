@@ -506,8 +506,10 @@
 
 
 
-/*************  베이스 사업자  *******************************************************************************************************/
-.base_business_icon{
+/*************  BADGE — _o 펼침(텍스트 표시) · _c 닫힘(라벨만, 멤버 부착용)  *************/
+.base_business_icon,
+.base_business_icon_o,
+.base_business_icon_c{
     --size: 36px;
     display:inline-flex;
     justify-content:center;
@@ -520,6 +522,9 @@
     box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #05653F;
     border-radius: calc(var(--size) * 10 / 36);
     font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.base_business_icon_c .base_text{
+    display: none;
 }
 .base_label{
     width: calc(var(--size) * 24 / 36);
@@ -543,7 +548,9 @@
 
 
 /*************  오토십 구독  *******************************************************************************************************/
-.autoship_icon{
+.autoship_icon,
+.autoship_icon_o,
+.autoship_icon_c{
     --size: 36px;
     display:inline-flex;
     justify-content:center;
@@ -556,6 +563,9 @@
     box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #0B2A91;
     border-radius: calc(var(--size) * 10 / 36);
     font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.autoship_icon_c .autoship_text{
+    display: none;
 }
 .autoship_label{
     width: calc(var(--size) * 24 / 36);
@@ -579,7 +589,9 @@
 
 
 /*************  추천 보너스  *******************************************************************************************************/
-.recommend_bonus_icon{
+.recommend_bonus_icon,
+.recommend_bonus_icon_o,
+.recommend_bonus_icon_c{
     --size: 36px;
     display:inline-flex;
     justify-content:center;
@@ -592,6 +604,9 @@
     box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #C7A417;
     border-radius: calc(var(--size) * 10 / 36);
     font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.recommend_bonus_icon_c .recommend_bonus_text{
+    display: none;
 }
 .recommend_bonus_label{
     width: calc(var(--size) * 24 / 36);
@@ -615,9 +630,9 @@
 
 
 /*************  PERSON  *******************************************************************************************************/
-.person-icon {
-    --size: 120px;
-    --color: #73a5f0;
+.person_icon {
+    --size: 160px;
+    --color: #b1c1da;
 
     position: relative;
     display: inline-block;
@@ -628,7 +643,7 @@
 }
 
 /* 머리 */
-.person-icon::before {
+.person_icon::before {
     content: "";
     position: absolute;
     top: 20%;
@@ -641,7 +656,7 @@
 }
 
 /* 어깨와 몸통 */
-.person-icon::after {
+.person_icon::after {
     content: "";
     position: absolute;
     bottom: 8%;
@@ -652,3 +667,47 @@
     background-color: var(--color);
     transform: translateX(-50%);
 }
+
+
+
+/*************  PERSON  *******************************************************************************************************/
+.member_icon {
+    --size: 160px;
+    --color: #73a5f0;
+
+    position: relative;
+    display: inline-block;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+    vertical-align: middle;
+}
+
+/* 머리 */
+.member_icon::before {
+    content: "";
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    width: 34%;
+    height: 34%;
+    border-radius: 50%;
+    background-color: var(--color);
+    transform: translateX(-50%);
+}
+
+/* 어깨와 몸통 */
+.member_icon::after {
+    content: "";
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    width: 72%;
+    height: 42%;
+    border-radius: 50% 50% 8% 8% / 75% 75% 15% 15%;
+    background-color: var(--color);
+    transform: translateX(-50%);
+}
+
+
+
