@@ -3,7 +3,7 @@
   <!-- ① 영상 상단 프레임 (디자인 시안) -->
   <header id="lo-bar" aria-label="영상 상단">
     <div id="lo-bar-left">
-      <button type="button" id="lo-back" aria-label="뒤로 가기">&#8592;</button>
+      <button type="button" id="lo-back" aria-label="뒤로 가기" onclick="closePlayer()">&#8592;</button>
       <span id="lo-scene-label">영상 타이틀</span>
     </div>
     <div id="lo-bar-right">

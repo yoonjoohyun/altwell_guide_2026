@@ -629,6 +629,50 @@
 }
 
 
+/*************  추천 보너스ex  *******************************************************************************************************/
+.recommend_bonus_icon_ex{
+    --size: 36px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    width:fit-content;
+    height:var(--size) * 60 / 60;
+    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 7 / 36);
+    gap: calc(var(--size) * 5 / 36);
+    background: linear-gradient(120deg, #ffd738, #ffeca0, #FFE373, #e6c92a, #ffd738);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #C7A417;
+    border-radius: calc(var(--size) * 10 / 36);
+    font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.recommend_bonus_ex_label{
+    width: calc(var(--size) * 24 / 36);
+    height: calc(var(--size) * 24 / 36);
+    line-height: calc(var(--size) * 24 / 36);
+    text-align:center;
+    border-radius: 50%;
+    background-color:#C7A417;
+    color:#FFEEA9;
+    font-weight:900;
+    font-size: calc(var(--size) * 15 / 36);
+    flex-shrink:0;
+}
+.recommend_bonus_ex_text{
+    font-weight:700;
+    font-size: calc(var(--size) * 18 / 36);
+    line-height: calc(var(--size) * 18 / 36);
+    white-space: nowrap;
+    text-align:center;
+}
+.recommend_bonus_text_1{
+    font-size: calc(var(--size) * 15 / 36);
+    font-weight:600;
+    color:#776313;
+}
+.recommend_bonus_text_2{
+    font-size: calc(var(--size) * 18 / 36);
+    color:#665308;
+}
+
 /*************  PERSON  *******************************************************************************************************/
 .person_icon {
     --size: 160px;
@@ -710,4 +754,414 @@
 }
 
 
+
+/*************  SUB ASSET — 추천포인트 토큰  *******************************************************************************************************/
+.point_token_icon {
+    --size: 40px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd738, #ffeca0 45%, #e6c92a 80%, #ffd738);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 40) #c7a417,
+                0 calc(var(--size) * 2 / 40) calc(var(--size) * 6 / 40) rgba(0, 0, 0, 0.2);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.point_token_inner {
+    font-size: calc(var(--size) * 16 / 40);
+    font-weight: 900;
+    color: #665308;
+    text-shadow: 0 calc(var(--size) * 1 / 40) calc(var(--size) * 1 / 40) rgba(255, 255, 255, 0.6);
+    line-height: 1;
+}
+
+
+
+/*************  SUB ASSET — 상태 표시 (체크 / 불가)  *******************************************************************************************************/
+.status_check_icon {
+    --size: 32px;
+    position: relative;
+    display: inline-block;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background-color: #118839;
+    box-shadow: 0 calc(var(--size) * 2 / 32) calc(var(--size) * 6 / 32) rgba(17, 136, 57, 0.3);
+    flex-shrink: 0;
+}
+.status_check_icon::after {
+    content: "";
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    width: calc(var(--size) * 8 / 32);
+    height: calc(var(--size) * 14 / 32);
+    border: solid #ffffff;
+    border-width: 0 calc(var(--size) * 3 / 32) calc(var(--size) * 3 / 32) 0;
+    transform: translate(-50%, -55%) rotate(45deg);
+}
+
+.status_cross_icon {
+    --size: 32px;
+    position: relative;
+    display: inline-block;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background-color: #d8030a;
+    box-shadow: 0 calc(var(--size) * 2 / 32) calc(var(--size) * 6 / 32) rgba(216, 3, 10, 0.3);
+    flex-shrink: 0;
+}
+.status_cross_icon::before,
+.status_cross_icon::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--size) * 16 / 32);
+    height: calc(var(--size) * 3 / 32);
+    background-color: #ffffff;
+    border-radius: calc(var(--size) * 2 / 32);
+}
+.status_cross_icon::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+.status_cross_icon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+
+
+/*************  SUB ASSET — 달력 월별 카드  *******************************************************************************************************/
+.calendar_month_card {
+    --size: 72px;
+    display: inline-flex;
+    flex-direction: column;
+    width: var(--size);
+    height: calc(var(--size) * 84 / 72);
+    border-radius: calc(var(--size) * 10 / 72);
+    background: #ffffff;
+    box-shadow: 0 calc(var(--size) * 3 / 72) calc(var(--size) * 8 / 72) rgba(0, 0, 0, 0.08);
+    border: calc(var(--size) * 1.5 / 72) solid #dce4f0;
+    overflow: hidden;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+.calendar_month_card.is_active {
+    border-color: #2c51ca;
+    box-shadow: 0 calc(var(--size) * 4 / 72) calc(var(--size) * 12 / 72) rgba(44, 81, 202, 0.2);
+}
+.calendar_header {
+    height: calc(var(--size) * 24 / 72);
+    background-color: #9aaec7;
+    color: #ffffff;
+    font-size: calc(var(--size) * 12 / 72);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.calendar_month_card.is_active .calendar_header {
+    background: linear-gradient(120deg, #2c51ca, #1034ac);
+}
+.calendar_body {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.calendar_title {
+    font-size: calc(var(--size) * 14 / 72);
+    font-weight: 700;
+    color: #334155;
+}
+.calendar_month_card.is_active .calendar_title {
+    color: #1034ac;
+}
+
+
+
+/*************  SUB ASSET — 상품 실루엣 카드  *******************************************************************************************************/
+.product_silhouette_card {
+    --size: 96px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    width: var(--size);
+    height: calc(var(--size) * 128 / 96);
+    padding: calc(var(--size) * 8 / 96);
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-radius: calc(var(--size) * 12 / 96);
+    border: calc(var(--size) * 1.5 / 96) solid #e2e8f0;
+    box-shadow: 0 calc(var(--size) * 3 / 96) calc(var(--size) * 8 / 96) rgba(0, 0, 0, 0.06);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.product_silhouette_body {
+    flex: 1;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--size) * 6 / 96);
+}
+.product_shape {
+    position: relative;
+    width: calc(var(--size) * 38 / 96);
+    height: calc(var(--size) * 54 / 96);
+    background-color: #cbd5e1;
+    border-radius: calc(var(--size) * 6 / 96);
+}
+.product_shape::before {
+    content: "";
+    position: absolute;
+    top: calc(var(--size) * -6 / 96);
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(var(--size) * 18 / 96);
+    height: calc(var(--size) * 6 / 96);
+    background-color: #94a3b8;
+    border-radius: calc(var(--size) * 3 / 96) calc(var(--size) * 3 / 96) 0 0;
+}
+.product_label {
+    font-size: calc(var(--size) * 14 / 96);
+    font-weight: 700;
+    color: #1e293b;
+}
+.product_tag {
+    font-size: calc(var(--size) * 9 / 96);
+    font-weight: 500;
+    color: #64748b;
+    background-color: #f1f5f9;
+    padding: calc(var(--size) * 3 / 96) calc(var(--size) * 6 / 96);
+    border-radius: calc(var(--size) * 4 / 96);
+    white-space: nowrap;
+}
+
+
+
+/*************  SUB ASSET — 3구획 배송 상자  *******************************************************************************************************/
+.delivery_box_icon {
+    --size: 72px;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    width: var(--size);
+    height: calc(var(--size) * 64 / 72);
+    background-color: #d4a373;
+    border-radius: calc(var(--size) * 4 / 72);
+    box-shadow: 0 calc(var(--size) * 4 / 72) calc(var(--size) * 10 / 72) rgba(0, 0, 0, 0.15);
+    box-sizing: border-box;
+    padding: calc(var(--size) * 6 / 72);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.delivery_box_lid {
+    position: absolute;
+    top: calc(var(--size) * -6 / 72);
+    left: calc(var(--size) * -3 / 72);
+    width: calc(var(--size) + (var(--size) * 6 / 72));
+    height: calc(var(--size) * 10 / 72);
+    background-color: #bc8a5f;
+    border-radius: calc(var(--size) * 3 / 72);
+}
+.delivery_box_compartments {
+    margin-top: calc(var(--size) * 4 / 72);
+    flex: 1;
+    display: flex;
+    gap: calc(var(--size) * 3 / 72);
+}
+.delivery_box_cell {
+    flex: 1;
+    background-color: #faedcd;
+    border: calc(var(--size) * 1.5 / 72) dashed #bc8a5f;
+    border-radius: calc(var(--size) * 3 / 72);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(var(--size) * 11 / 72);
+    font-weight: 700;
+    color: #8c5b36;
+}
+
+
+
+/*************  SUB ASSET — 결제 카드  *******************************************************************************************************/
+.payment_card_icon {
+    --size: 64px;
+    position: relative;
+    display: inline-block;
+    width: var(--size);
+    height: calc(var(--size) * 42 / 64);
+    background: linear-gradient(135deg, #1e293b, #334155);
+    border-radius: calc(var(--size) * 6 / 64);
+    box-shadow: 0 calc(var(--size) * 3 / 64) calc(var(--size) * 8 / 64) rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+    padding: calc(var(--size) * 6 / 64);
+    flex-shrink: 0;
+}
+.payment_card_chip {
+    width: calc(var(--size) * 12 / 64);
+    height: calc(var(--size) * 9 / 64);
+    background: #fdd503;
+    border-radius: calc(var(--size) * 2 / 64);
+    margin-top: calc(var(--size) * 3 / 64);
+}
+.payment_card_line {
+    position: absolute;
+    bottom: calc(var(--size) * 8 / 64);
+    left: calc(var(--size) * 6 / 64);
+    width: calc(var(--size) * 28 / 64);
+    height: calc(var(--size) * 3 / 64);
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: calc(var(--size) * 1.5 / 64);
+}
+
+
+
+/*************  SUB ASSET — 선택 카운터 배지  *******************************************************************************************************/
+.select_counter_badge {
+    --size: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: var(--size);
+    padding: 0 calc(var(--size) * 12 / 32);
+    gap: calc(var(--size) * 4 / 32);
+    background-color: #0f172a;
+    color: #ffffff;
+    border-radius: calc(var(--size) * 16 / 32);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    font-weight: 700;
+    box-shadow: 0 calc(var(--size) * 2 / 32) calc(var(--size) * 6 / 32) rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
+}
+.select_counter_current {
+    color: #fdd503;
+    font-size: calc(var(--size) * 16 / 32);
+}
+.select_counter_divider {
+    color: #64748b;
+    font-size: calc(var(--size) * 12 / 32);
+}
+.select_counter_max {
+    color: #e2e8f0;
+    font-size: calc(var(--size) * 13 / 32);
+}
+
+
+
+/*************  SUB ASSET — 인정 EP 카드  *******************************************************************************************************/
+.ep_split_card {
+    --size: 74px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: var(--size);
+    height: calc(var(--size) * 62 / 74);
+    padding: calc(var(--size) * 6 / 74);
+    gap: calc(var(--size) * 4 / 74);
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-radius: calc(var(--size) * 8 / 74);
+    border: calc(var(--size) * 1.5 / 74) solid #cbd5e1;
+    box-shadow: 0 calc(var(--size) * 2 / 74) calc(var(--size) * 6 / 74) rgba(0, 0, 0, 0.05);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.ep_split_title {
+    font-size: calc(var(--size) * 12 / 74);
+    color: #64748b;
+    font-weight: 500;
+}
+.ep_split_token {
+    font-size: calc(var(--size) * 14 / 74);
+    font-weight: 800;
+    color: #09794d;
+    background-color: #eaf6ee;
+    padding: calc(var(--size) * 3 / 74) calc(var(--size) * 8 / 74);
+    border-radius: calc(var(--size) * 4 / 74);
+}
+
+
+
+/*************  SUB ASSET — 캐시백 카드  *******************************************************************************************************/
+.cashback_card {
+    --size: 36px;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    height: var(--size);
+    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 10 / 36);
+    gap: calc(var(--size) * 6 / 36);
+    background: #f8fafc;
+    border-radius: calc(var(--size) * 10 / 36);
+    box-shadow: inset 0 0 0 calc(var(--size) * 1.5 / 36) #94a3b8;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.cashback_badge {
+    width: calc(var(--size) * 22 / 36);
+    height: calc(var(--size) * 22 / 36);
+    line-height: calc(var(--size) * 22 / 36);
+    border-radius: 50%;
+    background-color: #475569;
+    color: #ffffff;
+    font-size: calc(var(--size) * 11 / 36);
+    font-weight: 800;
+    text-align: center;
+}
+.cashback_text {
+    font-size: calc(var(--size) * 15 / 36);
+    font-weight: 700;
+    color: #1e293b;
+    white-space: nowrap;
+}
+
+
+
+/*************  SUB ASSET — 가격 도식 단계 카드  *******************************************************************************************************/
+.price_step_card {
+    --size: 90px;
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: var(--size);
+    height: calc(var(--size) * 54 / 90);
+    border-radius: calc(var(--size) * 8 / 90);
+    background-color: #f1f5f9;
+    border: calc(var(--size) * 1.5 / 90) solid #cbd5e1;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.price_step_label {
+    font-size: calc(var(--size) * 14 / 90);
+    font-weight: 700;
+    color: #475569;
+}
+.price_step_desc {
+    font-size: calc(var(--size) * 11 / 90);
+    color: #64748b;
+    margin-top: calc(var(--size) * 2 / 90);
+}
+.price_step_card.is_highlight {
+    background-color: #ffffff;
+    border-color: #2c51ca;
+    box-shadow: 0 calc(var(--size) * 4 / 90) calc(var(--size) * 10 / 90) rgba(44, 81, 202, 0.18);
+}
+.price_step_card.is_highlight .price_step_label {
+    color: #1034ac;
+}
+.price_step_card.is_highlight .price_step_desc {
+    color: #2c51ca;
+    font-weight: 700;
+}
 

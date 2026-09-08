@@ -24,13 +24,13 @@
 
 .asset-preview h2{font-size:14px;font-weight:700;color:#64748b;letter-spacing:.08em;margin-bottom:16px}
 
-.lev_container,.badge_container{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
+.lev_container,.badge_container,.sub_asset_container{display:flex;flex-wrap:wrap;gap:24px;align-items:center}
 
 </style>
 
 </head>
 
-<body class="page-layout">
+<body class="page-layout" style="overflow:scroll;">
 
 
 
@@ -57,6 +57,14 @@
     <h2>UNIT</h2>
 
     <!--#include file="includes/components/person_container.asp"-->
+
+  </section>
+
+  <section>
+
+    <h2>SUB ASSET</h2>
+
+    <!--#include file="includes/components/sub_asset_container.asp"-->
 
   </section>
 

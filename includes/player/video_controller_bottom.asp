@@ -87,7 +87,12 @@ function onSeek(ev){
 (function(){
   var backUrl = (function(){
     var p = new URLSearchParams(location.search).get('from');
-    return p === 'sim' ? 'sim.asp' : 'guide.asp';
+    var file = p === 'sim' ? 'sim.asp' : 'guide.asp';
+    var path = location.pathname || '';
+    if(/\/series\/[^/]+\//.test(path)){
+      return '../../' + file;
+    }
+    return file;
   })();
 
   function closePlayer(){
