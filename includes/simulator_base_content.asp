@@ -1,6 +1,5 @@
       <!-- Question Panel -->
       <div id="sim-question-panel">
-        <p id="panel-fixed-title">BASE사업자 이해하기</p>
         <p id="sim-step-label" class="sim-step-label">STEP 1</p>
         <h2 class="scene-title" id="scene-title-main"></h2>
         <p id="sim-question" class="sim-question"></p>

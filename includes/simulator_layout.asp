@@ -1,28 +1,20 @@
 <!-- Simulator common layout frame (Motion Canvas + Question Panel + Controls) -->
 <div id="layout-ov" class="layout-simulator">
 
-  <!-- Header -->
-  <div id="lo-bar">
-    <div id="lo-bar-left">
-      <button id="lo-back" type="button" onclick="closeSimulator()">&#8592;</button>
-      <span id="lo-breadcrumb">시뮬레이터</span>
-      <span class="lo-hd-sep"> &rsaquo; </span>
-      <span id="lo-scene-label">BASE사업자 이해하기</span>
-    </div>
-    <div id="lo-bar-right">
-      <span id="lo-brand">ALTWELL SMART GUIDE</span>
-      <span id="lo-brand-dot"></span>
-    </div>
-  </div>
+  <!--#include file="player/video_controller_top.asp"-->
 
-  <!-- Main: Canvas + Question Panel -->
+  <!-- Main: 4:3 Motion Stage + Text Panel -->
   <div id="lo-main">
 
-    <section id="lo-canvas" aria-label="학습 애니메이션">
-      <div id="motion-canvas"></div>
-    </section>
+    <div class="lo-motion-zone">
+      <div class="lo-stage-frame">
+        <section id="lo-canvas" aria-label="모션그래픽">
+          <div id="motion-canvas"></div>
+        </section>
+      </div>
+    </div>
 
-    <aside id="lo-panel" aria-label="질문 패널">
+    <aside id="lo-panel" aria-label="텍스트 표시">
 <!--#include file="simulator_base_content.asp"-->
     </aside>
 

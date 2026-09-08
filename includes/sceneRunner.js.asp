@@ -60,9 +60,14 @@ var SceneRunner = (function(){
     if(timeTotal) timeTotal.textContent = fmtMs(total);
     if(sceneNum){
       if(currentIndex >= 0 && scenes[currentIndex]){
-        sceneNum.textContent = '· 챕터 ' + (currentIndex + 1) + ' · ' + scenes[currentIndex].title;
+        var label = '· 챕터 ' + (currentIndex + 1) + ' · ' + scenes[currentIndex].title;
+        sceneNum.textContent = label;
+        var caption = document.getElementById('scene-caption');
+        if(caption) caption.title = label;
       } else {
         sceneNum.textContent = '· 준비';
+        var cap = document.getElementById('scene-caption');
+        if(cap) cap.removeAttribute('title');
       }
     }
   }

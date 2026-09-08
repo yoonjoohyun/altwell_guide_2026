@@ -1,7 +1,7 @@
 <script>
-/* Scene Media - voice/mp4 playback per scene */
+/* Scene Media - 씬별 음성 (voice/{seriesId}/sceneNN.mp4) */
 var SceneMedia = (function(){
-  var seriesId = '01_base_business_running';
+  var seriesId = '';
   var media = null;
   var currentIndex = -1;
   var activePath = '';
@@ -22,17 +22,21 @@ var SceneMedia = (function(){
 
   function ensureMedia(){
     if(!media){
-      media = document.getElementById('scene-media');
-      if(!media){
-        media = document.createElement('video');
+      var existing = document.getElementById('scene-media');
+      if(existing && existing.tagName === 'VIDEO'){
+        media = document.createElement('audio');
         media.id = 'scene-media';
         media.preload = 'auto';
-        media.setAttribute('playsinline', '');
-        media.setAttribute('webkit-playsinline', '');
-        media.playsInline = true;
         media.controls = false;
-        media.muted = false;
-        media.volume = 1;
+        media.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
+        existing.parentNode.replaceChild(media, existing);
+      } else if(existing){
+        media = existing;
+      } else {
+        media = document.createElement('audio');
+        media.id = 'scene-media';
+        media.preload = 'auto';
+        media.controls = false;
         media.style.cssText = 'position:fixed;left:0;top:0;width:1px;height:1px;opacity:0;pointer-events:none;z-index:-1';
         document.body.appendChild(media);
       }
@@ -129,13 +133,13 @@ var SceneMedia = (function(){
     if(el.src && el.paused) attachPlayRetry(el);
   }
 
+  var FALLBACK_MS = [29000, 33000, 26000, 30000, 34000, 25000, 52000];
+
   function probeDuration(sceneIndex){
     return new Promise(function(resolve){
       var path = getMediaPath(sceneIndex);
-      var probe = document.createElement('video');
+      var probe = document.createElement('audio');
       probe.preload = 'metadata';
-      probe.muted = true;
-      probe.setAttribute('playsinline', '');
       function done(ms){
         probe.removeAttribute('src');
         probe.load();
@@ -145,10 +149,12 @@ var SceneMedia = (function(){
         if(probe.duration && isFinite(probe.duration)){
           done(Math.round(probe.duration * 1000));
         } else {
-          done(0);
+          done(FALLBACK_MS[sceneIndex] || 30000);
         }
       });
-      probe.addEventListener('error', function(){ done(0); });
+      probe.addEventListener('error', function(){
+        done(FALLBACK_MS[sceneIndex] || 30000);
+      });
       probe.src = path;
       probe.load();
     });
@@ -156,14 +162,18 @@ var SceneMedia = (function(){
 
   function applyDurations(scenes, onComplete){
     if(!scenes || !scenes.length){
-      if(onComplete) onComplete();
+      if(onComplete) onComplete(false);
       return;
     }
     var pending = scenes.length;
     var changed = false;
     scenes.forEach(function(scene, i){
+      if(!scene.duration || scene.duration <= 0){
+        scene.duration = FALLBACK_MS[i] || 30000;
+        changed = true;
+      }
       probeDuration(i).then(function(ms){
-        if(ms > 0 && (!scene.duration || scene.duration <= 0)){
+        if(ms > 0 && scene.duration !== ms){
           scene.duration = ms;
           changed = true;
         }
@@ -174,7 +184,7 @@ var SceneMedia = (function(){
   }
 
   return {
-    setSeriesId: function(id){ seriesId = id || seriesId; },
+    setSeriesId: function(id){ if(id) seriesId = id; },
     getMediaPath: getMediaPath,
     prepareScene: prepareScene,
     beginScene: beginScene,

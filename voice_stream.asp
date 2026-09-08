@@ -1,4 +1,4 @@
-﻿<%@ Language=VBScript CodePage=65001 %>
+<%@ Language=VBScript CodePage=65001 %>
 <%
 Option Explicit
 Response.Buffer = True
@@ -24,7 +24,7 @@ If Not RegExpTest("^[0-9]{2}$", sceneNum) Then
   Response.End
 End If
 
-allowedSeries = Array("01_base_business_running")
+allowedSeries = Array("guide01", "03_sep_growth")
 ok = False
 For i = 0 To UBound(allowedSeries)
   If LCase(seriesId) = LCase(allowedSeries(i)) Then
@@ -38,7 +38,12 @@ If Not ok Then
 End If
 
 Set fso = Server.CreateObject("Scripting.FileSystemObject")
-filePath = Server.MapPath("voice/" & seriesId & "/scene" & sceneNum & ".mp4")
+
+If LCase(seriesId) = "guide01" Then
+  filePath = Server.MapPath("voice/guide_season01/guide01/guide01_scene_" & sceneNum & ".mp3")
+Else
+  filePath = Server.MapPath("voice/" & seriesId & "/scene" & sceneNum & ".mp4")
+End If
 
 If Not fso.FileExists(filePath) Then
   Response.Status = "404 Not Found"

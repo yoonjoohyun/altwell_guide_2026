@@ -1,0 +1,42 @@
+/* sim.asp — 시뮬레이터 목록 전용 */
+
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:18px}
+.sc-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow:hidden;cursor:pointer;
+  box-shadow:0 2px 10px rgba(0,0,0,.06);
+  transition:transform .2s,box-shadow .2s;
+}
+.sc-card:hover{transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.12)}
+.sc-card.disabled{cursor:default}
+.sc-card.disabled:hover{transform:none;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+.sc-thumb{
+  height:155px;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+}
+.sc-thumb.t1{background:linear-gradient(135deg,#0c1016,#162036,#1e3a5f)}
+.sc-thumb.t2{background:linear-gradient(135deg,#0c1016,#1a0a2e,#3b0764)}
+.sc-thumb-glow{
+  position:absolute;width:110px;height:110px;border-radius:50%;
+  background:radial-gradient(circle,rgba(238,51,56,.28),transparent 70%);
+}
+.sc-thumb-icon{font-size:46px;position:relative;z-index:1}
+.sc-badge{
+  position:absolute;top:11px;right:11px;
+  background:rgba(238,51,56,.9);color:#fff;
+  font-size:13px;font-weight:700;padding:4px 12px;
+  border-radius:99px;letter-spacing:.04em;
+}
+.sc-body{padding:18px 20px 20px}
+.sc-label{font-size:13px;font-weight:700;letter-spacing:.09em;color:var(--red);margin-bottom:8px}
+.sc-title{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
+.sc-desc{font-size:16px;color:var(--sub);line-height:1.7;margin-bottom:16px}
+.sc-footer{display:flex;align-items:center;justify-content:space-between}
+.sc-meta{font-size:14px;color:var(--sub)}
+.sc-go{
+  padding:10px 20px;border-radius:8px;font-size:16px;font-weight:700;
+  background:var(--red);color:#fff;border:none;transition:background .15s;
+}
+.sc-go:hover{background:var(--red2)}
+.sc-go.off{background:#d1d5db;color:#9ca3af;cursor:default}
+.sc-go.off:hover{background:#d1d5db}

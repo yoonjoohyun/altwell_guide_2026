@@ -1,7 +1,8 @@
-﻿# ALTWELL SMART GUIDE ? Project Rule
+﻿# ALTWELL SMART GUIDE — Project Rule
 
 > Classic ASP 기반 교육용 인터랙티브 웹 플랫폼  
-> Cursor AI / 개발자가 작업 전·중에 빠르게 참고하는 단일 규칙 문서
+> Cursor AI / 개발자 작업 시 참고하는 단일 규칙 문서  
+> **시나리오 작성:** [부록 A](#부록-a-시나리오-작성-양식) (문서 맨 아래)
 
 ---
 
@@ -11,72 +12,164 @@
 |------|------|
 | 이름 | ALTWELL SMART GUIDE |
 | 목적 | 신규 디슈머가 앨트웰 비즈니스 구조를 영상형 웹 인포그래픽으로 학습하고, 시뮬레이터로 복습 |
-| 현재 우선 과제 | **BASE사업자 이해하기** 챕터를 씬 단위로 제작 → 하나의 연속 영상으로 연결 |
+| 현재 과제 | **영상 페이지 템플릿 정리** — `frame_layout.asp` 기준으로 신규 챕터 제작 |
 
 **사용자 흐름**
 
 ```
-메인(index.asp) → 가이드 리스트(guide.asp) → 영상 재생
-              → 시뮬레이터 리스트(sim.asp) → 복습
+index.asp → guide.asp → frame_layout.asp (템플릿·에셋 데모) / ○○_smartguide.asp (영상)
+         → sim.asp    → (시뮬레이터 — 준비 중)
 ```
 
 ---
 
 ## 2. 기술 스택
 
-**사용**
-- Classic ASP, SSI, HTML, CSS, Vanilla JavaScript
-- **문자 인코딩: UTF-8** (`CodePage=65001`, `<meta charset="utf-8">`)
+| 사용 | 미사용 |
+|------|--------|
+| Classic ASP (SSI), HTML, CSS, Vanilla JavaScript | React, Vue, TypeScript, npm, bundler |
 
-**인코딩 규칙 (`guide_page` 전용, 상위 폴더 미변경)**
-- 진입 ASP 첫 줄: `<%@ Language=VBScript CodePage=65001 %>`
-- 공통 응답: `includes/asp_utf8.asp` include (`Response.CodePage` / `Response.Charset`)
-- 소스·문서 파일 저장: UTF-8
-- 씬·러너 JS 문자열: **한글 리터럴** 사용 (`\uXXXX` 이스케이프 사용 안 함)
+**인코딩**
 
-**사용하지 않음**
-- React, Vue, TypeScript, npm, bundler, framework state
+- ASP 첫 줄: `<%@ Language=VBScript CodePage=65001 %>`
+- 공통: `includes/asp_utf8.asp` include
+- 소스·문서: UTF-8 저장
+- JS 문자열: 한글 리터럴 사용 (`\uXXXX` 이스케이프 금지)
+
+**SSI 경로 규칙**
+
+- 영상 **진입 ASP(루트)** 에서 include: `includes/…` (루트 기준)
+- `includes/player/` 내부 include: 같은 폴더 기준 (`video_controller_top.asp` 등)
+- **중첩 SSI에서 `../` 사용 금지** — IIS Parent Paths 비활성 시 500 오류
 
 ---
 
-## 3. 폴더 구조 (현재)
+## 3. 현재 작업 구조
+
+### 3-1. 페이지 2종
+
+| 종류 | 예 | CSS |
+|------|-----|-----|
+| **리스트** | `index.asp`, `guide.asp`, `sim.asp` | `_css/main.css` + 페이지별 (`index.css`, `guide.css`, `sim.css`) |
+| **영상** | `frame_layout.asp`, `○○_smartguide.asp` | `_css/main.css` + `includes/styles.asp` + `_css/video_controller.css` |
+
+### 3-2. 영상 페이지 6구역
+
+새 영상은 **`frame_layout.asp` 복사 → `○○_smartguide.asp`** 로 시작한다.  
+(에셋 쇼케이스 데모 블록 제거 후 RUNTIME·SCENES·INIT 추가)
+
+| 구역 | 위치 | 내용 |
+|------|------|------|
+| **1. HEAD** | 진입 ASP `<head>` | title, fonts, main_css, styles.asp, 영상별 CSS |
+| **2. LAYOUT** | `includes/player/video_layout.asp` | 상단·4:3 모션·텍스트 패널·하단 컨트롤러 (**수정 불필요**) |
+| **4. RUNTIME** | `includes/video_runtime.asp` | defineScene + motion + components + SceneMedia + SceneRunner |
+| **5. SCENES** | `includes/series/…/scenes/sceneNN.js.asp` | 씬별 motion + panel |
+| **6. INIT** | series 등록 + `SeriesXXX.init()` | registerScene, 메타, UI 초기화 |
+
+**템플릿·레퍼런스:** `frame_layout.asp` (레이아웃 + 에셋 컴포넌트 쇼케이스 데모)
+
+### 3-3. 씬 1개 = 3요소
+
+| # | 요소 | 영역 | 산출물 |
+|---|------|------|--------|
+| ① | **모션** | 좌 `#motion-canvas` | `sceneNN.js.asp` → `motion` / `play` 타임라인 |
+| ② | **텍스트** | 우 `#lo-panel` | `sceneNN.js.asp` → `panel` / `setSceneTitle` 등 |
+| ③ | **음성** | `#scene-media` (숨김) | `voice/{seriesId}/sceneNN.mp4` 파일만 추가 |
+
+- `SceneRunner.registerScene()` **순서(0-based)** = voice `scene01`, `scene02` … 자동 매핑
+- `SceneRunner.playScene()` — **모션 `play()` + 음성 재생** 동시 실행
+- 고정 도트 배경: `#motion-stage-bg` (씬 reset 시에도 유지)
+- 씬별 오브젝트: `#motion-canvas` 안에만 주입
+
+### 3-4. 플레이어 HTML 셸 (`video_layout.asp`)
+
+```
+#layout-ov
+├── ① video_controller_top.asp     (#lo-bar, 뒤로·타이틀·홈)
+├── ② #lo-main
+│   ├── .lo-motion-zone > .lo-stage-frame > #lo-canvas
+│   │   ├── #motion-stage-bg        (도트·원형 — 고정)
+│   │   └── #motion-canvas          (씬별 모션)
+│   └── #lo-panel                     (씬별 텍스트)
+├── ③ video_controller_bottom.asp   (재생·타임라인·리스트)
+├── #scene-media                      (음성 mp4)
+└── video_init.asp                    (#lo-back → closePlayer)
+```
+
+**씬에서 변경 가능:** `#motion-canvas` 내부, `#lo-panel` 콘텐츠  
+**씬에서 변경 금지:** `#lo-bar`, `#lo-ctrl`, 4:3 프레임 구조, zone/panel 분리
+
+### 3-5. 모션 4계층 (씬 내부 구현)
+
+```
+Object Library (styles.asp) → Motion Primitives (motion.js.asp)
+  → Motion Components (motions/) → Scene Scripts (scenes/)
+  → Scene Runner (sceneRunner.js.asp)
+```
+
+| 계층 | 위치 | 역할 |
+|------|------|------|
+| Object Library | `styles.asp` | DOM·CSS class·배치 기준 |
+| Motion Primitives | `motion.js.asp` | `enterElement`, `wait`, `fadeCanvas` … |
+| Motion Components | `includes/motions/` | 2씬+ 공통 움직임 시퀀스 |
+| Object 팩토리 | `motions/core/objects/` | `MemberUnit`, `CanvasStage`, `BadgeObject` |
+| Scene Scripts | `series/…/scenes/` | 타임라인·motion·panel·endState |
+| Scene Runner | `sceneRunner.js.asp` | 등록·순차 재생·pause/seek·진행률 |
+
+### 3-6. 폴더 구조
 
 ```
 guide_page/
-├── index.asp                      # 메인
-├── guide.asp                      # 교육영상 리스트
-├── sim.asp                        # 시뮬레이터 리스트
-├── video_start.asp                # 레이아웃·Object Library 참고용 (정적)
-├── video_base.asp                 # 공통 플레이어 템플릿
-├── 01_base_business_running.asp   # BASE 챕터 영상 페이지
-├── voice/
-│   └── 01_base_business_running/
-│       ├── scene01.mp4 … scene07.mp4
+├── index.asp, guide.asp, sim.asp
+├── frame_layout.asp                 # 영상 페이지 템플릿 + 에셋 쇼케이스 데모
+├── _css/
+│   ├── main.css                     # 전역·NAV·page shell
+│   ├── index.css, guide.css, sim.css
+│   ├── video_controller.css         # #lo-bar, #lo-ctrl
+│   └── icon_style.css               # 에셋 컴포넌트 (rank, badge …)
+├── voice/{seriesId}/scene01.mp4 …
 ├── images/
 └── includes/
-    ├── images.asp                 # 이미지 경로 상수
-    ├── asp_utf8.asp               # UTF-8 Response.CodePage / Charset
-    ├── styles.asp                 # 전역 CSS·키프레임
-    ├── motion.js.asp              # Object·Motion Library
-    ├── sceneMedia.js.asp          # 씬별 mp4 재생 (voice_stream.asp 경유)
-    ├── sceneRunner.js.asp         # 씬 순차 재생 엔진
-    ├── playerControls.js.asp      # Play/Pause/Progress UI
-    ├── player.js.asp              # 레거시 (참고용)
-    ├── voice_stream.asp           # mp4 스트리밍 (IIS 정적 mp4 404 우회)
+    ├── asp_utf8.asp, fonts.asp, images.asp, main_css.asp
+    ├── styles.asp                   # 플레이어·모션·오브젝트 CSS
+    ├── video_runtime.asp            # 재생 엔진 일괄 include
+    ├── motion.js.asp, sceneMedia.js.asp, sceneRunner.js.asp
+    ├── scenes/
+    │   ├── defineScene.js.asp       # defineScene, SceneMotion, ScenePanel
+    │   └── _scene.template.js.asp   # 씬 작성 템플릿
+    ├── components/                  # 에셋 HTML + asset_showcase (frame_layout 데모)
+    ├── player/
+    │   ├── video_layout.asp         # 영상 HTML 셸
+    │   ├── video_init.asp
+    │   ├── video_controller_top.asp
+    │   └── video_controller_bottom.asp  (playerControls 인라인)
+    ├── motions/_load.asp + core/, canvas/, member/, badge/, …
     └── series/
-        └── 01_base_business_running/
-            ├── 01_base_business_running.asp   # 씬 등록·초기화
-            └── scenes/
-                ├── scene01.js.asp
-                ├── scene02.js.asp
-                └── … scene07.js.asp
+        └── {seriesId}/
+            ├── {seriesId}.asp       # registerScene + init
+            └── scenes/sceneNN.js.asp
 ```
 
-**아키텍처 흐름**
+### 3-7. Include 체인 (신규 영상 — `○○_smartguide.asp`)
 
 ```
-Object Library → Motion Library → Scene Scripts → Scene Runner → Lesson Player
+○○_smartguide.asp                    ← frame_layout.asp 복사 후 데모 제거
+├── includes/player/video_layout.asp
+│   ├── video_controller_top.asp   (#lo-scene-label = 영상 타이틀)
+│   ├── video_controller_bottom.asp
+│   └── video_init.asp
+├── includes/video_runtime.asp
+│   ├── scenes/defineScene.js.asp
+│   ├── motion.js.asp
+│   ├── motions/_load.asp
+│   ├── sceneMedia.js.asp
+│   └── sceneRunner.js.asp
+├── includes/series/{seriesId}/scenes/sceneNN.js.asp …
+├── includes/series/{seriesId}/{seriesId}.asp
+└── SeriesXXX.init()
 ```
+
+**`frame_layout.asp` (데모 전용)** — RUNTIME·SCENES 대신 `asset_showcase.js.asp` + `AssetShowcase.init()`
 
 ---
 
@@ -85,376 +178,473 @@ Object Library → Motion Library → Scene Scripts → Scene Runner → Lesson 
 | 파일 | 역할 |
 |------|------|
 | `index.asp` | 메인 진입 |
-| `guide.asp` | 교육영상 카드 리스트 → 영상 페이지 진입 |
+| `guide.asp` | 교육영상 리스트 |
 | `sim.asp` | 시뮬레이터 리스트 |
-| `video_start.asp` | **레이아웃·오브젝트 배치·CSS class 참고 기준** (씬 미연결) |
-| `01_base_business_running.asp` | **BASE 챕터 실제 재생** (`guide.asp` 진입, `#layout-ov`) |
-| `video_base.asp` | 공통 플레이어 템플릿 (레거시·참고) |
-
-> `video_start.asp`는 복사·iframe 삽입하지 않는다. DOM·비율만 참고한다.
+| `frame_layout.asp` | **영상 페이지 템플릿** + 에셋 컴포넌트 쇼케이스 데모 |
+| `○○_smartguide.asp` | 챕터별 영상 진입 (얇은 shell) |
+| `asset_design.asp` | 오브젝트·에셋 디자인 시안 (별도) |
 
 ---
 
-## 5. 애니메이션 시스템
+## 5. 씬 작성 API
 
-### 현재 표준 (사용)
-
-| 계층 | 파일 | 역할 |
-|------|------|------|
-| 스타일 | `styles.asp` | 레이아웃, Object, keyframe, 상태 클래스 |
-| 모션 API | `motion.js.asp` | 재사용 모션·오브젝트 상태 함수 |
-| 씬 | `scenes/sceneXX.js.asp` | 씬별 타임라인·패널 텍스트·endState |
-| 러너 | `sceneRunner.js.asp` | 씬 등록, 순차 재생, pause/resume/seek, 진행률 |
-| 미디어 | `sceneMedia.js.asp` | 씬별 mp4 재생·duration 프로브 |
-| 컨트롤 | `playerControls.js.asp` | 버튼·시크바 UI 연결 |
-
-### 레거시 (참고만, 삭제 금지)
-
-- `includes/player.js.asp` ? EVS + `requestAnimationFrame` 기반 구 플레이어
-- `index.asp.bak` ? 구조 참고
-
----
-
-## 6. Motion API
-
-```
-wait, showElement, hideElement, activateElement, deactivateElement
-enterElement, exitElement, acquireElement, softAcquireElement, enterMember
-setRank, replaceRank, setAutoship, setSEP, completeCondition
-setRecommendBonus, setSupportBonus
-setSceneTitle, setSceneBullets, slideUpElement, staggerFade
-fadeCanvas, transitionCanvas
-resetMotion, resetMotionTree, resetScene
-softAcquireElement (옵션: hero, glow)
-```
-
-**Keyframe / 클래스:** `kf-enter`, `kf-soft-enter`, `kf-soft-acquire`, `kf-acquire`, `kf-glow-once`, `kf-badge-hero-enter`, `kf-rank-out`, `kf-rank-in`, `kf-slide-up`, `kf-check-pop`, `kf-stagger-item`, `kf-idle-float`, `kf-highlight-pulse`
-
-> 새 Keyframe·Motion API는 **필요 시에만** `motion.js.asp` / `styles.asp`에 **한 곳** 추가한다. 씬 파일에 중복 정의하지 않는다.
-
----
-
-## 7. 파일별 책임 (Do / Don't)
-
-| 파일 | 해야 할 일 | 하지 말 것 |
-|------|-----------|-----------|
-| `images.asp` | 이미지 경로 상수 | 애니메이션·씬 로직 |
-| `styles.asp` | 레이아웃, Object, keyframe, 반응형 | 씬 시간·문구 하드코딩 |
-| `motion.js.asp` | 공통 모션·상태 함수 | 특정 씬 타임라인·플레이어 시간 관리 |
-| `sceneXX.js.asp` | 씬 초기/종료 상태, 타임라인, 패널 텍스트 | CSS keyframe 신규 작성, 공통 함수 중복 |
-| `sceneRunner.js.asp` | 씬 순서·전체 재생·진행률 | 오브젝트 애니메이션·콘텐츠 |
-| `playerControls.js.asp` | UI → SceneRunner 연결 | 애니메이션·씬 콘텐츠 |
-| `01_base_business_running.asp` (series) | `registerScene`, 메타·제목 설정 | 씬 타임라인 직접 작성 |
-
----
-
-## 8. Object Library 의미
-
-오브젝트 의미를 재해석하거나 재디자인하지 않는다.
-
-| Object | 의미 | 비고 |
-|--------|------|------|
-| Main Member | 설명 중심 본인 디슈머/사업자 | |
-| Child Member | 하위·관계 디슈머 | |
-| Rank Medal | D, P, JP, SP, FC **지위** | BASE 자격과 **별개** |
-| Autoship Badge | 오토십 이용 상태 | |
-| BASE Badge | BASE사업자 **자격** | Rank가 아님. P와 자동 동일 아님 |
-| SEP Badge | SEP 실적 | **HTML div** (이미지 X) |
-| Recommend/Support Bonus Plate | 추천·후원 보너스 | **HTML div** (이미지 X) |
-| Leader Crown | 중심 인물 Marker | Rank 아님 |
-| Recommend Star | 직접 추천 Member 표시 | 조직선과 다름 |
-
-**핵심:** BASE Badge와 Rank Medal은 **독립** ? 교체·자동 승급 처리 금지.
-
----
-
-## 9. Scene 구현 규칙
-
-> **모든 Scene은 아래 규칙을 따른다.**
-
-### 9-1. 참고 파일·레이아웃
-
-**구현 전 반드시 확인 (순서)**
-
-1. `PROJECT_RULE.md` (본 문서)
-2. `SceneXX.md` (해당 씬 시나리오)
-3. `video_start.asp` (레이아웃·Object Library·DOM ID·class 기준)
-4. 실제 Media (`voice/…/sceneXX.mp4`)
-
-`video_start.asp`는 **복사·iframe 삽입하지 않는다.** DOM·비율·Object 배치만 참고한다. 새 레이아웃을 임의 생성하지 않는다.
-
-**공통 플레이어**
-
-| 파일 | 역할 |
-|------|------|
-| `01_base_business_running.asp` | BASE 챕터 **실제 재생** (`#layout-ov`) |
-| `video_base.asp` | 공통 플레이어 템플릿 (레거시·참고) |
-
-**씬에서 변경 가능**
-
-- Motion Canvas (`#motion-canvas`)
-- Information Panel (`#lo-panel` 내부 콘텐츠)
-
-**씬에서 변경 금지**
-
-- Header (`#lo-bar`)
-- Player Controls (`#lo-ctrl`, `#btn-play`, Progress Bar `#lo-tl`)
-- 플레이어 전체 레이아웃 (`#layout-ov` 구조·비율)
-
-1. 씬별 크기·위치는 **씬 전용 ID** (`#scene01-base-badge` 등)로 override한다.
-2. Header·Controls·패널 레이아웃은 씬 전환 시 유지한다.
-
-**핵심 DOM ID** (플레이어 ? 씬이 건드리지 않음)
-
-| 영역 | ID | 비고 |
-|------|-----|------|
-| 루트 | `#layout-ov` | `body.page-layout` |
-| 헤더 | `#lo-bar`, `#lo-back`, `#lo-breadcrumb`, `#lo-scene-label` | |
-| 메인 | `#lo-main`, `#lo-canvas`, `#motion-canvas` | 씬 오브젝트 주입 대상 |
-| 패널 | `#lo-panel`, `#panel-fixed-title`, `#scene-title-main`, `#panel-scene-desc`, `#scene-bullets` | |
-| 컨트롤 | `#lo-ctrl`, `#btn-play`, `#lo-tl`, `#lo-tlf`, `#time-current`, `#time-total`, `#scene-number` | |
-
-**씬 시나리오 문서:** 프로젝트 루트 `Scene01.md` … `Scene07.md`
-
-**참고용 Object DOM** (`video_start.asp` ? 씬에서 동적 생성 시 동일 ID·class 사용)
-
-`#member-unit-main`, `#member-unit-left`, `#member-unit-right`, `#rank-medal-main`, `#autoship-emblem-main`, `#base-business-badge-main`, `.member-emblem-group`, `.scene-canvas-badge`, `#lo-connectors`
-
-### 9-2. Object / Motion Library
-
-**Object Library**
-
-- Member, Badge, Medal 등 **기존 Object만 재사용**한다. 임의 신규 Object·재디자인 금지.
-- 크기·비율·배치는 `video_start.asp` + `styles.asp` 기준. 의미는 §8 표 준수.
-
-**Motion Library**
-
-- 모든 애니메이션은 `motion.js.asp` API + `styles.asp` keyframe 조합으로 구현한다.
-- 동일 keyframe·모션 함수를 씬 파일에 **중복 생성하지 않는다.**
-
-**HTML Object (설명 UI)**
-
-권리·조건·비율 설명, 화살표, 연결선 등 **설명용 UI는 이미지로 만들지 않는다.**
-
-- SEP Badge, Bonus Plate → **HTML div**
-- 관계선 → **SVG** (`#lo-connectors`)
-- 텍스트·수치 → **HTML** (`span`, `strong` 등)
-
-### 9-3. Information Panel / Motion Canvas
-
-**Information Panel** ? 구조 고정, **내용만** 씬마다 변경
-
-| 요소 | ID | 비고 |
-|------|-----|------|
-| Fixed Chapter Title | `#panel-fixed-title` | 챕터명. 이전 씬 endState에서 이어질 수 있음 |
-| Scene Title | `#scene-title-main` | 씬 제목 |
-| Description | `#panel-scene-desc` 또는 `#scene-bullets` | 설명·불릿 |
-
-**Motion Canvas**
-
-- Object Library로 **해당 씬 내용만** 표현한다.
-- 배경 레이어(`scene-canvas-bg`)는 오브젝트 **아래**, 씬 오브젝트는 **위** (z-index 규칙 § `styles.asp`).
-- Scene 종료 시 `SceneXX.md` **End State**를 `endState()`로 유지한다 (다음 씬 연결용).
-
-### 9-4. 씬 스크립트 표준
-
-각 `sceneXX.js.asp`는 아래 API를 노출한다.
+### 5-1. defineScene (권장 — 신규 씬)
 
 ```javascript
-var BaseScene01 = {
+var BaseScene01 = defineScene({
   id: 'base-scene-01',
   title: '씬 제목',
-  duration: 14000,        // Media 실제 길이 우선, md Estimated는 참고용
+  duration: 16000,           // voice mp4 길이 우선 (applyDurations)
+  mediaStartDelay: 0,        // 선택: 음성 시작 지연(ms)
 
-  reset: function() { /* 해당 씬 오브젝트·패널만 */ },
-  play: async function(ctx) { /* ctx.canvas, reportProgress, isCancelled */ },
-  endState: function() { /* 다음 씬에 넘길 상태 */ }
+  motion: {
+    mountCanvas: function(canvas){ /* #motion-canvas DOM */ },
+    reset: function(){ CanvasStage.reset(SceneMotion.canvas()); },
+    endState: function(){}
+  },
+
+  panel: {
+    reset: function(){ ScenePanel.reset(); },
+    endState: function(){}
+  },
+
+  play: async function(ctx){
+    var T = createSceneTiming(ctx, this._baseAnimMs);
+    setActiveSceneTiming(T);
+    try {
+      await T.padStart();
+      setSceneTitle(this.title);
+      showElement('#scene-title-main');
+      await MotionBadgeHeroAcquire.run(ctx, { target: badge });
+      await T.padEnd();
+    } finally {
+      setActiveSceneTiming(null);
+    }
+  }
+});
+```
+
+템플릿: `includes/scenes/_scene.template.js.asp`
+
+### 5-2. 레거시 씬 객체
+
+```javascript
+var MyScene01 = {
+  id, title, duration, mediaStartDelay?,
+  reset(), play(ctx), endState(), _mountCanvas()
 };
 ```
 
-**오브젝트 조작:** REUSE · SHOW · HIDE · MOVE · UPDATE · REPLACE · ANIMATE  
-**CREATE**는 재사용 컴포넌트가 없을 때만.
+신규 씬은 `defineScene` 사용.
 
-**reset 범위:** 해당 씬 canvas·패널만. `panel-fixed-title` 등 이전 씬에서 유지할 항목은 건드리지 않는다.
+### 5-3. 패널 DOM ID
 
-**씬 전환**
+| ID | 용도 |
+|----|------|
+| `#lo-scene-label` | 영상 타이틀 (상단 `#lo-bar`, series `meta.lessonTitle`) |
+| `#scene-title-main` | 씬 제목 |
+| `#panel-scene-desc` | 부연 1~2문장 |
+| `#scene-bullets` | bullet 리스트 |
 
-- 각 씬은 **단독 실행·reset** 가능해야 한다.
-- Scene01 → 02 → … 순차 재생 시 endState·`transitionCanvas` 등으로 **자연스럽게 연결**한다.
+> `#panel-fixed-title`은 제거됨 — 영상 타이틀은 상단 `#lo-scene-label`만 사용.
 
-### 9-5. Scene Media·동기화
-
-**미디어 위치**
-
-```
-voice/
-└── 01_base_business_running/
-    ├── scene01.mp4 … scene07.mp4
-```
-
-| 대응 | 예 |
-|------|-----|
-| Scene 01 | scene01.mp4 |
-| Scene 02 | scene02.mp4 |
-
-- Scene 번호 ↔ Media 파일 **1:1**. 경로는 `SceneMedia` / `voice_stream.asp` 경유 (IIS 정적 mp4 404 우회).
-- `duration`은 **실제 Media 길이 우선**. `SceneXX.md` Estimated Duration은 기획·`wait()` 임시값 참고용.
-
-**재생·동기화 흐름 (목표)**
+### 5-4. Media (음성)
 
 ```
-Play    → Media Play    → Animation Play
-Pause   → Media Pause   → Animation Pause
-Restart → Media Reset   → Scene Reset → Play
+voice/{seriesId}/scene01.mp4 … sceneNN.mp4
 ```
 
-- 애니메이션은 최종적으로 Media **`currentTime` 기준** 동기화한다.
-- `SceneXX.md` Timeline은 **나레이션 흐름·currentTime** 우선. 단순 `wait()` 숫자만 맞추지 않는다.
-
-**구현 참고 순서:** `SceneXX.md` → 실제 Media → `video_start.asp` → Object/Motion Library
-
-#### 현재 구현 상태 vs 목표
-
-| 항목 | 목표 | 현재 (2026-07) |
-|------|------|----------------|
-| Media 재생 | 씬 시작 시 mp4 | ? `sceneMedia.js.asp` + `voice_stream.asp` |
-| duration | Media 실제 길이 | ? `applyDurations()` (Scene01·02 등록 씬) |
-| Pause | Media ↔ 애니메이션 | ? SceneRunner `playToken` + Media pause |
-| Seek | Progress Bar 이동 | ? 씬 시작 지점 이동 (씬 내 초 단위는 후속) |
-| 타임라인 | Media `currentTime` 동기화 | ? Scene01·02는 `wait()` 병렬 (전환 예정) |
-
-> Media `currentTime` 전환 시 `sceneXX.js.asp`의 `play()`를 Media 이벤트(`timeupdate` 등) 기준으로 리팩터링한다.
-
-### 9-6. Include 체인 (BASE 챕터)
-
-```
-01_base_business_running.asp          ← guide.asp 진입 페이지
-├── includes/images.asp
-├── includes/styles.asp
-├── includes/motion.js.asp
-├── includes/sceneMedia.js.asp
-├── includes/sceneRunner.js.asp
-├── includes/playerControls.js.asp
-├── includes/series/01_base_business_running/scenes/scene01.js.asp
-├── includes/series/01_base_business_running/scenes/scene02.js.asp
-│   … scene07.js.asp (추가 시 동일 경로)
-├── includes/series/01_base_business_running/01_base_business_running.asp
-└── Series01BaseBusinessRunning.init()
-```
-
-**신규 씬 추가 절차**
-
-1. `SceneXX.md` 작성·확인
-2. `voice/…/sceneXX.mp4` 배치·길이 확인
-3. `scenes/sceneXX.js.asp` 생성 (`BaseSceneXX`)
-4. `01_base_business_running.asp`(루트)에 scene include 한 줄 추가
-5. `01_base_business_running.asp`(series)에 `SceneRunner.registerScene(BaseSceneXX)` 추가
-
-### 9-7. 진행 현황 (BASE 챕터)
-
-| Scene | 시나리오 | scene JS | register | Media |
-|-------|----------|----------|----------|-------|
-| 01 | `Scene01.md` | ? | ? | ? wait 병렬 |
-| 02 | `Scene02.md` | ? | ? | ? wait 병렬 |
-| 03~07 | 미작성 | ? | ? | ? |
-
-**인프라 완료:** `#layout-ov`, SceneRunner, SceneMedia, playerControls, seek, series 구조, `guide.asp` 링크
-
-### 9-8. 품질·체크리스트
-
-모든 Scene은 아래를 만족한다.
-
-- [ ] Object·Motion Library 재사용 (중복 keyframe·API 금지)
-- [ ] 단독 실행·반복 재생·reset 가능
-- [ ] Play / Pause / Seek(씬 단위) / Progress / 시간 표시
-- [ ] Media 재생 연동 (해당 mp4 존재 시)
-- [ ] 씬 간 시각적 점프 없음 (`transitionCanvas`, `enterMember` 등)
-- [ ] End State 유지 (다음 씬 연결)
-- [ ] Console Error 없음
-- [ ] `animationend` 누락 시 Promise fallback timeout
-- [ ] `prefers-reduced-motion`에서도 씬 완료
-- [ ] 한 씬에 핵심 메시지 하나 ? 조건·보너스 동시 몰아넣기 금지
+- registerScene **순서** ↔ mp4 번호 **1:1**
+- `SceneMedia.applyDurations()` — mp4 메타데이터로 `duration` 자동 반영
+- 재생: Play → motion + voice / Pause → 둘 다 / Seek → 씬 단위
 
 ---
 
-## 10. BASE사업자 이해하기 레슨
+## 6. Motion Component
 
-| Scene | 제목 | Media |
-|-------|------|-------|
-| 01 | BASE사업자란 무엇일까요? | scene01.mp4 |
-| 02 | 비즈니스 성장의 전환점 | scene02.mp4 |
-| 03 | BASE사업자의 의미 | scene03.mp4 |
-| 04 | BASE사업자가 되는 조건 | scene04.mp4 |
-| 05 | BASE사업자의 첫 번째 권리 | scene05.mp4 |
-| 06 | 권리 소득 시스템의 출발점 | scene06.mp4 |
-| 07 | 핵심 요약 | scene07.mp4 |
+### 6-1. 원칙
 
-**목표 길이:** 약 2분 50초 · **제작 순서:** Scene 01 단독 완성 → 검수 → 02 → … → 07 → 전체 연결
+- **2씬 이상** 동일 움직임 → `includes/motions/` 컴포넌트
+- `.run(ctx, overrides)` — defaults 불변, 씬별 옵션만 병합
+- 씬 파일에 50줄+ private 모션 메서드 금지
 
----
+### 6-2. 등록된 Motion Component
 
-## 11. 씬 제작 워크플로
+| 컴포넌트 | 파일 | 용도 |
+|----------|------|------|
+| `MotionCanvasStandardStage` | `canvas/standardStage` | 씬 캔버스 기본 마운트 |
+| `MotionCanvasFadeOut` | `canvas/fadeOut` | 캔버스 페이드·정리 |
+| `MotionCanvasTransitionMount` | `canvas/transitionMount` | 씬 전환 + 재구성 |
+| `MotionMemberEnter` | `member/enter` | 멤버 등장 |
+| `MotionMemberReplaceImage` | `member/replaceImage` | 이미지 교체 |
+| `MotionMemberPromoteHero` | `member/promoteHero` | 히어로 이동 |
+| `MotionBadgeHeroAcquire` | `badge/heroAcquire` | 배지 등장 |
+| `MotionBadgeFlyToAttach` | `badge/flyToAttach` | 배지 비행·부착 |
+| `MotionBadgeChildAutoshipAcquire` | `badge/childAutoshipAcquire` | 하위 오토십 |
+| `MotionConnectorDraw` | `connector/draw` | SVG 연결선 |
+| `MotionPanelHideBullets` | `panel/hideBullets` | bullet 숨김 |
+| `MotionPanelRevealBullets` | `panel/revealBullets` | bullet 순차 등장 |
+| `MotionEffectPulseHighlight` | `effect/pulseHighlight` | 하이라이트 |
+| `MotionObjectFloatEnter` | `effect/floatEnter` | 순차 플로팅 |
+
+### 6-3. 신규 씬 워크플로
 
 ```
-1. SceneXX.md 시나리오 확정
-2. voice/…/sceneXX.mp4 배치·duration 확인
-3. video_start.asp·Object/Motion Library 확인
-4. sceneXX.js.asp 독립 구현
-5. 단독 재생·reset·endState·Media 검수
-6. registerScene 및 include 추가
-7. 이전 씬과 연속 재생·전환·seek 검수
-8. 전체 Play/Pause/Progress/시간 표시 검수
+1. SceneXX 시나리오 작성 (§12 문법)
+2. voice/…/sceneXX.mp4 배치
+3. scenes/sceneXX.js.asp — defineScene + motion/panel/play
+4. 진입 ASP에 scene include + registerScene
+5. 단독·연속·seek·Media 검수
 ```
 
 ---
 
-## 12. 레거시 마이그레이션
+## 7. Motion Primitive API
 
-| 단계 | 내용 |
-|------|------|
-| 1 | 레거시 플레이어 유지 (참고) |
-| 2 | Object + Motion + Scene Runner로 신규 레슨 구축 |
-| 3 | 동작 비교 |
-| 4 | `guide.asp` 링크를 신규 페이지로 전환 |
-| 5 | 안정화 후 레거시 아카이브 (즉시 삭제 금지) |
+`motion.js.asp` — 씬·컴포넌트 내부 호출.
 
----
-
-## 13. 완료 기준 (BASE 챕터)
-
-1. Scene 01~07 독립 모듈, 단독·reset 가능  
-2. 동일 Object·Motion Library 재사용  
-3. 순차 재생 시 레이아웃 점프·DOM 중복 없음  
-4. Play / Pause / Replay / Progress / 시간 표시 정상  
-5. Fixed Chapter Title 일관 유지  
-6. BASE Badge ↔ Rank Medal 의미 독립 유지  
-7. SEP·Bonus는 HTML div 유지  
-8. 데스크톱·태블릿·모바일 반응형  
-9. JP/SP/FC 등 다른 챕터·시뮬레이터로 확장 가능한 구조  
+```
+wait, showElement, hideElement, enterElement, exitElement
+setSceneTitle, setSceneBullets, slideUpElement, staggerFade
+fadeCanvas, transitionCanvas
+createSceneTiming, sceneWait, sceneDur, setActiveSceneTiming
+resetMotion, resetMotionTree, resetScene
+enterMember, setRank, setAutoship, setSEP, …
+```
 
 ---
 
-## 14. Cursor AI 작업 지침
+## 8. 파일별 책임
 
-**작업 전 (필수)**
+| 파일 | 해야 할 일 | 하지 말 것 |
+|------|-----------|-----------|
+| `frame_layout.asp` | 영상 템플릿·에셋 데모 | 씬·모션 로직 (데모 제외) |
+| `○○_smartguide.asp` (루트) | HEAD + layout + runtime + scenes + init | 씬 타임라인 |
+| `video_layout.asp` | 고정 HTML 셸 | 씬별 콘텐츠 |
+| `video_runtime.asp` | 엔진 include 묶음 | — |
+| `defineScene.js.asp` | 씬 3요소 헬퍼 | 씬별 내용 |
+| `scenes/sceneXX.js.asp` | motion + panel + play | keyframe 중복 |
+| `series/…/01_….asp` | registerScene, meta, init | 타임라인 |
+| `sceneRunner.js.asp` | 재생·seek·UI 진행률 | 오브젝트 애니메이션 |
+| `video_controller_bottom.asp` | UI + playerControls | 씬 로직 |
+| `styles.asp` | 플레이어·오브젝트 CSS | 씬 문구 |
+| `_css/main.css` | NAV·page shell | 플레이어 모션 |
 
-1. `PROJECT_RULE.md` → `SceneXX.md` → `video_start.asp` 순으로 읽는다.
-2. 현재 프로젝트 구조·DOM ID·include 체인·기존 Object/Motion Library를 분석한다.
-3. 실제 파일명·함수명 확인 (추측·**동일 기능 중복 구현 금지**).
-4. Classic ASP SSI·`images.asp` 경로·반응형 유지.
+---
 
-**작업 후 보고**
+## 9. Object Library
 
-- 수정·생성 파일 / 재사용·추가 함수 / 변경 DOM ID / 테스트 방법 / 알려진 제한
+오브젝트 의미를 재해석·재디자인하지 않는다.
+
+| Object | 의미 |
+|--------|------|
+| Main / Child Member | 본인·하위 디슈머/사업자 |
+| Rank Medal | D~FC **지위** (BASE와 별개) |
+| Autoship Badge | 오토십 이용 |
+| BASE Badge | BASE사업자 **자격** |
+| SEP Badge | SEP 실적 (HTML) |
+| Bonus Plate | 추천·후원 보너스 (HTML) |
+
+**핵심:** BASE Badge ↔ Rank Medal **독립** — 교체·자동 승급 금지.
+
+---
+
+## 10. BASE사업자 이해하기
+
+guide.asp STEP 2 — **준비 중**.  
+`frame_layout.asp`를 복사해 `02_base_business_smartguide.asp`(가칭)를 만들고, `includes/series/02_base_business/` 아래에 씬·음성을 추가한다.
+
+| Scene | 제목 (기획) |
+|-------|-------------|
+| 01 | BASE사업자란? |
+| 02 | 비즈니스 성장의 전환점 |
+| 03 | BASE사업자의 의미 |
+| 04 | BASE사업자가 되는 조건 |
+| 05 | BASE사업자의 첫 번째 권리 |
+| 06 | 권리 소득 시스템의 출발점 |
+| 07 | 핵심 요약 |
+
+---
+
+## 11. Cursor AI 작업 지침
+
+**작업 전:** 시나리오 작성 → [부록 A](#부록-a-시나리오-작성-양식) / 코드 변환 → §12·`motions/`·`defineScene` 확인  
+**작업 후:** 수정 파일 / 재사용 컴포넌트 / DOM ID / 테스트 방법 보고
 
 **금지**
 
-- React·Vue·TypeScript·npm·Vite 마이그레이션
-- UI 임의 재디자인 (명시적 요청 없을 때)
-- 새 레이아웃·Object·Keyframe·Motion API 중복 생성
-- 모놀리식 단일 플레이어 파일 확장
-- 씬 정의·모션 primitive·타임라인을 한 파일에 혼합
+- React·Vue·TS·npm 마이그레이션
+- `includes/player/` 내부에서 `../` nested SSI
+- keyframe·Component 중복 생성
+- `#motion-stage-bg` 씬 reset 시 삭제
+- UI 임의 재디자인 (명시 요청 없을 때)
 
 ---
 
-*문서 끝*
+## 12. 시나리오 문법 (개발 참고)
+
+씬 기획·코드 변환용 상세 문법. **시나리오 작성은 [부록 A](#부록-a-시나리오-작성-양식)만 사용.**
+
+| 블록 | 역할 |
+|------|------|
+| `--- script ---` | 강의·나레이션 원고 (음성 mp4) |
+| `--- motion ---` | 좌 `#motion-canvas` — 에셋·멤버·애니메이션 |
+| `--- panel ---` | 우 `#lo-panel` — title·desc·bullets |
+| `--- end ---` | 씬 종료 후 다음 씬 seek 시 잔존 상태 |
+
+**MOTION:** `mount standardStage` · `show asset.*` / `member.*` · `animate` · `hide` · `canvas.fadeOut` · `end motion`  
+**PANEL:** `title` · `desc` · `bullets`(선택) · `show` / `hide`  
+**타이밍:** `@0.2s` = 씬 시작 후 초 · `@END-0.8s` = 씬 끝 0.8초 전 (mp4 길이 기준)
+
+---
+
+## 부록 A. 시나리오 작성 양식
+
+> **이 부록만 보고 작성.** 업로드 → 강의 영상 **초안** 제작 → 초안 보면서 수정·완성.
+
+**가이드 영상의 목적**  
+강의 **스크립트(음성)** + **좌측 모션그래픽** + **우측 텍스트 패널**이 함께 정보를 전달한다.
+
+| 요소 | 역할 |
+|------|------|
+| **음성 (mp4)** | 강의·나레이션 — 전달의 중심 |
+| **모션 (좌)** | 말하는 내용을 **보여 주는** 그래픽 (에셋·멤버·연결선·강조 등) |
+| **패널 (우)** | 핵심 주제·부연·bullet — **읽으며 정리**하는 텍스트 |
+
+씬은 **에셋 개수**가 아니라 **강의 주제가 바뀌는 단위**로 나눈다. 한 씬 안에 에셋·오브젝트가 여러 개 있어도 된다.
+
+---
+
+### A-1. 챕터 헤더 (문서 맨 위, 1회)
+
+```text
+# {챕터명}
+@lessonTitle {상단 바에 보일 영상 제목}
+@series {seriesId}
+@smartguide {파일명}.asp
+```
+
+| 항목 | 예 |
+|------|-----|
+| `@lessonTitle` | BASE사업자 이해하기 |
+| `@series` | `02_base_business` (voice 폴더명) |
+| `@smartguide` | `02_base_business_smartguide.asp` |
+
+---
+
+### A-2. 씬 양식 (씬마다 복사)
+
+**1씬 = 강의 주제 1단락** (스크립트 + 모션 + 패널 + 음성).  
+`## Scene 01`, `## Scene 02` … 로 반복한다.
+
+```text
+## Scene NN
+
+@scene NN
+@title {이 씬의 핵심 주제 — 패널 제목}
+@voice sceneNN.mp4
+@duration auto
+
+--- script ---
+{이 씬 음성(mp4) 스크립트 — 말할 내용 전체}
+
+--- motion ---
+@0.0s  mount standardStage
+@0.3s  show asset.base_business #sceneNN-base
+@0.3s  animate asset.enter #sceneNN-base
+{필요 시 추가 이벤트 — hide, show, member, connector, highlight …}
+@END-0.8s animate canvas.fadeOut
+@END-0.4s end motion
+
+--- panel ---
+@0.3s  title {핵심 주제 — script와 같은 맥락}
+@0.3s  show title
+@1.0s  desc {script를 보조하는 부연 1~2문장}
+@1.0s  show desc
+{필요 시 bullets}
+@END-1.0s hide desc
+@END-0.6s hide title
+
+--- end ---
+motion: {다음 씬 seek 시 캔버스 잔존 상태 — 보통 fadeOut 후 empty}
+panel: title hidden, desc hidden
+```
+
+**블록별 작성 요령**
+
+| 블록 | 작성 내용 |
+|------|-----------|
+| `--- script ---` | **먼저 작성.** mp4에 실릴 나레이션·강의 원고 |
+| `--- motion ---` | script를 **시각화** — 등장·강조·교체·연결선 등 시간순 |
+| `--- panel ---` | script의 **핵심만 텍스트로 정리** — title·desc·bullets |
+| `--- end ---` | 씬 종료·다음 씬 연결 시 유지할 상태 |
+
+**모션에 쓸 수 있는 것 (필요한 만큼 조합)**
+
+| 구문 | 용도 |
+|------|------|
+| `show asset.{키} #id` | 지위·배지 에셋 ([A-3](#a-3-에셋-목록)) |
+| `show member.main` / `member.child` | 멤버 유닛 |
+| `animate asset.enter` / `member.enter` | 등장 |
+| `animate effect.pulseHighlight` | 강조 |
+| `draw connector left\|right` | 연결선 |
+| `hide #id` | 교체·정리 전 숨김 |
+| `idle float #id` | 가벼운 반복 움직임 (선택) |
+
+**패널 bullets (선택)**
+
+```text
+@3.0s  bullets
+  - 핵심 포인트 1
+  - 핵심 포인트 2
+@3.0s  show bullets
+@END-1.0s hide bullets
+```
+
+**씬 나누는 기준**
+
+- ✅ 주제·전개가 바뀔 때 (예: 「BASE란?」 → 「되는 조건」)
+- ✅ 스크립트가 한 덩어리의 메시지를 끝낼 때
+- ❌ 에셋 1개 = 씬 1개 (지위 12개라고 12씬 필수 **아님**)
+
+---
+
+### A-3. 에셋 목록
+
+모션 `show asset.{에셋키}` 에 사용. **씬 개수와 무관** — script·모션 기획에 맞게 골라 쓴다.  
+패널 `title` / `desc` 는 **script에 맞게** 작성 (아래 표는 기본 표기 참고).
+
+**지위 (12단계)**
+
+| 에셋키 | title | desc |
+|--------|-------|------|
+| `lev_d` | D 지위 | Disumer |
+| `lev_p` | P 지위 | Pioneer |
+| `lev_jp` | JP 지위 | Junior Pioneer |
+| `lev_sp` | SP 지위 | Senior Pioneer |
+| `lev_fc` | FC 지위 | First Class |
+| `lev_gc` | GC 지위 | Gold Class |
+| `lev_dc` | DC 지위 | Diamond Class |
+| `lev_rf` | RF 지위 | Royal Family |
+| `lev_crf` | CRF 지위 | Crown Royal Family |
+| `lev_mrf` | MRF 지위 | Major Royal Family |
+| `lev_srf` | SRF 지위 | Special Royal Family |
+| `lev_irf` | IRF 지위 | Imperial Royal Family |
+
+**자격·서비스·보너스 (3종)**
+
+| 에셋키 | title | desc |
+|--------|-------|------|
+| `base_business` | 베이스 사업자 | BASE Business |
+| `autoship` | 오토십 | 20% 할인 구독 서비스 |
+| `recommend_bonus` | 추천 보너스 | 추천회원 한명당 1point 책정 |
+
+> 지위(D~IRF)와 베이스 사업자 자격은 **별개 개념** — 혼동하지 않는다.
+
+**신규 에셋 (자격·서비스·보너스 계열)**  
+목록에 없는 배지형 에셋이 필요하면 **`base_business` · `autoship` · `recommend_bonus` 아이콘의 HTML·CSS 레이아웃을 참고**해 `includes/components/` + `_css/icon_style.css`에 추가한다.  
+시나리오에는 `에셋키`, `title`, `desc`, 라벨 글자(1자), `aria-label`을 함께 적는다.
+
+#### 배지형 에셋 — 공통 HTML 구조
+
+3종 모두 **둥근 라벨(1글자) + 텍스트**를 가로로 나열한 **캡슐형 배지**다.
+
+```html
+<div class="{이름}_icon" aria-label="{접근성 설명}">
+  <div class="{이름}_label">{1글자}</div>
+  <div class="{이름}_text">{한글 표기}</div>
+</div>
+```
+
+| 파일 | 예 |
+|------|-----|
+| 컴포넌트 | `includes/components/base_business_icon.asp` |
+| CSS | `_css/icon_style.css` 해당 섹션 |
+| 시나리오 키 | `show asset.base_business` → templateId `base_business_icon` |
+
+**3종 HTML·라벨 매핑**
+
+| 컴포넌트 | 루트 class | label class | text class | 라벨 글자 |
+|----------|------------|-------------|------------|-----------|
+| 베이스 사업자 | `.base_business_icon` | `.base_label` | `.base_text` | B |
+| 오토십 | `.autoship_icon` | `.autoship_label` | `.autoship_text` | A |
+| 추천 보너스 | `.recommend_bonus_icon` | `.recommend_bonus_label` | `.recommend_bonus_text` | R |
+
+#### 배지형 에셋 — 공통 CSS 구조
+
+**외곽 `{이름}_icon`** (3종 동일 골격, 색상만 다름)
+
+| 속성 | 값 |
+|------|-----|
+| 레이아웃 | `inline-flex`, `align-items:center`, `height:36px`, `padding:5px 7px`, `gap:5px` |
+| 배경 | `linear-gradient(120deg, …)` |
+| 테두리 | `box-shadow: inset 0 0 0 2px {색}` |
+| 모서리 | `border-radius:10px` |
+| 폰트 | `font-family: var(--font-sans, 'MinSansVF', sans-serif)` |
+
+**원형 라벨 `{이름}_label`**
+
+| 속성 | 값 |
+|------|-----|
+| 크기 | `24×24px`, `border-radius:50%` |
+| 글자 | `font-size:15px`, `font-weight:700~900`, 가운데 정렬 |
+| 색 | 배경색·글자색은 에셋별 지정 |
+
+**텍스트 `{이름}_text`**
+
+| 속성 | 값 |
+|------|-----|
+| 글자 | `font-size:18px`, `font-weight:700`, `line-height:18px` |
+| 줄바꿈 | `white-space:nowrap` |
+| 색 | 에셋별 지정 (밝은 배경 → 진한 글자, 어두운 배경 → 흰 글자) |
+
+**3종 색상 참고**
+
+| 에셋 | 그라데이션·테두리 톤 | 라벨 원 | 텍스트 |
+|------|----------------------|---------|--------|
+| base_business | 녹색 `#118839` 계열 | `#54BE12` / 흰 글자 | `#fff` |
+| autoship | 남색 `#2c51ca` 계열 | `#B3B1FF` / `#0B2A91` | `#fff` |
+| recommend_bonus | 금색 `#ffd738` 계열 | `#C7A417` / `#FFEEA9` | `#665308` |
+
+#### 신규 배지형 에셋 — 시나리오에 적을 항목
+
+```text
+@assetNew {에셋키}
+@assetFile {이름}_icon.asp
+@assetLabel {1글자}
+@assetAria {aria-label 문구}
+@title / @desc  ← A-2 패널과 동일
+@colors {선택: 그라데이션·라벨·텍스트 hex 요약}
+```
+
+신규 에셋 씬에서 `show asset.{에셋키}` 로 사용. A-2 `--- script ---`·패널 문구와 함께 기재.
+
+---
+
+### A-4. 작성 규칙
+
+1. **씬 번호** — 01부터 빠짐없이, `@voice sceneNN.mp4` 번호와 일치
+2. **씬 분할** — **강의 주제·전개** 기준; 에셋 개수로 씬 수를 맞추지 않음
+3. **작성 순서** — `--- script ---` → `--- motion ---` → `--- panel ---` (음성 중심, 모션·패널은 보조)
+4. **영상 제목** — `@lessonTitle`은 A-1 헤더에만; 패널에 반복하지 않음
+5. **패널** — `title` 필수; `desc`·`bullets`는 script 전달에 필요할 만큼
+6. **모션·패널** — 같은 씬 안에서 **같은 메시지**를 다른 방식으로 전달 (모션=보여줌, 패널=글로 정리)
+7. **초안 이후** — mp4 길이 확정 후 `@END-…` 시점·문구·모션 타이밍 조정
+
+---
+
+### A-5. 작업 흐름
+
+```
+1. A-1 챕터 헤더 작성
+2. 씬마다 script(강의 원고) 작성
+3. script에 맞춰 motion·panel 타임라인 작성
+4. 업로드 → 강의 영상 초안 제작
+5. 초안 시청 → 스크립트·타이밍·모션·패널 수정 → 완성
+```
+
+에셋·지위 **미리보기:** `frame_layout.asp` (컴포넌트 15종 데모, 시나리오 양식과 별개)
+
+---
+
+*문서 끝 — 시나리오 작성은 **부록 A***

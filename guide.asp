@@ -5,15 +5,14 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>가이드 영상 - ALTWELL SMART GUIDE</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-<!--#include file="includes/styles.asp"-->
-</style>
+<!--#include file="includes/fonts.asp"-->
+<!--#include file="includes/main_css.asp"-->
+<link rel="stylesheet" href="_css/guide.css"/>
 </head>
 <body class="d2 page-list">
 <nav id="nav">
-  <button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>
-  <div class="nav-logo">ALTWELL<span> SMART GUIDE</span></div>
+  <!--<button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>-->
+  <button type="button" class="nav-logo" onclick="location.href='index.asp'" aria-label="홈으로">ALTWELL<span> SMART GUIDE</span></button>
   <span id="nav-page-title">가이드 영상</span>
   <div class="nav-spacer"></div>
 </nav>
@@ -28,7 +27,7 @@
       <button class="vt" onclick="setView('list',this)">리스트</button>
     </div>
     <div class="cards-grid" id="vcards">
-      <div class="vcard" onclick="location.href='video_start.asp'">
+      <div class="vcard" onclick="location.href='frame_layout.asp'">
         <div class="vc-thumb"><div class="vc-thumb-inner g1">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
@@ -40,27 +39,39 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='01_base_business_running.asp?from=guide'">
+      <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
           <div class="vc-top"><span class="vc-step">STEP 2</span><span class="vc-new">NEW</span></div>
+          <div class="vc-title">오토십 알아보기</div>
+          <div class="vc-desc">3개월 정기 구독 서비스의 혜택과 이용 기준</div>
+          <div class="vc-meta">? 7씬</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+      <div class="vcard">
+        <div class="vc-thumb"><div class="vc-thumb-inner g4">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">STEP 2B</span><span class="vc-soon">준비 중</span></div>
           <div class="vc-title">BASE사업자 이해하기</div>
           <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자</div>
           <div class="vc-meta">? 3분</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="vcard">
+      <div class="vcard" onclick="location.href='03_sep_growth_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">STEP 3</span><span class="vc-soon">준비 중</span></div>
+          <div class="vc-top"><span class="vc-step">STEP 3</span><span class="vc-new">TEST</span></div>
           <div class="vc-title">SEP 성장하기</div>
           <div class="vc-desc">실적을 쌓고 조직을 성장시키는 SEP 전략</div>
-          <div class="vc-meta">? 18분</div>
+          <div class="vc-meta">? 0:10</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>

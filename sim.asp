@@ -5,15 +5,14 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>시뮬레이터 - ALTWELL SMART GUIDE</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-<style>
-<!--#include file="includes/styles.asp"-->
-</style>
+<!--#include file="includes/fonts.asp"-->
+<!--#include file="includes/main_css.asp"-->
+<link rel="stylesheet" href="_css/sim.css"/>
 </head>
 <body class="d2 page-list">
 <nav id="nav">
-  <button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>
-  <div class="nav-logo">ALTWELL<span> SMART GUIDE</span></div>
+  <!--<button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>-->
+  <button type="button" class="nav-logo" onclick="location.href='index.asp'" aria-label="홈으로">ALTWELL<span> SMART GUIDE</span></button>
   <span id="nav-page-title">시뮬레이터</span>
   <div class="nav-spacer"></div>
 </nav>
