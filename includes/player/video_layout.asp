@@ -26,6 +26,9 @@
           <!-- 씬별 모션 그래픽 주입면 -->
           <div id="motion-canvas"></div>
 
+          <!-- 7×7 존 배치 그리드 (씬 reset 시에도 유지) -->
+          <div id="motion-zone-grid" aria-hidden="true"></div>
+
         </section>
       </div>
     </div>

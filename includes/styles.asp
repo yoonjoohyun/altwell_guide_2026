@@ -280,6 +280,37 @@
   background-image:radial-gradient(circle,rgba(255,255,255,.3) 1px,transparent 1px);
   background-size:28px 28px;
 }
+/* 7×7 존 그리드 — MOTION_GRID_GUIDE.md (안전 여백 내 작업 영역) */
+#motion-zone-grid{
+  --motion-safe-inset:10px;
+  position:absolute;
+  left:var(--motion-safe-inset);
+  top:var(--motion-safe-inset);
+  width:calc(100% - 2 * var(--motion-safe-inset));
+  height:calc(100% - 2 * var(--motion-safe-inset));
+  z-index:5;
+  pointer-events:none;
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  grid-template-rows:repeat(7,1fr);
+  outline:1px solid rgba(30,90,180,.35);
+  background-image:
+    linear-gradient(to right,rgba(30,90,180,.22) 1px,transparent 1px),
+    linear-gradient(to bottom,rgba(30,90,180,.22) 1px,transparent 1px);
+  background-size:calc(100% / 7) 100%,100% calc(100% / 7);
+}
+#motion-zone-grid .motion-zone-cell{
+  display:flex;align-items:center;justify-content:center;
+  font-size:clamp(6px,0.65vw,10px);
+  font-weight:700;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  letter-spacing:-.02em;
+  color:rgba(30,90,180,.42);
+  line-height:1;
+}
+@media(max-width:900px){
+  #motion-zone-grid{--motion-safe-inset:5px}
+}
 /* SVG 관계 연결선 */
 #lo-connectors{
   position:absolute;inset:0;width:100%;height:100%;
