@@ -39,7 +39,7 @@ var Guide01 = (function(){
 
   function mountStage(canvas, extraCls){
     var cls = CANVAS_CLS + (extraCls ? ' ' + extraCls : '');
-    MotionCanvasStandardStage.run({ canvas: canvas, sceneClass: cls });
+    MotionCanvasStandardStage.run({ canvas: canvas }, { sceneClass: cls });
   }
 
   function cloneTemplate(id){
@@ -57,12 +57,108 @@ var Guide01 = (function(){
     return node;
   }
 
+  function parseZone(zone){
+    var m = /^([a-g])([1-7])$/i.exec(String(zone || '').trim());
+    if(!m) return null;
+    return { row: m[1].toLowerCase().charCodeAt(0) - 96, col: parseInt(m[2], 10) };
+  }
+
+  function placeAtZone(el, zone){
+    if(!el) return el;
+    var z = parseZone(zone);
+    if(!z) return el;
+    el.classList.add('lo-zone-place');
+    el.setAttribute('data-zone', String(zone).toLowerCase());
+    el.style.setProperty('--zone-row', z.row);
+    el.style.setProperty('--zone-col', z.col);
+    return el;
+  }
+
+  function addZonedAsset(canvas, templateId, elId, zone){
+    var node = cloneTemplate(templateId);
+    if(!node) return null;
+
+    var wrap = document.createElement('div');
+    wrap.id = elId;
+    wrap.className = 'g01-zone-wrap is-hidden';
+    placeAtZone(wrap, zone);
+
+    node.classList.add('guide01-asset');
+    wrap.appendChild(node);
+    canvas.appendChild(wrap);
+    return wrap;
+  }
+
   async function showAsset(el){
     if(!el) return;
     showElement(el);
     el.classList.add('asset-enter');
     await wait(500);
     el.classList.remove('asset-enter');
+  }
+
+  async function showZoned(wrap){
+    if(!wrap) return;
+    showElement(wrap);
+    var inner = wrap.querySelector('.guide01-asset') || wrap.firstElementChild;
+    if(!inner) return;
+    showElement(inner);
+    inner.classList.add('asset-enter');
+    await wait(500);
+    inner.classList.remove('asset-enter');
+    inner.style.opacity = '1';
+  }
+
+  function animateZoneBouncePath(ctx, wrap, options){
+    options = options || {};
+    if(!wrap) return Promise.resolve();
+
+    var from = parseZone(options.from || 'a1');
+    var to = parseZone(options.to || 'g7');
+    if(!from || !to) return Promise.resolve();
+
+    var duration = options.duration || 29000;
+    var bouncePx = options.bouncePx != null ? options.bouncePx : 16;
+    var cycles = options.bounces != null ? options.bounces : 13;
+    var scale = options.scale != null ? options.scale : 1.15;
+    var inner = wrap.querySelector('.guide01-asset') || wrap.firstElementChild;
+    var rafId = 0;
+
+    wrap.classList.add('is-zone-travel');
+
+    return new Promise(function(resolve){
+      var start = performance.now();
+
+      function finish(){
+        if(rafId) cancelAnimationFrame(rafId);
+        wrap.classList.remove('is-zone-travel');
+        placeAtZone(wrap, options.to || 'g7');
+        if(inner) inner.style.transform = 'scale(' + scale + ') translateY(0)';
+        resolve();
+      }
+
+      function frame(now){
+        if(ctx && MotionComponent.cancelled(ctx)) return finish();
+
+        var t = Math.min(1, (now - start) / duration);
+        var eased = t < 0.5
+          ? 4 * t * t * t
+          : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        wrap.style.setProperty('--zone-row', String(from.row + (to.row - from.row) * eased));
+        wrap.style.setProperty('--zone-col', String(from.col + (to.col - from.col) * eased));
+
+        if(inner){
+          var bounce = Math.sin(t * Math.PI * 2 * cycles) * bouncePx;
+          inner.style.transform = 'scale(' + scale + ') translateY(' + bounce.toFixed(2) + 'px)';
+        }
+
+        if(t < 1) rafId = requestAnimationFrame(frame);
+        else finish();
+      }
+
+      rafId = requestAnimationFrame(frame);
+    });
   }
 
   function addCard(canvas, id, html, extraCls){
@@ -249,7 +345,12 @@ var Guide01 = (function(){
     resetScene: resetScene,
     mountStage: mountStage,
     addAsset: addAsset,
+    parseZone: parseZone,
+    placeAtZone: placeAtZone,
+    addZonedAsset: addZonedAsset,
     showAsset: showAsset,
+    showZoned: showZoned,
+    animateZoneBouncePath: animateZoneBouncePath,
     addCard: addCard,
     showCard: showCard,
     hideCard: hideCard,
