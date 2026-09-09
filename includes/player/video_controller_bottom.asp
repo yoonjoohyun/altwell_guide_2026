@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="_css/video_controller.css"/>
+<link rel="stylesheet" href="/_css/video_controller.css"/>
   <!-- ③ 영상 하단 컨트롤러 (디자인 시안) -->
   <footer id="lo-ctrl" aria-label="영상 컨트롤러">
     <div id="lo-progress-wrap">

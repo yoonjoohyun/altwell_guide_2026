@@ -10,7 +10,7 @@ var SeriesGuide01 = {
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
 
-    SceneRunner.registerScene(Guide01Scene01);
+    /* 씬 추가 시: SceneRunner.registerScene(Guide01SceneNN); */
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);

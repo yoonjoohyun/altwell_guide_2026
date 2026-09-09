@@ -1,5 +1,4 @@
-<link rel="stylesheet" href="_css/main.css"/>
-<link rel="stylesheet" href="_css/video_controller.css"/>
+<link rel="stylesheet" href="/_css/video_controller.css"/>
   <!-- ① 영상 상단 프레임 (디자인 시안) -->
   <header id="lo-bar" aria-label="영상 상단">
     <div id="lo-bar-left">

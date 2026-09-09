@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 
-<title>오토십 알아보기 - ALTWELL SMART GUIDE</title>
+<title>0909 모션 테스트 - ALTWELL SMART GUIDE</title>
 
 <!--#include virtual="/includes/fonts.asp"-->
 
@@ -46,12 +46,15 @@
 
 
 
-<!-- 씬 추가 시: scenes/sceneNN.js.asp include 후 guide01.asp에서 registerScene -->
-<!--#include virtual="/includes/series/guide01/scenes/scene01.js.asp"-->
+<!-- 0909 테스트: 멤버 에셋 부착 등 실험 씬 -->
+<!--#include virtual="/includes/series/guide01/scenes/scene01_test.js.asp"-->
 
 <!--#include virtual="/includes/series/guide01/guide01.asp"-->
 
-<script>SeriesGuide01.init();</script>
+<script>
+SceneRunner.registerScene(Guide01Scene01);
+SeriesGuide01.init();
+</script>
 
 
 
