@@ -27,6 +27,84 @@
   z-index:auto;
 }
 
+/* 멤버 아이콘 + 부착 슬롯 */
+.guide01-canvas .g01-member-stack{
+  position:relative;
+  display:inline-block;
+  line-height:0;
+}
+
+.guide01-canvas .g01-member-stack .member_icon{
+  --size:140px;
+  display:block;
+}
+
+.guide01-canvas .g01-member-slots{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.guide01-canvas .g01-attach-slot{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2;
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="autoship"]{
+  bottom:4%;
+  left:-6%;
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="rank"]{
+  bottom:4%;
+  right:-6%;
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="base"]{
+  bottom:-2%;
+  left:50%;
+  transform:translateX(-50%);
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="bonus"]{
+  top:6%;
+  right:-10%;
+}
+
+.guide01-canvas .g01-attached-badge{
+  transform-origin:center center;
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="autoship"] .autoship_icon_c{
+  --size:30px;
+  transform:scale(1);
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="rank"] .lev_p{
+  --size:42px;
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="base"] .base_business_icon_c{
+  --size:30px;
+  transform:scale(1);
+}
+
+.guide01-canvas .g01-attach-slot[data-slot="bonus"] .recommend_bonus_icon_c{
+  --size:30px;
+  transform:scale(1);
+}
+
+.guide01-canvas .g01-fly-badge{
+  position:absolute;
+  z-index:20;
+  pointer-events:none;
+  margin:0;
+  transform-origin:center center;
+}
+
 .guide01-canvas .g01-zone-wrap.is-zone-travel .guide01-asset{
   will-change:transform;
 }

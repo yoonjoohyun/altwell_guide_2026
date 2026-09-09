@@ -319,6 +319,149 @@ var Guide01 = (function(){
     return el;
   }
 
+  var ATTACH_SLOT_KEYS = ['autoship', 'rank', 'base', 'bonus'];
+
+  function mountMemberAtZone(canvas, elId, zone){
+    var wrap = document.createElement('div');
+    wrap.id = elId;
+    wrap.className = 'g01-zone-wrap g01-member-unit is-hidden';
+    placeAtZone(wrap, zone);
+
+    var stack = document.createElement('div');
+    stack.className = 'g01-member-stack';
+
+    var icon = cloneTemplate('member_icon');
+    if(icon){
+      icon.id = elId + '-icon';
+      stack.appendChild(icon);
+    }
+
+    var slots = document.createElement('div');
+    slots.className = 'g01-member-slots';
+    for(var i = 0; i < ATTACH_SLOT_KEYS.length; i++){
+      var key = ATTACH_SLOT_KEYS[i];
+      var slot = document.createElement('div');
+      slot.className = 'g01-attach-slot';
+      slot.setAttribute('data-slot', key);
+      slot.id = elId + '-slot-' + key;
+      slots.appendChild(slot);
+    }
+    stack.appendChild(slots);
+    wrap.appendChild(stack);
+    canvas.appendChild(wrap);
+    return wrap;
+  }
+
+  function prepareMemberAttach(wrap, spec){
+    if(!wrap || !spec) return null;
+    var slot = wrap.querySelector('[data-slot="' + spec.slot + '"]');
+    if(!slot) return null;
+
+    var attached = cloneTemplate(spec.closedTemplate);
+    if(!attached) return null;
+    attached.id = (wrap.id || 'member') + '-attached-' + spec.slot;
+    attached.classList.add('g01-attached-badge', 'is-hidden');
+    slot.appendChild(attached);
+    return { slot: slot, attached: attached, openTemplate: spec.openTemplate };
+  }
+
+  async function showMemberWrap(wrap){
+    if(!wrap) return;
+    showElement(wrap);
+    var icon = wrap.querySelector('.member_icon');
+    if(!icon) return;
+    icon.classList.add('asset-enter');
+    await wait(500);
+    icon.classList.remove('asset-enter');
+  }
+
+  async function flyAttachToMember(ctx, canvas, plan, options){
+    options = options || {};
+    if(!plan || !plan.attached || !canvas) return;
+
+    var openTpl = plan.openTemplate || plan.closedTemplate;
+    var flyer = cloneTemplate(openTpl);
+    if(!flyer) return;
+
+    if(flyer.classList.contains('autoship_icon') ||
+       flyer.classList.contains('autoship_icon_o') ||
+       flyer.classList.contains('autoship_icon_c')){
+      badgeToOpen(flyer);
+    } else if(flyer.classList.contains('base_business_icon') ||
+              flyer.classList.contains('base_business_icon_o') ||
+              flyer.classList.contains('base_business_icon_c')){
+      badgeToOpen(flyer);
+    } else if(flyer.classList.contains('recommend_bonus_icon') ||
+              flyer.classList.contains('recommend_bonus_icon_o') ||
+              flyer.classList.contains('recommend_bonus_icon_c')){
+      badgeToOpen(flyer);
+    }
+
+    flyer.classList.add('g01-fly-badge', 'guide01-asset');
+    canvas.appendChild(flyer);
+
+    var canvasRect = canvas.getBoundingClientRect();
+    var centerX = canvasRect.width / 2;
+    var centerY = canvasRect.height / 2;
+
+    plan.attached.classList.remove('is-hidden');
+    plan.attached.style.visibility = 'hidden';
+    var targetRect = plan.attached.getBoundingClientRect();
+    plan.attached.style.visibility = '';
+    plan.attached.classList.add('is-hidden');
+
+    var endX = targetRect.left + targetRect.width / 2 - canvasRect.left;
+    var endY = targetRect.top + targetRect.height / 2 - canvasRect.top;
+    var flyDur = options.duration || 900;
+    var fadeDur = options.fadeDuration || 280;
+
+    flyer.style.left = centerX + 'px';
+    flyer.style.top = centerY + 'px';
+    flyer.style.opacity = '1';
+    flyer.style.transition = 'none';
+    flyer.style.transform = 'translate(-50%,-50%) scale(1.15)';
+    void flyer.offsetWidth;
+
+    var flyRect = flyer.getBoundingClientRect();
+    var targetScale = targetRect.width / Math.max(flyRect.width, 1);
+
+    flyer.style.transition =
+      'left ' + flyDur + 'ms var(--ease-smooth), ' +
+      'top ' + flyDur + 'ms var(--ease-smooth), ' +
+      'transform ' + flyDur + 'ms var(--ease-smooth)';
+
+    await wait(40);
+    if(ctx && MotionComponent.cancelled(ctx)) return;
+
+    flyer.style.left = endX + 'px';
+    flyer.style.top = endY + 'px';
+    flyer.style.transform = 'translate(-50%,-50%) scale(' + targetScale + ')';
+    await wait(flyDur);
+
+    if(ctx && MotionComponent.cancelled(ctx)) return;
+
+    flyer.style.transition = 'opacity ' + fadeDur + 'ms var(--ease-smooth)';
+    flyer.style.opacity = '0';
+    await wait(fadeDur);
+    if(flyer.parentNode) flyer.parentNode.removeChild(flyer);
+
+    showElement(plan.attached);
+    await softAcquireElement(plan.attached, {
+      duration: options.acquireDuration || 520,
+      glow: options.glow !== false
+    });
+  }
+
+  async function runMemberAttachSequence(ctx, canvas, plans, tl, schedule){
+    schedule = schedule || [];
+    for(var i = 0; i < plans.length; i++){
+      var when = schedule[i] != null ? schedule[i] : (800 + i * 6500);
+      await tl.wait(when);
+      if(ctx && MotionComponent.cancelled(ctx)) return;
+      await flyAttachToMember(ctx, canvas, plans[i], { duration: 900 });
+    }
+  }
+
   var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
 
   function badgeSetMode(el, mode){
@@ -351,6 +494,11 @@ var Guide01 = (function(){
     showAsset: showAsset,
     showZoned: showZoned,
     animateZoneBouncePath: animateZoneBouncePath,
+    mountMemberAtZone: mountMemberAtZone,
+    prepareMemberAttach: prepareMemberAttach,
+    showMemberWrap: showMemberWrap,
+    flyAttachToMember: flyAttachToMember,
+    runMemberAttachSequence: runMemberAttachSequence,
     addCard: addCard,
     showCard: showCard,
     hideCard: hideCard,

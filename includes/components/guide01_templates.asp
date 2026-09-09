@@ -6,4 +6,6 @@
   <div data-template="base_business_icon_c"><!--#include file="base_business_icon_c.asp"--></div>
   <div data-template="recommend_bonus_icon"><!--#include file="recommend_bonus_icon.asp"--></div>
   <div data-template="recommend_bonus_icon_c"><!--#include file="recommend_bonus_icon_c.asp"--></div>
+  <div data-template="member_icon"><!--#include file="member_icon.asp"--></div>
+  <div data-template="lev_p"><!--#include file="lev_p.asp"--></div>
 </div>
