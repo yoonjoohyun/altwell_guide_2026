@@ -47,6 +47,8 @@
 
 
 <!-- 씬 추가 시: scenes/sceneNN.js.asp include 후 guide01.asp에서 registerScene -->
+<!--#include virtual="/includes/series/guide01/scenes/scene01.constants.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene01.setup.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene01.js.asp"-->
 
 <!--#include virtual="/includes/series/guide01/guide01.asp"-->

@@ -14,6 +14,19 @@
   pointer-events:none;
 }
 
+.guide01-canvas .g01-zone-wrap.g01-layer-back{z-index:10}
+.guide01-canvas .g01-zone-wrap.g01-layer-front{z-index:14}
+
+.guide01-canvas .g01-zone-wrap.is-zone-moving{
+  transition:none;
+  will-change:transform;
+}
+
+.guide01-canvas .g01-zone-wrap.is-zone-moving .g01-float-inner{
+  transition:none;
+  will-change:transform;
+}
+
 .guide01-canvas .lo-zone-place{
   left:calc(10px + (var(--zone-col) - 0.5) / 7 * (100% - 20px));
   top:calc(10px + (var(--zone-row) - 0.5) / 7 * (100% - 20px));
@@ -444,6 +457,176 @@
 
 .guide01-canvas .asset-enter{
   animation:g01-badge-enter .5s cubic-bezier(.22,1,.36,1) both;
+}
+
+.guide01-canvas .g01-float-inner{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  transform-origin:center center;
+  backface-visibility:hidden;
+}
+
+.guide01-canvas .g01-zone-wrap .calendar_month_card,
+.guide01-canvas .g01-zone-wrap .product_silhouette_card,
+.guide01-canvas .g01-zone-wrap .price_step_card,
+.guide01-canvas .g01-zone-wrap .status_check_icon,
+.guide01-canvas .g01-zone-wrap .cashback_card,
+.guide01-canvas .g01-zone-wrap .point_token_icon,
+.guide01-canvas .g01-zone-wrap .person_icon,
+.guide01-canvas .g01-zone-wrap .member_icon,
+.guide01-canvas .g01-zone-wrap .lev_p{
+  position:relative;
+  left:auto;
+  top:auto;
+  transform:none;
+}
+
+.guide01-canvas .g01-cycle-ring{
+  width:72%;
+  height:58%;
+  border:2px dashed rgba(30,90,180,.38);
+  border-radius:50%;
+  box-sizing:border-box;
+  background:transparent;
+}
+
+.guide01-canvas .g01-mini-bonus{
+  transform:scale(.82);
+  transform-origin:center center;
+}
+
+.guide01-canvas .g01-connector-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:8;
+  overflow:visible;
+}
+
+.guide01-canvas .g01-connector-svg line{
+  stroke:rgba(30,90,180,.42);
+  stroke-width:2.2;
+  stroke-linecap:round;
+  fill:none;
+  stroke-dasharray:320;
+  stroke-dashoffset:320;
+}
+
+.guide01-canvas .g01-connector-svg line.is-visible{
+  animation:g01-draw-line .75s ease forwards;
+}
+
+@keyframes g01-draw-line{
+  to{stroke-dashoffset:0}
+}
+
+@keyframes g01-pop-scale{
+  from{opacity:0;transform:scale(var(--g01-from-scale,0.88)) translateZ(0)}
+  to{opacity:1;transform:scale(var(--g01-base-scale,1)) translateZ(0)}
+}
+
+@keyframes g01-coin-drop{
+  from{opacity:0;transform:scale(var(--g01-base-scale,1)) translate3d(0,-22px,0)}
+  to{opacity:1;transform:scale(var(--g01-base-scale,1)) translateZ(0)}
+}
+
+@keyframes g01-zone-enter{
+  from{opacity:0;transform:scale(var(--g01-from-scale,0.94)) translate3d(0,4px,0)}
+  to{opacity:1;transform:scale(var(--g01-base-scale,1)) translateZ(0)}
+}
+
+@keyframes g01-idle-float{
+  0%,100%{transform:scale(var(--g01-base-scale,1)) translateY(0)}
+  50%{transform:scale(var(--g01-base-scale,1)) translateY(-3px)}
+}
+
+.guide01-canvas .g01-float-inner.g01-anim-pop{
+  animation:g01-pop-scale var(--g01-anim-dur,520ms) cubic-bezier(.22,1,.36,1) both;
+  will-change:transform,opacity;
+}
+
+.guide01-canvas .g01-float-inner.g01-anim-drop{
+  animation:g01-coin-drop var(--g01-anim-dur,520ms) cubic-bezier(.22,1,.36,1) both;
+  will-change:transform,opacity;
+}
+
+.guide01-canvas .g01-float-inner.g01-anim-enter{
+  animation:g01-zone-enter var(--g01-anim-dur,420ms) cubic-bezier(.22,1,.36,1) both;
+  will-change:transform,opacity;
+}
+
+.guide01-canvas .g01-float-inner.g01-idle-float{
+  animation:g01-idle-float 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+/* Badge fold — gap→0 + 텍스트 margin-left로 간격 대체, track clip으로 함께 수축 */
+.g01-badge-foldable[class*="_icon"]{
+  justify-content:flex-start;
+  gap:0 !important;
+}
+
+.g01-badge-foldable[class*="_icon_c"] [class$="_text"],
+.g01-badge-foldable [class$="_text"]{
+  display:inline-block !important;
+  white-space:nowrap;
+  vertical-align:middle;
+  margin-left:var(--g01-badge-gap, calc(var(--size,36px)*5/36));
+}
+
+.g01-badge-text-track{
+  display:inline-block;
+  vertical-align:middle;
+  overflow:hidden;
+  max-width:0;
+}
+
+.g01-badge-foldable [class$="_text"]{
+  opacity:0;
+}
+
+/* 접힘: track clip(마진+텍스트) → 수축 후 fade-out */
+.g01-badge-foldable.g01-badge-is-open [class$="_text"],
+.g01-badge-foldable.g01-badge-folding.g01-badge-is-closed:not(.g01-badge-text-out) [class$="_text"]{
+  opacity:1;
+}
+
+.g01-badge-foldable.g01-badge-is-open .g01-badge-text-track{
+  max-width:var(--g01-badge-track-w,12em);
+}
+
+.g01-badge-foldable.g01-badge-is-closed .g01-badge-text-track{
+  max-width:0;
+}
+
+.g01-badge-foldable.g01-badge-text-in [class$="_text"]{
+  opacity:1;
+}
+
+.g01-badge-foldable.g01-badge-text-out [class$="_text"]{
+  opacity:0;
+}
+
+#lo-panel .bullet-item.is-dim .bullet-text{
+  color:#B8BDC5;
+  font-weight:500;
+}
+
+#lo-panel .bullet-item.is-emphasis .bullet-text{
+  color:#222222;
+  font-weight:700;
+}
+
+#lo-panel .bullet-item.g01-flash .bullet-text{
+  animation:g01-bullet-flash .6s ease;
+}
+
+@keyframes g01-bullet-flash{
+  0%,100%{opacity:1}
+  40%{opacity:.35}
 }
 
 @media(max-width:900px){

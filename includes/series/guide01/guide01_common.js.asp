@@ -2,6 +2,7 @@
 /* guide01 공통 — 타임라인·패널·에셋·DOM 헬퍼 */
 var Guide01 = (function(){
   var CANVAS_CLS = 'guide01-canvas';
+  var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
 
   function setSceneDesc(text){
     var el = document.getElementById('panel-scene-desc');
@@ -9,22 +10,27 @@ var Guide01 = (function(){
   }
 
   function timeline(ctx){
+    var origin = performance.now();
     var elapsed = 0;
     return {
       wait: async function(ms){
-        if(ms > elapsed){
-          await wait(ms - elapsed);
-          elapsed = ms;
+        var target = origin + ms;
+        var now = performance.now();
+        if(target > now){
+          await wait(target - now);
         }
+        elapsed = ms;
         if(ctx && ctx.reportProgress) ctx.reportProgress(elapsed);
       },
       finish: async function(){
         var total = (ctx && ctx.sceneDuration) || elapsed;
-        if(elapsed < total){
-          await wait(total - elapsed);
-          elapsed = total;
-          if(ctx && ctx.reportProgress) ctx.reportProgress(elapsed);
+        var target = origin + total;
+        var now = performance.now();
+        if(target > now){
+          await wait(target - now);
         }
+        elapsed = total;
+        if(ctx && ctx.reportProgress) ctx.reportProgress(elapsed);
       },
       get elapsed(){ return elapsed; }
     };
@@ -58,35 +64,208 @@ var Guide01 = (function(){
   }
 
   function parseZone(zone){
-    var m = /^([a-g])([1-7])$/i.exec(String(zone || '').trim());
-    if(!m) return null;
-    return { row: m[1].toLowerCase().charCodeAt(0) - 96, col: parseInt(m[2], 10) };
+    return G01ZonedAnim.parseZone(zone);
   }
 
   function placeAtZone(el, zone){
-    if(!el) return el;
-    var z = parseZone(zone);
-    if(!z) return el;
-    el.classList.add('lo-zone-place');
-    el.setAttribute('data-zone', String(zone).toLowerCase());
-    el.style.setProperty('--zone-row', z.row);
-    el.style.setProperty('--zone-col', z.col);
-    return el;
+    return G01ZonedAnim.placeAtZone(el, zone);
   }
 
-  function addZonedAsset(canvas, templateId, elId, zone){
+  function addZonedAsset(canvas, templateId, elId, zone, opts){
+    opts = opts || {};
     var node = cloneTemplate(templateId);
     if(!node) return null;
+    return mountZonedNode(canvas, node, elId, zone, opts);
+  }
+
+  function badgeClosedTemplateId(templateId){
+    if(!templateId) return templateId;
+    if(/_icon_c$/.test(templateId)) return templateId;
+    if(/_icon_o$/.test(templateId)) return templateId.replace(/_icon_o$/, '_icon_c');
+    if(/_icon$/.test(templateId)) return templateId + '_c';
+    return templateId;
+  }
+
+  function addZonedBadge(canvas, templateId, elId, zone, opts){
+    return addZonedAsset(canvas, badgeClosedTemplateId(templateId), elId, zone, opts);
+  }
+
+  function resolveZonedBadge(wrap){
+    if(!wrap) return null;
+    if(typeof G01BadgeFold !== 'undefined'){
+      return G01BadgeFold.resolveBadge(wrap);
+    }
+    for(var i = 0; i < BADGE_BASES.length; i++){
+      var base = BADGE_BASES[i];
+      var found = wrap.querySelector('.' + base + '_o, .' + base + '_c, .' + base);
+      if(found) return found;
+    }
+    return null;
+  }
+
+  function mountZonedNode(canvas, node, elId, zone, opts){
+    opts = opts || {};
+    if(!node || !canvas) return null;
 
     var wrap = document.createElement('div');
     wrap.id = elId;
-    wrap.className = 'g01-zone-wrap is-hidden';
+    wrap.className = 'g01-zone-wrap is-hidden' + (opts.extraCls ? ' ' + opts.extraCls : '');
     placeAtZone(wrap, zone);
 
+    var inner = document.createElement('div');
+    inner.className = 'g01-float-inner';
+    var baseScale = opts.scale != null ? opts.scale : 1;
+    inner.style.setProperty('--g01-base-scale', String(baseScale));
+    inner.style.transform = 'scale(' + baseScale + ')';
+
     node.classList.add('guide01-asset');
-    wrap.appendChild(node);
+    inner.appendChild(node);
+    wrap.appendChild(inner);
     canvas.appendChild(wrap);
+    wrap._float = inner;
     return wrap;
+  }
+
+  function zonedInner(wrap){
+    return G01ZonedAnim.zonedInner(wrap);
+  }
+
+  function zoneCenterPx(canvas, zone){
+    return G01ZonedAnim.zoneCenterPx(canvas, zone);
+  }
+
+  async function fadeZoned(wrap, show, opts){
+    opts = opts || {};
+    if(!wrap) return;
+    if(show){
+      if(opts.pop) return G01ZonedAnim.enterPop(wrap, opts);
+      if(opts.coinDrop) return G01ZonedAnim.enterDrop(wrap, opts);
+      return G01ZonedAnim.enterFade(wrap, opts);
+    }
+    await G01ZonedAnim.exitHide(wrap, opts);
+  }
+
+  function getZonedScale(wrap){
+    return G01ZonedAnim.getZonedScale(wrap);
+  }
+
+  async function moveZoned(wrap, zone, durationOrOpts){
+    var opts = typeof durationOrOpts === 'number'
+      ? { duration: durationOrOpts }
+      : (durationOrOpts || {});
+    return G01ZonedAnim.move(wrap, zone, opts);
+  }
+
+  function setZonedScale(wrap, scale){
+    G01ZonedAnim.setBaseScale(wrap, scale);
+  }
+
+  function startIdleFloat(wrap){
+    G01ZonedAnim.idleStart(wrap);
+  }
+
+  function stopIdleFloat(wrap){
+    G01ZonedAnim.idleStop(wrap);
+  }
+
+  function addZonedCalendar(canvas, elId, zone, label){
+    var node = cloneTemplate('calendar_month_card');
+    if(!node) return null;
+    node.classList.remove('is_active');
+    var title = node.querySelector('.calendar_title');
+    if(title) title.textContent = label;
+    return mountZonedNode(canvas, node, elId, zone, { scale: 0.88 });
+  }
+
+  function addZonedBonusPlate(canvas, elId, zone, label, value){
+    var node = document.createElement('div');
+    node.className = 'bonus-plate support-bonus g01-mini-bonus guide01-asset';
+    node.innerHTML =
+      '<span class="bonus-indicator"></span>' +
+      '<span class="bonus-label">' + label + '</span>' +
+      '<strong class="bonus-value">' + value + '</strong>';
+    return mountZonedNode(canvas, node, elId, zone, { scale: 1 });
+  }
+
+  function mountConnectorSvg(canvas, id){
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.id = id;
+    svg.setAttribute('class', 'g01-connector-svg');
+    svg.setAttribute('aria-hidden', 'true');
+    canvas.appendChild(svg);
+    return svg;
+  }
+
+  function linkZones(svg, canvas, lineId, zoneA, zoneB){
+    if(!svg || !canvas) return null;
+    var a = zoneCenterPx(canvas, zoneA);
+    var b = zoneCenterPx(canvas, zoneB);
+    var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.id = lineId;
+    line.setAttribute('x1', a.x);
+    line.setAttribute('y1', a.y);
+    line.setAttribute('x2', b.x);
+    line.setAttribute('y2', b.y);
+    svg.appendChild(line);
+    return line;
+  }
+
+  async function revealConnector(lineId, duration){
+    await MotionConnectorDraw.run({}, { lineId: lineId, duration: duration || 700 });
+  }
+
+  function hideConnectors(svg){
+    if(!svg) return;
+    var lines = svg.querySelectorAll('line');
+    for(var i = 0; i < lines.length; i++){
+      lines[i].classList.remove('is-visible');
+    }
+  }
+
+  function clearConnectorSvg(svg){
+    if(svg) svg.innerHTML = '';
+  }
+
+  async function popScaleZoned(wrap, opts){
+    return G01ZonedAnim.popScale(wrap, opts || {});
+  }
+
+  function panelInitBullets(items){
+    setSceneBullets(items);
+    showElement('#scene-bullets');
+    var bullets = document.querySelectorAll('#scene-bullets .bullet-item');
+    for(var i = 0; i < bullets.length; i++){
+      bullets[i].classList.add('is-dim');
+      bullets[i].classList.remove('is-emphasis', 'g01-flash');
+    }
+  }
+
+  function panelFlashBullet(index){
+    var bullets = document.querySelectorAll('#scene-bullets .bullet-item');
+    for(var i = 0; i < bullets.length; i++){
+      bullets[i].classList.toggle('is-emphasis', i === index);
+      bullets[i].classList.toggle('is-dim', i !== index);
+      bullets[i].classList.remove('g01-flash');
+    }
+    if(bullets[index]){
+      bullets[index].classList.add('g01-flash');
+    }
+  }
+
+  async function panelBulletTimeline(tl, title, items, flashes){
+    await tl.wait(0);
+    setSceneTitle(title);
+    showElement('#scene-title-main');
+    panelInitBullets(items);
+    for(var i = 0; i < flashes.length; i++){
+      await tl.wait(flashes[i].at);
+      panelFlashBullet(flashes[i].index);
+    }
+  }
+
+  async function finishSceneHold(tl, duration){
+    await tl.wait(duration);
+    await tl.finish();
   }
 
   async function showAsset(el){
@@ -379,23 +558,11 @@ var Guide01 = (function(){
     options = options || {};
     if(!plan || !plan.attached || !canvas) return;
 
-    var openTpl = plan.openTemplate || plan.closedTemplate;
-    var flyer = cloneTemplate(openTpl);
+    var flyTpl = plan.closedTemplate || badgeClosedTemplateId(plan.openTemplate);
+    var flyer = cloneTemplate(flyTpl);
     if(!flyer) return;
 
-    if(flyer.classList.contains('autoship_icon') ||
-       flyer.classList.contains('autoship_icon_o') ||
-       flyer.classList.contains('autoship_icon_c')){
-      badgeToOpen(flyer);
-    } else if(flyer.classList.contains('base_business_icon') ||
-              flyer.classList.contains('base_business_icon_o') ||
-              flyer.classList.contains('base_business_icon_c')){
-      badgeToOpen(flyer);
-    } else if(flyer.classList.contains('recommend_bonus_icon') ||
-              flyer.classList.contains('recommend_bonus_icon_o') ||
-              flyer.classList.contains('recommend_bonus_icon_c')){
-      badgeToOpen(flyer);
-    }
+    badgeToClosed(flyer);
 
     flyer.classList.add('g01-fly-badge', 'guide01-asset');
     canvas.appendChild(flyer);
@@ -450,6 +617,10 @@ var Guide01 = (function(){
       duration: options.acquireDuration || 520,
       glow: options.glow !== false
     });
+
+    await unfoldZonedBadge(plan.attached, {
+      unfoldDuration: options.unfoldDuration || 620
+    });
   }
 
   async function runMemberAttachSequence(ctx, canvas, plans, tl, schedule){
@@ -461,8 +632,6 @@ var Guide01 = (function(){
       await flyAttachToMember(ctx, canvas, plans[i], { duration: 900 });
     }
   }
-
-  var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
 
   function badgeSetMode(el, mode){
     if(!el) return el;
@@ -481,6 +650,29 @@ var Guide01 = (function(){
   function badgeToOpen(el){ return badgeSetMode(el, 'o'); }
   function badgeToClosed(el){ return badgeSetMode(el, 'c'); }
 
+  async function unfoldZonedBadge(wrap, opts){
+    opts = opts || {};
+    var badge = resolveZonedBadge(wrap);
+    if(!badge) return;
+    var unfoldMs = opts.unfoldDuration != null ? opts.unfoldDuration : 620;
+    var dur = typeof sceneDur === 'function' ? sceneDur(unfoldMs) : unfoldMs;
+    if(typeof G01BadgeFold !== 'undefined'){
+      await G01BadgeFold.unfold(badge, { duration: dur });
+    } else {
+      badgeToOpen(badge);
+    }
+  }
+
+  /* 접힌(_c) 상태로 등장 → 펼침까지 한 세트 */
+  async function enterZonedBadge(wrap, opts){
+    opts = opts || {};
+    if(!wrap) return;
+    var badge = resolveZonedBadge(wrap);
+    if(badge) badgeToClosed(badge);
+    await fadeZoned(wrap, true, opts);
+    if(badge) await unfoldZonedBadge(wrap, opts);
+  }
+
   return {
     CANVAS_CLS: CANVAS_CLS,
     setSceneDesc: setSceneDesc,
@@ -491,6 +683,29 @@ var Guide01 = (function(){
     parseZone: parseZone,
     placeAtZone: placeAtZone,
     addZonedAsset: addZonedAsset,
+    addZonedBadge: addZonedBadge,
+    badgeClosedTemplateId: badgeClosedTemplateId,
+    mountZonedNode: mountZonedNode,
+    zonedInner: zonedInner,
+    zoneCenterPx: zoneCenterPx,
+    fadeZoned: fadeZoned,
+    moveZoned: moveZoned,
+    getZonedScale: getZonedScale,
+    setZonedScale: setZonedScale,
+    startIdleFloat: startIdleFloat,
+    stopIdleFloat: stopIdleFloat,
+    addZonedCalendar: addZonedCalendar,
+    addZonedBonusPlate: addZonedBonusPlate,
+    mountConnectorSvg: mountConnectorSvg,
+    linkZones: linkZones,
+    revealConnector: revealConnector,
+    hideConnectors: hideConnectors,
+    clearConnectorSvg: clearConnectorSvg,
+    popScaleZoned: popScaleZoned,
+    panelInitBullets: panelInitBullets,
+    panelFlashBullet: panelFlashBullet,
+    panelBulletTimeline: panelBulletTimeline,
+    finishSceneHold: finishSceneHold,
     showAsset: showAsset,
     showZoned: showZoned,
     animateZoneBouncePath: animateZoneBouncePath,
@@ -516,7 +731,10 @@ var Guide01 = (function(){
     disclaimer: disclaimer,
     badgeSetMode: badgeSetMode,
     badgeToOpen: badgeToOpen,
-    badgeToClosed: badgeToClosed
+    badgeToClosed: badgeToClosed,
+    resolveZonedBadge: resolveZonedBadge,
+    unfoldZonedBadge: unfoldZonedBadge,
+    enterZonedBadge: enterZonedBadge
   };
 })();
 </script>

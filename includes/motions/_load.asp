@@ -31,3 +31,6 @@
 <!-- Motion Components: Effect -->
 <!--#include file="effect/pulseHighlight.js.asp"-->
 <!--#include file="effect/floatEnter.js.asp"-->
+
+<!-- Motion Components: G01 Zoned (guide01 7×7 에셋) -->
+<!--#include file="g01/_load.asp"-->

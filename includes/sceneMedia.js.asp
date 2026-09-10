@@ -10,14 +10,10 @@ var SceneMedia = (function(){
     return n < 10 ? '0' + n : String(n);
   }
 
-  function getPageBase(){
-    var path = location.pathname || '/';
-    return path.substring(0, path.lastIndexOf('/') + 1);
-  }
-
   function getMediaPath(sceneIndex){
     var num = padSceneNum(sceneIndex + 1);
-    return getPageBase() + 'voice_stream.asp?series=' + encodeURIComponent(seriesId) + '&scene=' + num;
+    /* voice_stream.asp는 사이트 루트 고정 (series/season01/ 등 하위 경로 페이지에서도 동일) */
+    return '/voice_stream.asp?series=' + encodeURIComponent(seriesId) + '&scene=' + num;
   }
 
   function ensureMedia(){
