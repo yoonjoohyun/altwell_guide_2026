@@ -10,6 +10,5 @@
 <!--#include file="payment_card_icon.asp"-->
 <!--#include file="select_counter_badge.asp"-->
 <!--#include file="ep_split_card.asp"-->
-<!--#include file="cashback_card.asp"-->
 <!--#include file="price_step_card.asp"-->
 </div>

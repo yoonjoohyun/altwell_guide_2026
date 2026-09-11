@@ -33,6 +33,38 @@
   transform:translate(-50%,-50%);
 }
 
+/* Scene 01 — 멤버(d4) 기준 그룹 배치 */
+.guide01-canvas.scene01-canvas .scene01-member-group{
+  --badge-gap:6px;
+  --benefit-gap:8px;
+  --side-gap:12px;
+  z-index:12;
+}
+
+.guide01-canvas.scene01-canvas .scene01-group-inner{
+  position:relative;
+  width:0;
+  height:0;
+  transform:scale(var(--group-scale,1));
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene01-canvas .scene01-group-child{
+  position:absolute;
+  left:50%;
+  top:50%;
+  margin:0;
+  transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px)));
+}
+
+.guide01-canvas.scene01-canvas .scene01-group-child.is-zone-moving{
+  transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px))) translate3d(var(--move-dx,0px), var(--move-dy,0px), 0);
+}
+
+.guide01-canvas.scene01-canvas .scene01-group-child .g01-float-inner{
+  transform-origin:center center;
+}
+
 .guide01-canvas .g01-zone-wrap .guide01-asset{
   position:relative;
   left:auto;
@@ -471,7 +503,12 @@
 .guide01-canvas .g01-zone-wrap .product_silhouette_card,
 .guide01-canvas .g01-zone-wrap .price_step_card,
 .guide01-canvas .g01-zone-wrap .status_check_icon,
-.guide01-canvas .g01-zone-wrap .cashback_card,
+.guide01-canvas .g01-zone-wrap .discount_benefit_icon,
+.guide01-canvas .g01-zone-wrap .discount_benefit_icon_o,
+.guide01-canvas .g01-zone-wrap .discount_benefit_icon_c,
+.guide01-canvas .g01-zone-wrap .cashback_icon,
+.guide01-canvas .g01-zone-wrap .cashback_icon_o,
+.guide01-canvas .g01-zone-wrap .cashback_icon_c,
 .guide01-canvas .g01-zone-wrap .point_token_icon,
 .guide01-canvas .g01-zone-wrap .person_icon,
 .guide01-canvas .g01-zone-wrap .member_icon,
@@ -621,10 +658,43 @@
 }
 
 #lo-panel .bullet-item.g01-flash .bullet-text{
-  animation:g01-bullet-flash .6s ease;
+  animation:g01-bullet-flash .6s ease-in-out;
 }
 
 @keyframes g01-bullet-flash{
+  0%,100%{opacity:1}
+  40%{opacity:.35}
+}
+
+/* Scene 01 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
+#lo-panel.scene01-panel .scene-title,
+#lo-panel.scene01-panel .bullet-item .bullet-text,
+#lo-panel.scene01-panel .bullet-item .bullet-dot{
+  transition:
+    color 420ms ease-in-out,
+    opacity 420ms ease-in-out,
+    transform 420ms ease-in-out,
+    background-color 420ms ease-in-out;
+}
+
+#lo-panel.scene01-panel .scene-title.motion-slide-up,
+#lo-panel.scene01-panel .bullet-item.motion-slide-up{
+  animation-timing-function:ease-in-out !important;
+}
+
+#lo-panel.scene01-panel .bullet-item.is-dim .bullet-dot{
+  background-color:#B8BDC5;
+}
+
+#lo-panel.scene01-panel .bullet-item.is-emphasis .bullet-dot{
+  background-color:#222222;
+}
+
+#lo-panel.scene01-panel .bullet-item.g01-flash .bullet-dot{
+  animation:g01-bullet-dot-flash .6s ease-in-out;
+}
+
+@keyframes g01-bullet-dot-flash{
   0%,100%{opacity:1}
   40%{opacity:.35}
 }

@@ -3,11 +3,12 @@
 Option Explicit
 Response.Buffer = True
 
-Dim seriesId, sceneNum, filePath, fso, stream, ext, contentType
-Dim allowedSeries, i, ok
+Dim seriesId, sceneNum, partId, filePath, fso, stream, ext, contentType
+Dim allowedSeries, i, ok, baseName
 
 seriesId = Trim(Request("series"))
 sceneNum = Trim(Request("scene"))
+partId = LCase(Trim(Request("part")))
 
 If seriesId = "" Or sceneNum = "" Then
   Response.Status = "404 Not Found"
@@ -40,12 +41,12 @@ End If
 Set fso = Server.CreateObject("Scripting.FileSystemObject")
 
 If LCase(seriesId) = "guide01" Then
-  filePath = Server.MapPath("voice/guide_season01/guide01/guide01_scene_" & sceneNum & ".mp3")
+  filePath = FindGuide01Voice(fso, sceneNum, partId)
 Else
-  filePath = Server.MapPath("voice/" & seriesId & "/scene" & sceneNum & ".mp4")
+  filePath = FindVoiceFile(fso, Server.MapPath("voice/" & seriesId & "/scene" & sceneNum))
 End If
 
-If Not fso.FileExists(filePath) Then
+If filePath = "" Then
   Response.Status = "404 Not Found"
   Response.End
 End If
@@ -80,5 +81,52 @@ Function RegExpTest(pattern, value)
   re.Pattern = pattern
   re.IgnoreCase = True
   RegExpTest = re.Test(value)
+End Function
+
+Function FindVoiceFile(fso, baseNoExt)
+  Dim exts, j, candidate
+  exts = Array(".mp4", ".mp3", ".m4a")
+  FindVoiceFile = ""
+  For j = 0 To UBound(exts)
+    candidate = baseNoExt & exts(j)
+    If fso.FileExists(candidate) Then
+      FindVoiceFile = candidate
+      Exit Function
+    End If
+  Next
+End Function
+
+Function FindGuide01Voice(fso, sceneNum, partId)
+  Dim roots, names, r, n, basePath, found
+  roots = Array( _
+    "voice/guide_season01/guide01/", _
+    "voice/guide01/" _
+  )
+
+  If partId = "title" Then
+    names = Array( _
+      "guide01_scene_" & sceneNum & "_title", _
+      "guide01_scene_" & sceneNum & "_title(1)" _
+    )
+  Else
+    ' part=main 또는 part 생략 → guide01_scene_NN.mp4
+    names = Array( _
+      "guide01_scene_" & sceneNum, _
+      "guide01_scene_" & sceneNum & "(2)", _
+      "scene" & sceneNum _
+    )
+  End If
+
+  FindGuide01Voice = ""
+  For r = 0 To UBound(roots)
+    For n = 0 To UBound(names)
+      basePath = Server.MapPath(roots(r) & names(n))
+      found = FindVoiceFile(fso, basePath)
+      If found <> "" Then
+        FindGuide01Voice = found
+        Exit Function
+      End If
+    Next
+  Next
 End Function
 %>

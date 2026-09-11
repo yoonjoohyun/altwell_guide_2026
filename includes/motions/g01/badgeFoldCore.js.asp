@@ -2,7 +2,13 @@
 /* G01 Badge Fold — text track max-width (duration은 inline transition으로 강제) */
 var G01BadgeFold = (function(){
 
-  var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
+  var BADGE_BASES = [
+    'base_business_icon',
+    'autoship_icon',
+    'recommend_bonus_icon',
+    'discount_benefit_icon',
+    'cashback_icon'
+  ];
   var DEFAULT_UNFOLD_DUR = 620;
   var DEFAULT_FOLD_DUR = Math.round(DEFAULT_UNFOLD_DUR * 1.2);
   var FOLD_SLOWER_RATIO = 1.2;

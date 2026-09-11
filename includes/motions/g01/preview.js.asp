@@ -85,7 +85,7 @@ var G01AnimPreview = (function(){
     },
     enterDrop: function(){
       return run('Enter Drop', async function(){
-        mountDemo('b4', 'cashback_card', 0.9);
+        mountDemo('b4', 'cashback_icon', 0.9);
         await MotionG01ZonedEnterDrop.run({}, { target: '#' + DEMO_ID, duration: 520 });
       });
     },

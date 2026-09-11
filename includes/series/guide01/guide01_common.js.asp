@@ -2,7 +2,13 @@
 /* guide01 공통 — 타임라인·패널·에셋·DOM 헬퍼 */
 var Guide01 = (function(){
   var CANVAS_CLS = 'guide01-canvas';
-  var BADGE_BASES = ['base_business_icon', 'autoship_icon', 'recommend_bonus_icon'];
+  var BADGE_BASES = [
+    'base_business_icon',
+    'autoship_icon',
+    'recommend_bonus_icon',
+    'discount_benefit_icon',
+    'cashback_icon'
+  ];
 
   function setSceneDesc(text){
     var el = document.getElementById('panel-scene-desc');
@@ -80,9 +86,13 @@ var Guide01 = (function(){
 
   function badgeClosedTemplateId(templateId){
     if(!templateId) return templateId;
-    if(/_icon_c$/.test(templateId)) return templateId;
+    if(/_c$/.test(templateId)) return templateId;
     if(/_icon_o$/.test(templateId)) return templateId.replace(/_icon_o$/, '_icon_c');
     if(/_icon$/.test(templateId)) return templateId + '_c';
+    if(/_badge_o$/.test(templateId)) return templateId.replace(/_badge_o$/, '_badge_c');
+    if(/_badge$/.test(templateId)) return templateId + '_c';
+    if(/_card_o$/.test(templateId)) return templateId.replace(/_card_o$/, '_card_c');
+    if(/_card$/.test(templateId)) return templateId + '_c';
     return templateId;
   }
 

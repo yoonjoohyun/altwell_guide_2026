@@ -23,6 +23,8 @@ function defineScene(spec){
     title: spec.title || '',
     duration: spec.duration || 0,
     mediaStartDelay: spec.mediaStartDelay || 0,
+    mediaSequence: spec.mediaSequence || null,
+    mediaFallbackMs: spec.mediaFallbackMs || null,
 
     reset: function(){
       if(typeof spec.reset === 'function') return spec.reset();

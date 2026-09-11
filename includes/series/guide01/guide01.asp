@@ -14,10 +14,44 @@ var SeriesGuide01 = {
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
-      SceneMedia.applyDurations(SceneRunner.getScenes(), function(){
-        SceneRunner.renderTimelineMarkers();
-        SceneRunner.updatePlayerUI();
-      });
+      var scenes = SceneRunner.getScenes();
+      var s0 = scenes[0];
+      function probeScene01TitleMs(done){
+        if(!SceneMedia.getMediaPath || !SceneMedia.probeDurationPath) return done();
+        SceneMedia.probeDurationPath(
+          SceneMedia.getMediaPath(0, 'title'),
+          Scene01Config.media.fallbackMs[0]
+        ).then(function(ms){
+          if(ms > 0){
+            Scene01Config.media.titleMs = ms;
+            if(s0) s0.mediaTitleMs = ms;
+          }
+          done();
+        });
+      }
+
+      if(s0 && s0.mediaSequence && SceneMedia.filterSequence){
+        SceneMedia.filterSequence(0, s0.mediaSequence).then(function(filtered){
+          s0.mediaSequence = filtered.length >= 2 ? filtered : Scene01Config.media.sequence;
+          if(SceneMedia.prepareSequence){
+            SceneMedia.prepareSequence(0, s0.mediaSequence);
+          }
+          probeScene01TitleMs(function(){
+            SceneMedia.applyDurations(scenes, onGuide01DurationsReady);
+          });
+        });
+      } else {
+        probeScene01TitleMs(function(){
+          SceneMedia.applyDurations(scenes, onGuide01DurationsReady);
+        });
+      }
+    }
+
+    function onGuide01DurationsReady(){
+      var scene0 = SceneRunner.getScenes()[0];
+      if(scene0 && scene0.duration) Scene01Config.duration = scene0.duration;
+      SceneRunner.renderTimelineMarkers();
+      SceneRunner.updatePlayerUI();
     }
 
     SceneRunner.init();

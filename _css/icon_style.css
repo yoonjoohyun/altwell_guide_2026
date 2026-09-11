@@ -629,7 +629,97 @@
 }
 
 
-/*************  할인 혜택  *******************************************************************************************************/
+/*************  할인 혜택 (오토십 뱃지 동일 구조)  *******************************************************************************************************/
+.discount_benefit_icon,
+.discount_benefit_icon_o,
+.discount_benefit_icon_c{
+    --size: 36px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    width:fit-content;
+    height:var(--size);
+    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 7 / 36);
+    gap: calc(var(--size) * 5 / 36);
+    background: linear-gradient(120deg, #e65100, #f57c00, #ef6c00);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #b23c00;
+    border-radius: calc(var(--size) * 10 / 36);
+    font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.discount_benefit_icon_c .discount_benefit_text{
+    display: none;
+}
+.discount_benefit_icon .discount_benefit_label,
+.discount_benefit_icon_o .discount_benefit_label,
+.discount_benefit_icon_c .discount_benefit_label{
+    width: calc(var(--size) * 24 / 36);
+    height: calc(var(--size) * 24 / 36);
+    line-height: calc(var(--size) * 24 / 36);
+    text-align:center;
+    border-radius: 50%;
+    background-color:#ffd180;
+    color:#b23c00;
+    font-weight:900;
+    font-size: calc(var(--size) * 15 / 36);
+    flex-shrink:0;
+}
+.discount_benefit_icon .discount_benefit_text,
+.discount_benefit_icon_o .discount_benefit_text,
+.discount_benefit_icon_c .discount_benefit_text{
+    color:#fff;
+    font-weight:700;
+    font-size: calc(var(--size) * 18 / 36);
+    line-height: calc(var(--size) * 18 / 36);
+    white-space: nowrap;
+}
+
+
+/*************  캐시백 (오토십 뱃지 동일 구조)  *******************************************************************************************************/
+.cashback_icon,
+.cashback_icon_o,
+.cashback_icon_c{
+    --size: 36px;
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+    width:fit-content;
+    height:var(--size);
+    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 7 / 36);
+    gap: calc(var(--size) * 5 / 36);
+    background: #f8fafc;
+    box-shadow: inset 0 0 0 calc(var(--size) * 1.5 / 36) #94a3b8;
+    border-radius: calc(var(--size) * 10 / 36);
+    font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.cashback_icon_c .cashback_text{
+    display: none;
+}
+.cashback_icon .cashback_label,
+.cashback_icon_o .cashback_label,
+.cashback_icon_c .cashback_label{
+    width: calc(var(--size) * 24 / 36);
+    height: calc(var(--size) * 24 / 36);
+    line-height: calc(var(--size) * 24 / 36);
+    text-align:center;
+    border-radius: 50%;
+    background-color:#475569;
+    color:#ffffff;
+    font-weight:900;
+    font-size: calc(var(--size) * 13 / 36);
+    flex-shrink:0;
+}
+.cashback_icon .cashback_text,
+.cashback_icon_o .cashback_text,
+.cashback_icon_c .cashback_text{
+    color:#1e293b;
+    font-weight:700;
+    font-size: calc(var(--size) * 18 / 36);
+    line-height: calc(var(--size) * 18 / 36);
+    white-space: nowrap;
+}
+
+
+/*************  할인 혜택 (legacy badge)  *******************************************************************************************************/
 .discount_benefit_badge,
 .discount_benefit_badge_o,
 .discount_benefit_badge_c{
@@ -920,7 +1010,7 @@
     display: inline-flex;
     flex-direction: column;
     width: max(var(--size), 88px);
-    min-height: calc(var(--size) * 96 / 88);
+    min-height: calc(var(--size) * 80 / 88);
     height: auto;
     border-radius: calc(var(--size) * 10 / 88);
     background: #ffffff;
@@ -937,7 +1027,7 @@
     box-shadow: 0 calc(var(--size) * 4 / 88) calc(var(--size) * 12 / 88) rgba(44, 81, 202, 0.2);
 }
 .calendar_header {
-    min-height: calc(var(--size) * 32 / 88);
+    min-height: calc(var(--size) * 30 / 88);
     padding: calc(var(--size) * 4 / 88) calc(var(--size) * 6 / 88);
     background-color: #9aaec7;
     color: #ffffff;
@@ -957,7 +1047,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: calc(var(--size) * 8 / 88) calc(var(--size) * 6 / 88);
     box-sizing: border-box;
 }
 .calendar_title {
@@ -1204,44 +1293,6 @@
     border-radius: calc(var(--size) * 4 / 92);
 }
 
-
-
-/*************  SUB ASSET — 캐시백 카드  *******************************************************************************************************/
-.cashback_card {
-    --size: 40px;
-    display: inline-flex;
-    align-items: center;
-    width: fit-content;
-    min-height: max(var(--size), 40px);
-    height: auto;
-    padding: calc(var(--size) * 6 / 40) calc(var(--size) * 12 / 40);
-    gap: calc(var(--size) * 8 / 40);
-    background: #f8fafc;
-    border-radius: calc(var(--size) * 10 / 40);
-    box-shadow: inset 0 0 0 calc(var(--size) * 1.5 / 40) #94a3b8;
-    font-family: var(--font-sans, 'MinSansVF', sans-serif);
-    flex-shrink: 0;
-    box-sizing: border-box;
-}
-.cashback_badge {
-    width: calc(var(--size) * 28 / 40);
-    height: calc(var(--size) * 28 / 40);
-    line-height: calc(var(--size) * 28 / 40);
-    border-radius: 50%;
-    background-color: #475569;
-    color: #ffffff;
-    font-size: max(15px, calc(var(--size) * 15 / 40));
-    font-weight: 800;
-    text-align: center;
-    flex-shrink: 0;
-}
-.cashback_text {
-    font-size: max(15px, calc(var(--size) * 15 / 40));
-    font-weight: 700;
-    line-height: 1.25;
-    color: #1e293b;
-    word-break: keep-all;
-}
 
 
 

@@ -129,8 +129,14 @@ var SceneRunner = (function(){
     if(typeof SceneMedia === 'undefined' || !SceneMedia.play) return Promise.resolve();
     var scene = scenes[index];
     var delay = (scene && scene.mediaStartDelay > 0) ? scene.mediaStartDelay : 0;
+    function isCancelled(){
+      return runToken != null && (state !== 'playing' || runToken !== playToken);
+    }
     function doPlay(){
-      if(runToken != null && (state !== 'playing' || runToken !== playToken)) return Promise.resolve();
+      if(isCancelled()) return Promise.resolve();
+      if(scene && scene.mediaSequence && scene.mediaSequence.length && SceneMedia.playSequence){
+        return SceneMedia.playSequence(index, scene.mediaSequence, isCancelled);
+      }
       return SceneMedia.play(index);
     }
     if(delay > 0) return wait(delay).then(doPlay);
@@ -147,9 +153,12 @@ var SceneRunner = (function(){
     var scene = scenes[index];
     if(scene && scene.mediaStartDelay > 0 && SceneMedia.prepareScene){
       SceneMedia.prepareScene(index);
+    } else if(scene && scene.mediaSequence && scene.mediaSequence.length && SceneMedia.prepareSequence){
+      SceneMedia.prepareSequence(index, scene.mediaSequence);
     } else if(SceneMedia.beginScene){
       SceneMedia.beginScene(index);
     }
+    if(SceneMedia.unlockGesture) SceneMedia.unlockGesture();
   }
 
   function isRunActive(runToken){
@@ -176,6 +185,7 @@ var SceneRunner = (function(){
       lesson: lessonMeta,
       sceneIndex: index,
       sceneDuration: scene.duration || 0,
+      mediaTitleMs: scene.mediaTitleMs || 0,
       isFollowUp: index > 0,
       isCancelled: function(){ return runToken !== playToken || state !== 'playing'; },
       reportProgress: function(ms){
