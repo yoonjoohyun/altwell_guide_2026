@@ -50,12 +50,14 @@ var Scene01Config = {
   /* 7×7 — 그룹 앵커(d4)만 사용, 개별 에셋 zone 미사용 */
   layout: {
     anchorZone: 'd4',
+    memberHeadZone: 'c4',
     calendarZone: 'd5',
     gaps: {
       memberToAutoship: 2,
       autoshipToBenefit: 6,
       autoshipToBase: 6,
       memberHeadRatio: 0.37,
+      memberHeadTopRatio: 0.2,
       memberOverlapAutoship: 2,
       benefitRowGap: 10
     },

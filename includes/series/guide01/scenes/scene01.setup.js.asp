@@ -245,6 +245,69 @@ var Scene01Layout = (function(){
     return grid.safe + (z.col - 1) * grid.cellW;
   }
 
+  function zoneTopPx(canvas, zone){
+    var z = Guide01.parseZone(zone);
+    if(!z || !canvas) return 0;
+    var grid = zoneCellSize(canvas);
+    return grid.safe + (z.row - 1) * grid.cellH;
+  }
+
+  /* #motion-zone-grid 셀 상단 — 보이는 그리드 라인과 동기 */
+  function zoneCellTopFromGrid(canvas, zone){
+    var z = Guide01.parseZone(zone);
+    if(!z || !canvas) return zoneTopPx(canvas, zone);
+    var gridEl = document.getElementById('motion-zone-grid');
+    if(!gridEl || !gridEl.children.length) return zoneTopPx(canvas, zone);
+    var idx = (z.row - 1) * 7 + (z.col - 1);
+    var cell = gridEl.children[idx];
+    if(!cell) return zoneTopPx(canvas, zone);
+    var canvasRect = canvas.getBoundingClientRect();
+    return cell.getBoundingClientRect().top - canvasRect.top;
+  }
+
+  function getOffset(wrap){
+    var x = wrap.style.getPropertyValue('--offset-x');
+    var y = wrap.style.getPropertyValue('--offset-y');
+    return { x: x ? parseFloat(x) : 0, y: y ? parseFloat(y) : 0 };
+  }
+
+  function shiftAllAssetsY(assets, deltaY){
+    var keys = ['member','autoship','calendar','discount','plus','cashback','plusRecommend','recommend','base'];
+    var i;
+    for(i = 0; i < keys.length; i++){
+      var wrap = assets[keys[i]];
+      if(!wrap) continue;
+      var off = getOffset(wrap);
+      setOffset(wrap, off.x, off.y + deltaY);
+    }
+  }
+
+  /* 멤버 ::before 머리 상단 = memberHeadZone 그리드 상단 라인 (c4 텍스트 아님) */
+  function alignMemberHeadToZoneTop(canvas, group, assets){
+    var layout = Scene01Config.layout;
+    var gaps = layout.gaps;
+    var inner = group._scene01Inner;
+    if(!inner || !assets.member) return;
+
+    var groupScale = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
+    var headTopRatio = gaps.memberHeadTopRatio != null ? gaps.memberHeadTopRatio : 0.2;
+    var targetTop = zoneCellTopFromGrid(canvas, layout.memberHeadZone || 'c4');
+
+    var memberInner = assets.member.querySelector('.g01-float-inner') || assets.member;
+    var memberRect = memberInner.getBoundingClientRect();
+    if(memberRect.height < 1) return;
+
+    var canvasRect = canvas.getBoundingClientRect();
+    var memberLocalH = memberRect.height / groupScale;
+    var memberCenterCanvasY = memberRect.top - canvasRect.top + memberRect.height / 2;
+    var headTopFromCenter = (-memberLocalH / 2) + memberLocalH * headTopRatio;
+    var currentHeadTop = memberCenterCanvasY + headTopFromCenter * groupScale;
+    var deltaLocalY = (targetTop - currentHeadTop) / groupScale;
+
+    if(Math.abs(deltaLocalY) < 0.05) return;
+    shiftAllAssetsY(assets, deltaLocalY);
+  }
+
   function offsetXFromAnchor(canvas, anchorZone, canvasX, halfW){
     var anchor = Guide01.zoneCenterPx(canvas, anchorZone);
     return canvasX - anchor.x + halfW;
@@ -323,6 +386,7 @@ var Scene01Layout = (function(){
     setOffset(assets.calendar, calX, memberHeadY);
 
     fitGroupScale(canvas, group, inner);
+    alignMemberHeadToZoneTop(canvas, group, assets);
     endMeasure();
   }
 
