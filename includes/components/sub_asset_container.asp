@@ -1,5 +1,6 @@
 <!-- Scene 서브 에셋 묶음 (시안·목록용) -->
 <div class="sub_asset_container">
+<!--#include file="effect_plus_icon.asp"-->
 <!--#include file="point_token_icon.asp"-->
 <!--#include file="status_check_icon.asp"-->
 <!--#include file="status_cross_icon.asp"-->

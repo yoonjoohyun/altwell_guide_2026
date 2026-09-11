@@ -3,7 +3,8 @@
 > Classic ASP 기반 교육용 인터랙티브 웹 플랫폼  
 > Cursor AI / 개발자 작업 시 참고하는 단일 규칙 문서  
 > **시나리오 작성:** [부록 A](#부록-a-시나리오-작성-양식) (문서 맨 아래)  
-> **모션 배치 좌표:** [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md) — 7×7 존 · 안전 여백
+> **모션 배치 좌표:** [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md) — 7×7 존 · 안전 여백  
+> **에셋 제작:** [ASSET_DESIGN_SYSTEM.md](./ASSET_DESIGN_SYSTEM.md) · **guide01 존 애니:** [asset_animation_rull.md](./asset_animation_rull.md)
 
 ---
 
@@ -13,12 +14,14 @@
 |------|------|
 | 이름 | ALTWELL SMART GUIDE |
 | 목적 | 신규 디슈머가 앨트웰 비즈니스 구조를 영상형 웹 인포그래픽으로 학습하고, 시뮬레이터로 복습 |
-| 현재 과제 | **영상 페이지 템플릿 정리** — `frame_layout.asp` 기준으로 신규 챕터 제작 |
+| 현재 과제 | **guide01(오토십 알아보기) 씬1 모션 재작업** — `frame_layout.asp` 템플릿 + `includes/series/guide01/` |
 
 **사용자 흐름**
 
 ```
-index.asp → guide.asp → frame_layout.asp (템플릿·에셋 데모) / ○○_smartguide.asp (영상)
+index.asp → guide.asp → series/season01/guide01_smartguide.asp (영상)
+                    → frame_layout.asp (템플릿·AssetShowcase 데모)
+                    → asset_design.asp (에셋 시안·G01 애니 미리보기)
          → sim.asp    → (시뮬레이터 — 준비 중)
 ```
 
@@ -39,7 +42,8 @@ index.asp → guide.asp → frame_layout.asp (템플릿·에셋 데모) / ○○
 
 **SSI 경로 규칙**
 
-- 영상 **진입 ASP(루트)** 에서 include: `includes/…` (루트 기준)
+- **루트 ASP** (`index.asp`, `asset_design.asp`, `frame_layout.asp`): `<!--#include file="includes/…"-->`
+- **시즌 폴더 ASP** (`series/season01/guide01_smartguide.asp`): `<!--#include virtual="/includes/…"-->` (사이트 루트 기준)
 - `includes/player/` 내부 include: 같은 폴더 기준 (`video_controller_top.asp` 등)
 - **중첩 SSI에서 `../` 사용 금지** — IIS Parent Paths 비활성 시 500 오류
 
@@ -52,7 +56,7 @@ index.asp → guide.asp → frame_layout.asp (템플릿·에셋 데모) / ○○
 | 종류 | 예 | CSS |
 |------|-----|-----|
 | **리스트** | `index.asp`, `guide.asp`, `sim.asp` | `_css/main.css` + 페이지별 (`index.css`, `guide.css`, `sim.css`) |
-| **영상** | `frame_layout.asp`, `○○_smartguide.asp` | `_css/main.css` + `includes/styles.asp` + `_css/video_controller.css` |
+| **영상** | `frame_layout.asp`, `series/…/○○_smartguide.asp` | `_css/main.css` + `icon_style.css`(guide01) + `guide01.css`(guide01) + `styles.asp` + `video_controller.css` |
 
 ### 3-2. 영상 페이지 6구역
 
@@ -64,10 +68,11 @@ index.asp → guide.asp → frame_layout.asp (템플릿·에셋 데모) / ○○
 | **1. HEAD** | 진입 ASP `<head>` | title, fonts, main_css, styles.asp, 영상별 CSS |
 | **2. LAYOUT** | `includes/player/video_layout.asp` | 상단·4:3 모션·텍스트 패널·하단 컨트롤러 (**수정 불필요**) |
 | **4. RUNTIME** | `includes/video_runtime.asp` | defineScene + motion + components + SceneMedia + SceneRunner |
-| **5. SCENES** | `includes/series/…/scenes/sceneNN.js.asp` | 씬별 motion + panel |
+| **5. SCENES** | `includes/series/…/scenes/sceneNN*.js.asp` | 씬별 motion + panel |
 | **6. INIT** | series 등록 + `SeriesXXX.init()` | registerScene, 메타, UI 초기화 |
 
-**템플릿·레퍼런스:** `frame_layout.asp` (레이아웃 + 에셋 컴포넌트 쇼케이스 데모)
+**템플릿·레퍼런스:** `frame_layout.asp` (레이아웃 + AssetShowcase 데모)  
+**guide01 레퍼런스:** `series/season01/guide01_smartguide.asp` + `includes/series/guide01/`
 
 ### 3-3. 씬 1개 = 3요소
 
@@ -122,53 +127,76 @@ Object Library (styles.asp) → Motion Primitives (motion.js.asp)
 ```
 guide_page/
 ├── index.asp, guide.asp, sim.asp
-├── frame_layout.asp                 # 영상 페이지 템플릿 + 에셋 쇼케이스 데모
+├── frame_layout.asp                 # 영상 페이지 템플릿 + AssetShowcase 데모
+├── asset_design.asp                 # 에셋 시안 + G01 ZONED ANIMATION 미리보기
+├── asset_animation_rull.md        # guide01 7×7 존 애니 규칙
+├── ASSET_DESIGN_SYSTEM.md         # 에셋 HTML·CSS 디자인 시스템
+├── series/season01/
+│   ├── guide01_smartguide.asp       # guide01 영상 진입 (제작 중)
+│   └── 0909test.asp                 # 멤버 부착 테스트 (scene01_test)
 ├── _css/
-│   ├── main.css                     # 전역·NAV·page shell
-│   ├── index.css, guide.css, sim.css
-│   ├── video_controller.css         # #lo-bar, #lo-ctrl
-│   └── icon_style.css               # 에셋 컴포넌트 (rank, badge …)
+│   ├── main.css, index.css, guide.css, sim.css
+│   ├── video_controller.css
+│   ├── icon_style.css               # 에셋 컴포넌트 (rank, badge, sub asset)
+│   └── guide01.css                  # guide01 7×7 존·뱃지 fold·씬 보조
 ├── voice/{seriesId}/scene01.mp4 …
 ├── images/
 └── includes/
     ├── asp_utf8.asp, fonts.asp, images.asp, main_css.asp
-    ├── styles.asp                   # 플레이어·모션·오브젝트 CSS
-    ├── video_runtime.asp            # 재생 엔진 일괄 include
+    ├── styles.asp, video_runtime.asp
     ├── motion.js.asp, sceneMedia.js.asp, sceneRunner.js.asp
-    ├── scenes/
-    │   ├── defineScene.js.asp       # defineScene, SceneMotion, ScenePanel
-    │   └── _scene.template.js.asp   # 씬 작성 템플릿
-    ├── components/                  # 에셋 HTML + asset_showcase (frame_layout 데모)
-    ├── player/
-    │   ├── video_layout.asp         # 영상 HTML 셸
-    │   ├── video_init.asp
-    │   ├── video_controller_top.asp
-    │   └── video_controller_bottom.asp  (playerControls 인라인)
-    ├── motions/_load.asp + core/, canvas/, member/, badge/, …
+    ├── scenes/defineScene.js.asp, _scene.template.js.asp
+    ├── components/                  # 에셋 HTML · guide01_templates.asp
+    ├── player/video_layout.asp …
+    ├── motions/
+    │   ├── _load.asp                # core + canvas/member/badge + g01/
+    │   └── g01/                     # zonedAnim · badgeFold · preview
     └── series/
-        └── {seriesId}/
-            ├── {seriesId}.asp       # registerScene + init
-            └── scenes/sceneNN.js.asp
+        ├── guide01/
+        │   ├── guide01.asp          # SeriesGuide01.init
+        │   ├── guide01_common.js.asp
+        │   └── scenes/
+        │       ├── scene01.constants.js.asp
+        │       ├── scene01.setup.js.asp
+        │       ├── scene01.js.asp
+        │       └── scene01_test.js.asp
+        └── {seriesId}/ …
 ```
 
-### 3-7. Include 체인 (신규 영상 — `○○_smartguide.asp`)
+### 3-7. Include 체인
+
+**guide01 (`series/season01/guide01_smartguide.asp`)**
 
 ```
-○○_smartguide.asp                    ← frame_layout.asp 복사 후 데모 제거
+guide01_smartguide.asp
+├── virtual /includes/player/video_layout.asp
+├── virtual /includes/components/guide01_templates.asp
+├── virtual /includes/images.asp
+├── virtual /includes/video_runtime.asp
+├── virtual /includes/series/guide01/guide01_common.js.asp
+├── scene01.constants.js.asp · scene01.setup.js.asp · scene01.js.asp
+├── virtual /includes/series/guide01/guide01.asp
+└── SeriesGuide01.init()
+```
+
+**신규 영상 (일반 패턴)** — `frame_layout.asp` 복사 → `series/…/○○_smartguide.asp`, 데모 제거 후 RUNTIME·SCENES·INIT 추가.
+
+```
+○○_smartguide.asp
 ├── includes/player/video_layout.asp
-│   ├── video_controller_top.asp   (#lo-scene-label = 영상 타이틀)
-│   ├── video_controller_bottom.asp
-│   └── video_init.asp
 ├── includes/video_runtime.asp
-│   ├── scenes/defineScene.js.asp
-│   ├── motion.js.asp
-│   ├── motions/_load.asp
-│   ├── sceneMedia.js.asp
-│   └── sceneRunner.js.asp
 ├── includes/series/{seriesId}/scenes/sceneNN.js.asp …
 ├── includes/series/{seriesId}/{seriesId}.asp
 └── SeriesXXX.init()
 ```
+
+**guide01 씬1 3파일 분리 (권장 패턴)**
+
+| 파일 | 역할 |
+|------|------|
+| `sceneNN.constants.js.asp` | duration, `T.*`, panel, motion preset |
+| `sceneNN.setup.js.asp` | `setupSceneNNAssets(canvas)` |
+| `sceneNN.js.asp` | `defineScene` + `runSceneNNMotion` |
 
 **`frame_layout.asp` (데모 전용)** — RUNTIME·SCENES 대신 `asset_showcase.js.asp` + `AssetShowcase.init()`
 
@@ -181,9 +209,11 @@ guide_page/
 | `index.asp` | 메인 진입 |
 | `guide.asp` | 교육영상 리스트 |
 | `sim.asp` | 시뮬레이터 리스트 |
-| `frame_layout.asp` | **영상 페이지 템플릿** + 에셋 컴포넌트 쇼케이스 데모 |
-| `○○_smartguide.asp` | 챕터별 영상 진입 (얇은 shell) |
-| `asset_design.asp` | 오브젝트·에셋 디자인 시안 (별도) |
+| `frame_layout.asp` | **영상 페이지 템플릿** + AssetShowcase 데모 |
+| `series/…/○○_smartguide.asp` | 챕터별 영상 진입 (얇은 shell) |
+| `asset_design.asp` | 에셋 시안 4계열 + **G01 ZONED ANIMATION** 미리보기 |
+| `asset_animation_rull.md` | guide01 존 에셋 애니 규칙 |
+| `ASSET_DESIGN_SYSTEM.md` | 에셋 HTML·CSS 제작 규칙 |
 
 ---
 
@@ -287,6 +317,16 @@ voice/{seriesId}/scene01.mp4 … sceneNN.mp4
 | `MotionPanelRevealBullets` | `panel/revealBullets` | bullet 순차 등장 |
 | `MotionEffectPulseHighlight` | `effect/pulseHighlight` | 하이라이트 |
 | `MotionObjectFloatEnter` | `effect/floatEnter` | 순차 플로팅 |
+| `MotionG01ZonedEnterFade` | `g01/zonedComponents` | guide01 fade 등장 |
+| `MotionG01ZonedEnterPop` | `g01/zonedComponents` | guide01 pop 등장 |
+| `MotionG01ZonedEnterDrop` | `g01/zonedComponents` | guide01 drop 등장 |
+| `MotionG01ZonedPopScale` | `g01/zonedComponents` | guide01 pop scale |
+| `MotionG01ZonedExit` | `g01/zonedComponents` | guide01 퇴장 |
+| `MotionG01ZonedIdleStart/Stop` | `g01/zonedComponents` | guide01 idle |
+| `MotionG01ZonedMove` | `g01/zonedComponents` | guide01 존 이동 |
+| `MotionG01BadgeUnfold/Fold/Toggle` | `g01/badgeFoldComponents` | 뱃지 _c↔_o |
+
+guide01 씬은 위 Component와 `Guide01.*` 헬퍼(`includes/series/guide01/guide01_common.js.asp`)를 함께 사용. 상세: [asset_animation_rull.md](./asset_animation_rull.md)
 
 ### 6-3. 신규 씬 워크플로
 
@@ -330,6 +370,9 @@ enterMember, setRank, setAutoship, setSEP, …
 | `video_controller_bottom.asp` | UI + playerControls | 씬 로직 |
 | `styles.asp` | 플레이어·오브젝트 CSS | 씬 문구 |
 | `_css/main.css` | NAV·page shell | 플레이어 모션 |
+| `guide01_common.js.asp` | guide01 존·뱃지·패널 헬퍼 | 다른 시리즈 로직 |
+| `guide01_templates.asp` | guide01 clone 템플릿 | 씬별 inline HTML |
+| `asset_design.asp` | 에셋·G01 미리보기 | 씬·재생 로직 |
 
 ---
 
@@ -350,9 +393,21 @@ enterMember, setRank, setAutoship, setSEP, …
 
 ---
 
-## 10. BASE사업자 이해하기
+## 10. 진행 중·예정 시리즈
 
-guide.asp STEP 2 — **준비 중**.  
+### guide01 — 오토십 알아보기 (제작 중)
+
+| 항목 | 경로 |
+|------|------|
+| 진입 | `series/season01/guide01_smartguide.asp` |
+| seriesId | `guide01` → `voice/guide01/scene01.mp4` |
+| 씬1 | `includes/series/guide01/scenes/scene01.*.js.asp` (골격만, 모션 TODO) |
+| 공통 JS | `guide01_common.js.asp` |
+| 에셋 clone | `includes/components/guide01_templates.asp` |
+
+### BASE사업자 이해하기 (준비 중)
+
+guide.asp STEP 2B — **준비 중**.  
 `frame_layout.asp`를 복사해 `02_base_business_smartguide.asp`(가칭)를 만들고, `includes/series/02_base_business/` 아래에 씬·음성을 추가한다.
 
 | Scene | 제목 (기획) |
@@ -534,15 +589,31 @@ panel: title hidden, desc hidden
 | `lev_srf` | SRF 지위 | Special Royal Family |
 | `lev_irf` | IRF 지위 | Imperial Royal Family |
 
-**자격·서비스·보너스 (3종)**
+**자격·서비스·보너스 (4종)**
 
-| 에셋키 | title | desc |
-|--------|-------|------|
-| `base_business` | 베이스 사업자 | BASE Business |
-| `autoship` | 오토십 | 20% 할인 구독 서비스 |
-| `recommend_bonus` | 추천 보너스 | 추천회원 한명당 1point 책정 |
+| 에셋키 | title | desc | templateId |
+|--------|-------|------|------------|
+| `base_business` | 베이스 사업자 | BASE Business | `base_business_icon` |
+| `autoship` | 오토십 | 20% 할인 구독 서비스 | `autoship_icon` |
+| `recommend_bonus` | 추천 보너스 | 추천회원 한명당 1point 책정 | `recommend_bonus_icon` |
+| `discount_benefit` | 할인 혜택 | 오토십 할인 혜택 | `discount_benefit_badge` |
 
 > 지위(D~IRF)와 베이스 사업자 자격은 **별개 개념** — 혼동하지 않는다.
+
+**SUB ASSET (guide01 씬용, 12종)**
+
+| templateId | 용도 |
+|------------|------|
+| `effect_plus_icon` | `+` 추가 효과 (혜택 연결) |
+| `calendar_month_card` | 월 달력 |
+| `cashback_card` | 캐시백 |
+| `product_silhouette_card` | 제품 실루에트 |
+| `price_step_card` | 가격 단계 |
+| `point_token_icon` | 포인트 |
+| `status_check_icon` / `status_cross_icon` | 상태 표시 |
+| 기타 | `delivery_box_icon`, `payment_card_icon`, `select_counter_badge`, `ep_split_card` |
+
+전체 목록: [ASSET_DESIGN_SYSTEM.md](./ASSET_DESIGN_SYSTEM.md) §9
 
 **신규 에셋 (자격·서비스·보너스 계열)**  
 목록에 없는 배지형 에셋이 필요하면 **`base_business` · `autoship` · `recommend_bonus` 아이콘의 HTML·CSS 레이아웃을 참고**해 `includes/components/` + `_css/icon_style.css`에 추가한다.  
@@ -646,8 +717,8 @@ panel: title hidden, desc hidden
 5. 초안 시청 → 스크립트·타이밍·모션·패널 수정 → 완성
 ```
 
-에셋·지위 **미리보기:** `frame_layout.asp` (컴포넌트 15종 데모, 시나리오 양식과 별개)
+에셋 **미리보기:** `asset_design.asp` (4계열 + G01 애니) · `frame_layout.asp` (AssetShowcase 15종 데모)
 
 ---
 
-*문서 끝 — 시나리오 작성은 **부록 A***
+*Last updated: 2026-09-11 — guide01 시리즈·G01 Motion·신규 에셋 반영*

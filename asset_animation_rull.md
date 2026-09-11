@@ -1,8 +1,8 @@
 # ALTWELL SMART GUIDE — 에셋 애니메이션 규칙
 
-> guide01 씬1 제작 과정에서 확립된 **부드러운 존(7×7) 에셋 애니메이션** 규칙  
-> 구현: `includes/series/guide01/guide01_common.js.asp` · `_css/guide01.css`  
-> 좌표 배치: [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md)
+> guide01 **7×7 존 에셋** 등장·이동·퇴장·idle·뱃지 fold 규칙  
+> 구현: `includes/series/guide01/guide01_common.js.asp` · `includes/motions/g01/` · `_css/guide01.css`  
+> 좌표 배치: [MOTION_GRID_GUIDE.md](./MOTION_GRID_GUIDE.md) · 에셋 HTML: [ASSET_DESIGN_SYSTEM.md](./ASSET_DESIGN_SYSTEM.md)
 
 ---
 
@@ -270,6 +270,7 @@ await Guide01.popScaleZoned(discount, { duration: 360 });
 | `addZonedBadge(canvas, templateId, id, zone, opts)` | 뱃지 `_c` 템플릿 + 존 마운트 |
 | `enterZonedBadge(wrap, opts)` | 접힌 상태 등장(pop/fade) → `unfold` |
 | `unfoldZonedBadge(wrap, opts)` | 펼침만 (`unfoldDuration`) |
+| `resolveZonedBadge(wrap)` | wrap 내부 뱃지 노드 탐색 |
 | `mountZonedNode(canvas, node, id, zone, opts)` | 커스텀 노드 마운트 |
 | `fadeZoned(wrap, show, opts)` | 등장/퇴장 (§4·§5) |
 | `popScaleZoned(wrap, opts)` | pop 등장 단축 |
@@ -280,6 +281,27 @@ await Guide01.popScaleZoned(discount, { duration: 360 });
 | `placeAtZone(wrap, zone)` | 존 문자열로 위치 리셋 |
 | `timeline(ctx)` | 벽시계 타임라인 |
 | `panelBulletTimeline(tl, title, items, flashes)` | 패널 bullet 점멸 |
+| `mountMemberAtZone` / `flyAttachToMember` | 멤버 존 배치 · 접힌 뱃지 비행 부착 |
+| `cloneTemplate(id)` | `#guide01-templates` 클론 |
+
+### Motion Component 대응 (`includes/motions/g01/`)
+
+씬에서 `MotionComponent.run` 또는 `asset_design.asp` 미리보기로 호출.
+
+| Component ID | Guide01 / 코어 API | 용도 |
+|--------------|-------------------|------|
+| `g01.zoned.enterFade` | `G01ZonedAnim.enterFade` | fade 등장 |
+| `g01.zoned.enterPop` | `G01ZonedAnim.enterPop` | pop 등장 |
+| `g01.zoned.enterDrop` | `G01ZonedAnim.enterDrop` | coin drop 등장 |
+| `g01.zoned.popScale` | `G01ZonedAnim.popScale` | 짧은 pop |
+| `g01.zoned.exit` | `G01ZonedAnim.exit` / `exitHide` | 퇴장 |
+| `g01.zoned.idleStart` / `idleStop` | `G01ZonedAnim.idleStart/Stop` | idle float |
+| `g01.zoned.move` | `G01ZonedAnim.move` | 존 이동 |
+| `g01.badge.unfold` | `G01BadgeFold.unfold` | 뱃지 펼침 |
+| `g01.badge.fold` | `G01BadgeFold.fold` | 뱃지 접힘 |
+| `g01.badge.toggle` | `G01BadgeFold.toggle` | 펼침↔접힘 |
+
+씬 타임라인 작성 시 위 Component를 직접 쓰거나, 동일 규칙의 `Guide01.*` 헬퍼를 await로 호출한다.
 
 ---
 
@@ -303,37 +325,60 @@ await Guide01.popScaleZoned(discount, { duration: 360 });
 | 단계 | 접힘 | 펼침 |
 |------|------|------|
 | 1 | track clip 수축 (overflow) | track 확장 |
-| 2 | 텍스트 fade-out | 텍스트 fade-in (확장과 겹침) |
+| 2 | 텍스트 fade-out | 텍스트 fade-in (확장과 15% overlap) |
 
+- **대상 클래스:** `base_business_icon`, `autoship_icon`, `recommend_bonus_icon` (`_o` / `_c`)
 - 코어: `G01BadgeFold` (`includes/motions/g01/badgeFoldCore.js.asp`)
 - 본작업 등장: `Guide01.enterZonedBadge(wrap, opts)` — `_c` → zone 등장 → unfold
 - 펼침 기본 620ms · 접힘 744ms (20% 느림) — `badgeFoldCore.js.asp` `DEFAULT_*`
-- 미리보기: `asset_design.asp` Badge Fold 버튼 (`MotionG01BadgeUnfold/Fold`)
+- 미리보기: `asset_design.asp` → G01 ZONED ANIMATION → Badge Fold 버튼
 - **씬 타임라인과 분리:** `Scene01Config.motion.BADGE.unfoldDuration` = 등장 시 펼침 속도만
+
+> **할인 혜택** (`discount_benefit_badge_o` / `_c`)는 동일 pill 구조이나 클래스 접두가 `_badge`이며, `G01BadgeFold.BADGE_BASES`에 **미등록** — fold 연출 필요 시 코어·CSS 확장 후 적용.
 
 ---
 
-## 14. 씬1 재작업 구조
+## 14. guide01 씬1 구조 (현재)
 
-| 파일 | 수정 대상 |
-|------|-----------|
-| `scene01.constants.js.asp` | `T.*` 시각, 패널 bullet, `motion.*` duration |
-| `scene01.setup.js.asp` | 에셋 templateId · zone · scale · element id |
-| `scene01.js.asp` | `runScene01Motion` 블록 (등장/퇴장/이동 순서) |
+### 진입·시리즈
+
+| 경로 | 역할 |
+|------|------|
+| `series/season01/guide01_smartguide.asp` | guide01 영상 shell (SSI `virtual="/includes/…"`) |
+| `includes/series/guide01/guide01.asp` | `SeriesGuide01.init()` · registerScene |
+| `includes/series/guide01/guide01_common.js.asp` | guide01 전용 존·패널·뱃지 헬퍼 |
+
+### 씬1 파일 분리 (3파일)
+
+| 파일 | 역할 |
+|------|------|
+| `scene01.constants.js.asp` | id, title, duration(29s), `T.*`, panel, `motion.FADE/POP/BADGE` |
+| `scene01.setup.js.asp` | `setupScene01Assets(canvas)` — templateId · zone · scale · element id |
+| `scene01.js.asp` | `defineScene` + `runScene01Motion(tl, assets, ctx)` |
 
 헬퍼: `scene01Motion('FADE'|'POP')`, `scene01BadgeEnter({ pop: true })`
 
-| 시각 | 동작 | API |
-|------|------|-----|
-| 0s | 오토십 접힘→펼침 + 제품 | `enterZonedBadge` + `fadeZoned` |
-| 2~4.7s | 달력 순차 | `fadeZoned` |
-| 6s | 링·달력 out + 제품 D4 | `fadeMany` + `moveZoned` |
-| 13s | 추천 관계 + 오토십 링크 | `enterZonedBadge` |
-| 20s | 추천 보너스 | `enterZonedBadge` |
-| 22s | BASE | `enterZonedBadge` POP |
-| 29s | 종료 | `finishSceneHold` |
+### 현재 구현 상태
 
-테스트(멤버 부착): `scene01_test.js.asp` → `0909test.asp` (본작업과 별도)
+| 항목 | 상태 |
+|------|------|
+| 씬 골격 (reset → mountStage → panelTitle → finishSceneHold) | ✅ |
+| `setupScene01Assets()` | ⏳ `{}` — 재작업 대기 |
+| `runScene01Motion()` | ⏳ TODO |
+| `Scene01Config.T` · panel bullets/flashes | ⏳ 미작성 |
+
+### 기획 시나리오 (멤버 중심, 참고용 · 미구현)
+
+| 시각 | 동작 | 주요 templateId |
+|------|------|-----------------|
+| 0s | 멤버 중앙 + 패널 타이틀 | `member_icon` |
+| 0s | 오토십 뱃지(하단) | `autoship_icon` + `enterZonedBadge` |
+| 3s | 3개월 달력(우측) | `calendar_month_card` |
+| 8s | `+` + 할인혜택(하단) | `effect_plus_icon`, `discount_benefit_badge` |
+| 14s | `+` + 캐시백(하단) | `effect_plus_icon`, `cashback_card` |
+| 22s | 베이스 뱃지(오토십 위) | `base_business_icon` |
+
+**테스트(멤버 부착):** `scene01_test.js.asp` → `series/season01/0909test.asp` (본작업과 별도)
 
 ---
 
@@ -342,13 +387,17 @@ await Guide01.popScaleZoned(discount, { duration: 360 });
 | 파일 | 내용 |
 |------|------|
 | `includes/series/guide01/guide01_common.js.asp` | 존·뱃지·타임라인 JS |
-| `includes/motions/g01/badgeFoldCore.js.asp` | Badge fold/unfold |
+| `includes/motions/g01/zonedCore.js.asp` | G01ZonedAnim 코어 |
+| `includes/motions/g01/zonedComponents.js.asp` | g01.zoned.* Motion Component |
+| `includes/motions/g01/badgeFoldCore.js.asp` | G01BadgeFold |
+| `includes/motions/g01/badgeFoldComponents.js.asp` | g01.badge.* Motion Component |
+| `includes/motions/g01/preview.js.asp` | asset_design G01 미리보기 |
 | `_css/guide01.css` | g01 keyframe · zone · badge fold |
-| `includes/components/guide01_templates.asp` | clone 템플릿 |
-| `includes/series/guide01/scenes/scene01.constants.js.asp` | 씬1 상수 |
-| `includes/series/guide01/scenes/scene01.setup.js.asp` | 씬1 에셋 마운트 |
-| `includes/series/guide01/scenes/scene01.js.asp` | 씬1 타임라인 |
+| `includes/components/guide01_templates.asp` | clone 템플릿 (`data-template`) |
+| `asset_design.asp` | 에셋 시안 + G01 ZONED ANIMATION 미리보기 |
+| `includes/series/guide01/scenes/scene01.*.js.asp` | 씬1 상수·setup·타임라인 |
 | `MOTION_GRID_GUIDE.md` | 7×7 존 좌표 |
+| `ASSET_DESIGN_SYSTEM.md` | 에셋 HTML·CSS 규칙 |
 | `PROJECT_RULE.md` | 프로젝트 전체 규칙 |
 
 ---
@@ -366,4 +415,4 @@ await Guide01.popScaleZoned(discount, { duration: 360 });
 
 ---
 
-*Last updated: guide01 Scene 01 재작업 구조 분리 기준*
+*Last updated: 2026-09-11 — guide01 씬1 골격·G01 Motion Component·신규 에셋(할인혜택·+) 반영*

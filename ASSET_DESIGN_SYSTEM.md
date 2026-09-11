@@ -9,13 +9,14 @@
 
 ## 1. 개요
 
-### 1-1. 에셋 3계열
+### 1-1. 에셋 4계열
 
 | 계열 | 영문명 | 용도 | CSS 파일 |
 |------|--------|------|----------|
 | **RANK MEDAL** | 지위 메달 | D~IRF 12단계 지위 표시 | `icon_style.css` |
-| **BADGE** | 자격·서비스 배지 | BASE사업자·오토십·추천보너스 | `icon_style.css` |
+| **BADGE** | 자격·서비스 배지 | BASE·오토십·추천보너스·할인혜택 | `icon_style.css` |
 | **UNIT** | 인물 실루엣 | 일반·멤버 캐릭터 | `icon_style.css` |
+| **SUB ASSET** | 씬 서브 에셋 | 달력·카드·상태·`+` 효과 등 | `icon_style.css` |
 
 ### 1-2. 기술 제약 (신규 아이콘 제작 시 필수)
 
@@ -31,7 +32,7 @@
 
 ```
 guide_page/
-├── asset_design.asp              ← 시안 미리보기 페이지
+├── asset_design.asp              ← 시안 미리보기 + G01 ZONED ANIMATION
 ├── ASSET_DESIGN_SYSTEM.md        ← 본 문서
 ├── _css/icon_style.css           ← 모든 아이콘 CSS (단일 파일)
 └── includes/components/
@@ -39,23 +40,18 @@ guide_page/
     ├── base_business_icon.asp    ← 배지 HTML (_o / _c)
     ├── autoship_icon.asp
     ├── recommend_bonus_icon.asp
+    ├── discount_benefit_badge.asp  ← 할인 혜택 (_o / _c)
     ├── person_icon.asp
     ├── member_icon.asp
     ├── lev_container.asp         ← 시안용 묶음
     ├── badge_container.asp
     ├── person_container.asp
-    ├── point_token_icon.asp      ← SUB ASSET (씬 서브 에셋)
+    ├── effect_plus_icon.asp      ← SUB ASSET '+' 추가 효과
+    ├── point_token_icon.asp
     ├── status_check_icon.asp
-    ├── status_cross_icon.asp
-    ├── calendar_month_card.asp
-    ├── product_silhouette_card.asp
-    ├── delivery_box_icon.asp
-    ├── payment_card_icon.asp
-    ├── select_counter_badge.asp
-    ├── ep_split_card.asp
-    ├── cashback_card.asp
-    ├── price_step_card.asp
-    └── sub_asset_container.asp
+    ├── … (sub asset 11종)
+    ├── sub_asset_container.asp
+    └── guide01_templates.asp     ← guide01 clone용 data-template
 ```
 
 **신규 아이콘 추가 절차**
@@ -63,6 +59,7 @@ guide_page/
 1. `includes/components/{name}.asp` — HTML 마크업
 2. `_css/icon_style.css` — 스타일 추가 (기존 패턴·비율 준수)
 3. 해당 `*_container.asp`에 include (시안 확인용)
+4. guide01 씬에서 쓸 경우 `guide01_templates.asp`에 `data-template` 등록
 
 ---
 
@@ -84,6 +81,8 @@ guide_page/
 | Complex Rank (RF~IRF) | `34px` | 컨테이너 한 변 |
 | Badge | `36px` | 배지 **높이** |
 | Unit (person/member) | `160px` | 실루엣 한 변 |
+| Sub Asset (effect_plus) | `28px` | 원형 `+` 아이콘 한 변 |
+| Sub Asset (point_token 등) | `48px`~`108px` | 에셋별 상이 — CSS 섹션 참고 |
 
 **비율 공식 (Simple Rank, base=60)**
 
@@ -388,6 +387,22 @@ box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #{border-color};
 | label color | `#FFEEA9` |
 | text color | `#665308` |
 
+#### 할인 혜택 (`discount_benefit_badge`)
+
+| 항목 | 값 |
+|------|-----|
+| 라벨 글자 | % |
+| 텍스트 | 할인 혜택 |
+| 루트 class | `discount_benefit_badge_o` / `discount_benefit_badge_c` |
+| 배경 gradient | `120deg, #e65100, #f57c00, #ef6c00` |
+| inset border | `#b23c00` |
+| label bg | `#ffd180` |
+| label color | `#b23c00` |
+| text color | `#fff` |
+| templateId | `discount_benefit_badge` / `discount_benefit_badge_c` |
+
+> `_icon` 계열과 달리 루트 접두가 `_badge`이다. Badge Fold(`G01BadgeFold`)는 현재 `_icon` 3종만 지원.
+
 ### 4-4. Badge CSS 골격 (신규 배지 제작용)
 
 ```css
@@ -513,8 +528,10 @@ box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #{border-color};
 | 지위 Complex bg | `{code}_bg01` … | `crf_bg04` |
 | 지위 Complex text | `lev_t_{code}` | `lev_t_mrf` |
 | Badge root | `{service}_icon_o` / `_c` | `autoship_icon_o` |
-| Badge label | `{prefix}_label` | `autoship_label` |
-| Badge text | `{prefix}_text` | `autoship_text` |
+| Badge root (예외) | `{service}_badge_o` / `_c` | `discount_benefit_badge_o` |
+| Badge label | `{prefix}_label` | `autoship_label`, `discount_benefit_label` |
+| Badge text | `{prefix}_text` | `autoship_text`, `discount_benefit_text` |
+| Sub Asset | `{name}_icon` / `{name}_card` | `effect_plus_icon`, `cashback_card` |
 | Unit | `{role}_icon` | `member_icon` |
 
 **금지**
@@ -556,18 +573,35 @@ box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #{border-color};
 
 ---
 
-## 8. 보조 오브젝트 (영상 씬용 — 참고)
+## 8. SUB ASSET (씬 서브 에셋)
 
-영상 `#motion-canvas` 안 **보조 UI** (달력·카드·타임라인 등)는 `icon_style.css` **밖** `_css/guide01.css`의 `.g01-*` 클래스로 별도 제작.
+`sub_asset_container.asp` · `icon_style.css` SUB ASSET 섹션.
 
-| 구분 | icon_style.css | guide01.css 등 |
-|------|----------------|----------------|
-| 대상 | **재사용 에셋** (지위·배지·유닛) | 씬별 일회성 보조 도형 |
-| 이미지 | 없음 (CSS only) | 없음 |
-| `--size` | 필수 | 선택 |
+| 컴포넌트 | `--size` | 구조 |
+|----------|----------|------|
+| `effect_plus_icon` | `28px` | pseudo `::before/::after` 십자, 원형 배경 |
+| `point_token_icon` | `48px` | 원형 + inner 텍스트 |
+| `status_check_icon` | `36px` | 원 + `::after` 체크 |
+| `calendar_month_card` | `90px` | 월·일 2-part 카드 |
+| `cashback_card` | `36px` | badge + text pill |
+
+**`effect_plus_icon` HTML**
+
+```html
+<div class="effect_plus_icon" role="img" aria-label="추가"></div>
+```
+
+신규 SUB ASSET 추가 시 `sub_asset_container.asp` + `guide01_templates.asp`(씬 사용 시) 등록.
+
+### guide01.css vs icon_style.css
+
+| 구분 | icon_style.css | guide01.css |
+|------|----------------|-------------|
+| 대상 | **재사용 에셋** (rank, badge, unit, sub asset) | 7×7 존 배치·wrap/inner 애니·뱃지 fold |
+| `--size` | 에셋별 필수 | 존 scale은 `--g01-base-scale` |
 
 **신규 재사용 에셋** → `icon_style.css` + `components/`  
-**씬 전용 카드·도식** → 시리즈 CSS, 에셋 HTML 복제 금지
+**존 애니·레이아웃** → `guide01.css` + [asset_animation_rull.md](./asset_animation_rull.md)
 
 ---
 
@@ -577,35 +611,65 @@ box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) #{border-color};
 
 `lev_d` · `lev_p` · `lev_jp` · `lev_sp` · `lev_fc` · `lev_gc` · `lev_dc` · `lev_rf` · `lev_crf` · `lev_mrf` · `lev_srf` · `lev_irf`
 
-### BADGE (3 × 2모드)
+### BADGE (4종 × 2모드 + ex 1)
 
-| 서비스 | 펼침 `_o` | 닫힘 `_c` |
-|--------|-----------|-----------|
-| 베이스 사업자 | `base_business_icon_o` | `base_business_icon_c` |
-| 오토십 | `autoship_icon_o` | `autoship_icon_c` |
-| 추천 보너스 | `recommend_bonus_icon_o` | `recommend_bonus_icon_c` |
+| 서비스 | 펼침 `_o` | 닫힘 `_c` | templateId |
+|--------|-----------|-----------|------------|
+| 베이스 사업자 | `base_business_icon_o` | `base_business_icon_c` | `base_business_icon` / `_c` |
+| 오토십 | `autoship_icon_o` | `autoship_icon_c` | `autoship_icon` / `_c` |
+| 추천 보너스 | `recommend_bonus_icon_o` | `recommend_bonus_icon_c` | `recommend_bonus_icon` / `_c` |
+| 할인 혜택 | `discount_benefit_badge_o` | `discount_benefit_badge_c` | `discount_benefit_badge` / `_c` |
+
+추가: `recommend_bonus_icon_ex` (2줄 텍스트 변형, badge_container 시안용)
 
 ### UNIT (2)
 
 `person_icon` · `member_icon`
 
-### SUB ASSET (11)
+### SUB ASSET (12)
 
-`point_token_icon` · `status_check_icon` · `status_cross_icon` · `calendar_month_card` · `product_silhouette_card` · `delivery_box_icon` · `payment_card_icon` · `select_counter_badge` · `ep_split_card` · `cashback_card` · `price_step_card`
+`effect_plus_icon` · `point_token_icon` · `status_check_icon` · `status_cross_icon` · `calendar_month_card` · `product_silhouette_card` · `delivery_box_icon` · `payment_card_icon` · `select_counter_badge` · `ep_split_card` · `cashback_card` · `price_step_card`
 
 ---
 
-## 10. 미리보기
+## 10. guide01 템플릿 (`guide01_templates.asp`)
+
+guide01 씬에서 `Guide01.cloneTemplate(id)` / `addZonedAsset(canvas, id, …)` 로 클론.
+
+| data-template | 컴포넌트 |
+|---------------|----------|
+| `autoship_icon` / `_c` | 오토십 배지 |
+| `base_business_icon` / `_c` | 베이스 사업자 |
+| `recommend_bonus_icon` / `_c` | 추천 보너스 |
+| `discount_benefit_badge` / `_c` | 할인 혜택 |
+| `member_icon` / `person_icon` | 유닛 |
+| `lev_p` | 지위 (예시) |
+| `calendar_month_card` | 달력 카드 |
+| `product_silhouette_card` | 제품 실루엣 |
+| `price_step_card` | 가격 단계 |
+| `status_check_icon` | 체크 |
+| `cashback_card` | 캐시백 |
+| `effect_plus_icon` | `+` 추가 효과 |
+| `point_token_icon` | 포인트 토큰 |
+
+영상 진입 ASP(`series/season01/guide01_smartguide.asp`)에서 include.
+
+---
+
+## 11. 미리보기
 
 브라우저에서 `asset_design.asp` 열기:
 
-- **RANK MEDAL** — 12지위 한 줄 배치
-- **BADGE** — 펼침 3 + 닫힘 3
+- **RANK MEDAL** — 12지위
+- **BADGE** — 펼침/닫힘 4종 + 추천보너스 ex
 - **UNIT** — person + member
-- **SUB ASSET** — 씬 서브 에셋 11종
+- **SUB ASSET** — 서브 에셋 12종 (`effect_plus_icon` 포함)
+- **G01 ZONED ANIMATION** — 7×7 존 Motion Component · Badge Fold 미리보기 ([asset_animation_rull.md](./asset_animation_rull.md))
 
-CSS 수정 후 새로고침으로 즉시 확인.
+CSS 수정 후 새로고침(Ctrl+Shift+R)으로 확인.
+
+`frame_layout.asp`는 영상 템플릿 + `AssetShowcase` 데모(15종)용 — guide01 전용 템플릿·G01 미리보기는 `asset_design.asp` 기준.
 
 ---
 
-*문서 버전: asset_design.asp · icon_style.css 기준 (2026-03)*
+*문서 버전: asset_design.asp · icon_style.css · guide01_templates.asp 기준 (2026-09-11)*

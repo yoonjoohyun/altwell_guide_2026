@@ -7,4 +7,6 @@
   <!--#include file="recommend_bonus_icon.asp"-->
   <!--#include file="recommend_bonus_icon_ex.asp"-->
   <!--#include file="recommend_bonus_icon_c.asp"-->
+  <!--#include file="discount_benefit_badge.asp"-->
+  <!--#include file="discount_benefit_badge_c.asp"-->
 </div>
