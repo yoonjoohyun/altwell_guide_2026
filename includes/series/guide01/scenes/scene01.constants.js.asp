@@ -52,6 +52,8 @@ var Scene01Config = {
     anchorZone: 'd4',
     memberHeadZone: 'c4',
     calendarZone: 'd5',
+    /* 웹뷰(데스크톱) 그리드 셀 크기 기준 — 모바일-only 진입 시 fallback */
+    referenceCanvas: { width: 720, height: 540 },
     gaps: {
       memberToAutoship: 2,
       autoshipToBenefit: 6,
@@ -60,6 +62,13 @@ var Scene01Config = {
       memberHeadTopRatio: 0.2,
       memberOverlapAutoship: 2,
       benefitRowGap: 10
+    },
+    mobileGaps: {
+      memberOverlapAutoship: 0,
+      memberToAutoship: 10,
+      autoshipToBenefit: 18,
+      autoshipToBase: 14,
+      benefitRowGap: 8
     },
     scales: {
       member: 1.5,

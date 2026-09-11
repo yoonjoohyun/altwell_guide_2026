@@ -4,6 +4,71 @@ var Scene01Layout = (function(){
   var _resizeBound = false;
   var _pending = false;
   var _ctx = null;
+  var _refGridCellPx = null;
+
+  function isMobileCanvas(){
+    return window.matchMedia('(max-width:900px)').matches;
+  }
+
+  function captureReferenceGridCell(canvas){
+    if(isMobileCanvas()) return;
+    var grid = zoneCellSize(canvas);
+    _refGridCellPx = Math.min(grid.cellW, grid.cellH);
+  }
+
+  function referenceGridCellPx(canvas){
+    if(!isMobileCanvas()) captureReferenceGridCell(canvas);
+    if(_refGridCellPx) return _refGridCellPx;
+
+    var layout = Scene01Config.layout;
+    if(layout.referenceCellPx > 0) return layout.referenceCellPx;
+
+    var ref = layout.referenceCanvas;
+    if(ref && ref.width && ref.height){
+      var safe = isMobileCanvas() ? 5 : 10;
+      return Math.min((ref.width - safe * 2) / 7, (ref.height - safe * 2) / 7);
+    }
+
+    var grid = zoneCellSize(canvas);
+    return Math.min(grid.cellW, grid.cellH);
+  }
+
+  /* 현재 그리드 셀 / 웹뷰 기준 셀 — 에셋·간격 비율 유지 */
+  function gridProportionalScale(canvas){
+    var grid = zoneCellSize(canvas);
+    var current = Math.min(grid.cellW, grid.cellH);
+    var ref = referenceGridCellPx(canvas);
+    if(!ref || ref <= 0) return 1;
+    return current / ref;
+  }
+
+  function readGroupScale(inner){
+    if(!inner) return 1;
+    return parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
+  }
+
+  function resolveLayoutGaps(canvas){
+    var base = Scene01Config.layout.gaps;
+    if(!isMobileCanvas()) return base;
+    var mobile = Scene01Config.layout.mobileGaps || {};
+    return {
+      memberToAutoship: mobile.memberToAutoship != null ? mobile.memberToAutoship : base.memberToAutoship,
+      autoshipToBenefit: mobile.autoshipToBenefit != null ? mobile.autoshipToBenefit : base.autoshipToBenefit,
+      autoshipToBase: mobile.autoshipToBase != null ? mobile.autoshipToBase : base.autoshipToBase,
+      memberOverlapAutoship: mobile.memberOverlapAutoship != null ? mobile.memberOverlapAutoship : 0,
+      benefitRowGap: mobile.benefitRowGap != null ? mobile.benefitRowGap : base.benefitRowGap,
+      memberHeadRatio: base.memberHeadRatio,
+      memberHeadTopRatio: base.memberHeadTopRatio
+    };
+  }
+
+  function localSizeFromRect(rect, inner){
+    var gs = readGroupScale(inner);
+    return {
+      width: rect.width / gs,
+      height: rect.height / gs
+    };
+  }
 
   function createGroup(canvas, zone){
     var group = document.createElement('div');
@@ -117,7 +182,7 @@ var Scene01Layout = (function(){
     return snap && snap.className && /_o\b/.test(snap.className);
   }
 
-  function measureUnfoldedBadgeWrap(wrap){
+  function measureUnfoldedBadgeWrap(wrap, inner){
     if(!wrap) return { width: 0, height: 0 };
     return withMeasureVis(wrap, function(){
       var snap = snapshotBadgeState(wrap);
@@ -126,8 +191,13 @@ var Scene01Layout = (function(){
       var target = wrap.querySelector('.g01-float-inner') || wrap;
       var rect = target.getBoundingClientRect();
       restoreBadgeState(snap, keepOpen);
-      return rect;
+      return localSizeFromRect(rect, inner);
     });
+  }
+
+  function measureLocalWrapRect(wrap, inner){
+    if(!wrap) return { width: 0, height: 0 };
+    return localSizeFromRect(measureWrapRect(wrap), inner);
   }
 
   function measureRowWrapSize(wrap){
@@ -137,11 +207,11 @@ var Scene01Layout = (function(){
     return { width: Math.ceil(r.width), height: Math.ceil(r.height) };
   }
 
-  function measurePlusRowSize(wrap){
-    var inner = wrap && wrap.querySelector('.g01-float-inner');
+  function measurePlusRowSize(wrap, groupInner){
+    var floatInner = wrap && wrap.querySelector('.g01-float-inner');
     var icon = wrap && wrap.querySelector('.effect_plus_icon');
-    if(!inner) return { width: 0, height: 0 };
-    var ir = inner.getBoundingClientRect();
+    if(!floatInner) return { width: 0, height: 0 };
+    var ir = floatInner.getBoundingClientRect();
     var w = ir.width;
     var h = ir.height;
     if(icon){
@@ -149,13 +219,14 @@ var Scene01Layout = (function(){
       w = Math.max(w, gr.width);
       h = Math.max(h, gr.height);
     }
-    return { width: Math.ceil(w), height: Math.ceil(h) };
+    var local = localSizeFromRect({ width: w, height: h }, groupInner);
+    return { width: Math.ceil(local.width), height: Math.ceil(local.height) };
   }
 
-  function measureBadgeRowSize(wrap){
-    var inner = wrap && (wrap.querySelector('.g01-float-inner') || wrap);
-    if(!inner) return { width: 0, height: 0 };
-    var ir = inner.getBoundingClientRect();
+  function measureBadgeRowSize(wrap, groupInner){
+    var floatInner = wrap && (wrap.querySelector('.g01-float-inner') || wrap);
+    if(!floatInner) return { width: 0, height: 0 };
+    var ir = floatInner.getBoundingClientRect();
     var w = ir.width;
     var h = ir.height;
     var badge = Guide01.resolveZonedBadge(wrap);
@@ -164,10 +235,11 @@ var Scene01Layout = (function(){
       w = Math.max(w, br.width);
       h = Math.max(h, br.height);
     }
-    return { width: Math.ceil(w), height: Math.ceil(h) };
+    var local = localSizeFromRect({ width: w, height: h }, groupInner);
+    return { width: Math.ceil(local.width), height: Math.ceil(local.height) };
   }
 
-  function measureBenefitRowRects(assets){
+  function measureBenefitRowRects(assets, groupInner){
     var badgeWraps = [assets.discount, assets.cashback, assets.recommend];
     var snaps = [];
     var i;
@@ -179,11 +251,11 @@ var Scene01Layout = (function(){
 
     /* offset은 wrap(= float-inner) 중심 — 모든 항목 동일 기준으로 측정 */
     var rects = {
-      discount: measureBadgeRowSize(assets.discount),
-      plus: measurePlusRowSize(assets.plus),
-      cashback: measureBadgeRowSize(assets.cashback),
-      plusRecommend: measurePlusRowSize(assets.plusRecommend),
-      recommend: measureBadgeRowSize(assets.recommend)
+      discount: measureBadgeRowSize(assets.discount, groupInner),
+      plus: measurePlusRowSize(assets.plus, groupInner),
+      cashback: measureBadgeRowSize(assets.cashback, groupInner),
+      plusRecommend: measurePlusRowSize(assets.plusRecommend, groupInner),
+      recommend: measureBadgeRowSize(assets.recommend, groupInner)
     };
 
     for(i = 0; i < snaps.length; i++){
@@ -194,8 +266,8 @@ var Scene01Layout = (function(){
     return rects;
   }
 
-  function layoutBenefitRow(assets, autoshipBottom, gaps){
-    var row = measureBenefitRowRects(assets);
+  function layoutBenefitRow(assets, autoshipBottom, gaps, groupInner){
+    var row = measureBenefitRowRects(assets, groupInner);
     var rowGap = gaps.benefitRowGap != null ? gaps.benefitRowGap : 10;
     var rowH = Math.max(
       row.discount.height, row.plus.height, row.cashback.height,
@@ -351,34 +423,35 @@ var Scene01Layout = (function(){
   function applyLayout(canvas, group, assets){
     if(!canvas || !group || !assets) return;
 
-    var gaps = Scene01Config.layout.gaps;
+    var gaps = resolveLayoutGaps(canvas);
     var mg = memberGapScale();
     var inner = group._scene01Inner;
     if(!inner) return;
 
     var endMeasure = beginMeasurePass(group, assets);
+    inner.style.setProperty('--group-scale', '1');
 
     setOffset(assets.member, 0, 0);
 
-    var memberR = measureWrapRect(assets.member);
+    var memberR = measureLocalWrapRect(assets.member, inner);
     var memberHalfW = memberR.width / 2;
     var memberHalfH = memberR.height / 2;
     var memberBottom = memberHalfH;
 
-    var autoshipR = measureUnfoldedBadgeWrap(assets.autoship);
+    var autoshipR = measureUnfoldedBadgeWrap(assets.autoship, inner);
     var autoshipY = memberBottom + (gaps.memberToAutoship - gaps.memberOverlapAutoship) * mg + autoshipR.height / 2;
     setOffset(assets.autoship, 0, autoshipY);
 
     var autoshipBottom = autoshipY + autoshipR.height / 2;
     var autoshipTop = autoshipY - autoshipR.height / 2;
 
-    layoutBenefitRow(assets, autoshipBottom, gaps);
+    layoutBenefitRow(assets, autoshipBottom, gaps, inner);
 
-    var baseR = measureUnfoldedBadgeWrap(assets.base);
+    var baseR = measureUnfoldedBadgeWrap(assets.base, inner);
     var baseY = autoshipTop - gaps.autoshipToBase - baseR.height / 2;
     setOffset(assets.base, 0, baseY);
 
-    var calR = measureWrapRect(assets.calendar);
+    var calR = measureLocalWrapRect(assets.calendar, inner);
     var memberHeadY = -memberHalfH + memberR.height * (gaps.memberHeadRatio || 0.37);
     var calZone = Scene01Config.layout.calendarZone || 'd5';
     var calLeft = zoneLeftPx(canvas, calZone);
@@ -387,15 +460,17 @@ var Scene01Layout = (function(){
 
     fitGroupScale(canvas, group, inner);
     alignMemberHeadToZoneTop(canvas, group, assets);
+    fitGroupScale(canvas, group, inner);
     endMeasure();
   }
 
   function fitGroupScale(canvas, group, inner){
-    var safe = window.matchMedia('(max-width:900px)').matches ? 5 : 10;
+    var safe = isMobileCanvas() ? 5 : 10;
     var canvasW = canvas.clientWidth - safe * 2;
     var canvasH = canvas.clientHeight - safe * 2;
-    var scale = 1;
-    var pad = 10;
+    var scale = gridProportionalScale(canvas);
+    var pad = isMobileCanvas() ? 14 : 10;
+    var minScale = isMobileCanvas() ? 0.15 : 0.5;
     var children = inner.querySelectorAll('.scene01-group-child');
     var minX = Infinity;
     var minY = Infinity;
@@ -412,19 +487,22 @@ var Scene01Layout = (function(){
       maxY = Math.max(maxY, r.bottom);
     }
 
-    if(!isFinite(minX)) return;
+    if(!isFinite(minX)){
+      inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
+      return;
+    }
 
     var boundsW = maxX - minX;
     var boundsH = maxY - minY;
 
-    if(boundsW > canvasW - pad * 2){
+    if(boundsW > 0 && boundsW * scale > canvasW - pad * 2){
       scale = Math.min(scale, (canvasW - pad * 2) / boundsW);
     }
-    if(boundsH > canvasH - pad * 2){
+    if(boundsH > 0 && boundsH * scale > canvasH - pad * 2){
       scale = Math.min(scale, (canvasH - pad * 2) / boundsH);
     }
 
-    inner.style.setProperty('--group-scale', String(Math.max(0.5, Math.min(1, scale))));
+    inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
   }
 
   function bindResize(canvas, group, assets){
@@ -473,14 +551,15 @@ var Scene01Layout = (function(){
     if(!_ctx || !_ctx.assets || !_ctx.group) return;
     var assets = _ctx.assets;
     var autoshipWrap = assets.autoship;
-    if(!autoshipWrap) return;
+    var inner = _ctx.group._scene01Inner;
+    if(!autoshipWrap || !inner) return;
 
     withBenefitRowMeasure(assets, function(){
       var y = autoshipWrap.style.getPropertyValue('--offset-y');
       var autoshipY = y ? parseFloat(y) : 0;
-      var autoshipR = measureUnfoldedBadgeWrap(autoshipWrap);
+      var autoshipR = measureUnfoldedBadgeWrap(autoshipWrap, inner);
       var autoshipBottom = autoshipY + autoshipR.height / 2;
-      layoutBenefitRow(assets, autoshipBottom, Scene01Config.layout.gaps);
+      layoutBenefitRow(assets, autoshipBottom, resolveLayoutGaps(_ctx.canvas), inner);
     });
   }
 
