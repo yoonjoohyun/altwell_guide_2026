@@ -586,6 +586,15 @@ var Scene01Layout = (function(){
   };
 })();
 
+function scene01SetBaseBadgeLabel(wrap, label){
+  if(!wrap) return;
+  var badge = Guide01.resolveZonedBadge(wrap);
+  if(!badge) return;
+  var textEl = badge.querySelector('.base_text');
+  if(textEl) textEl.textContent = label;
+  badge.setAttribute('aria-label', label);
+}
+
 function setupScene01Assets(canvas){
   Scene01Layout.unbindResize();
 
@@ -625,6 +634,8 @@ function setupScene01Assets(canvas){
       extraCls: 'g01-layer-front'
     }, true)
   };
+
+  scene01SetBaseBadgeLabel(assets.base, 'BASE 사업자 기준');
 
   Scene01Layout.applyLayout(canvas, group, assets);
   Scene01Layout.bindResize(canvas, group, assets);
