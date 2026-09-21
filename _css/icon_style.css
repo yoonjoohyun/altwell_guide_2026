@@ -1343,3 +1343,680 @@
     font-weight: 700;
 }
 
+
+/*************  MORE BADGE — guide_info_badge  *******************************************************************************************************/
+.guide_info_badge {
+    --size: 36px;
+    --badge-bg-1: #2c51ca;
+    --badge-bg-2: #1034ac;
+    --badge-bg-3: #462db3;
+    --badge-border: #0b2a91;
+    --badge-label-bg: #b3b1ff;
+    --badge-label-color: #0b2a91;
+    --badge-text-color: #fff;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    height: var(--size);
+    padding: calc(var(--size) * 5 / 36) calc(var(--size) * 7 / 36);
+    gap: calc(var(--size) * 5 / 36);
+    border-radius: calc(var(--size) * 10 / 36);
+    background: linear-gradient(120deg, var(--badge-bg-1), var(--badge-bg-2), var(--badge-bg-3));
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 36) var(--badge-border);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.guide_info_badge_label {
+    display: grid;
+    place-items: center;
+    width: calc(var(--size) * 24 / 36);
+    height: calc(var(--size) * 24 / 36);
+    flex: 0 0 auto;
+    border-radius: 50%;
+    color: var(--badge-label-color);
+    background: var(--badge-label-bg);
+    font-size: calc(var(--size) * 14 / 36);
+    font-weight: 900;
+    line-height: 1;
+}
+.guide_info_badge_text {
+    color: var(--badge-text-color);
+    font-size: calc(var(--size) * 16 / 36);
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+.guide_info_badge.is_green {
+    --badge-bg-1: #118839;
+    --badge-bg-2: #08794d;
+    --badge-bg-3: #107474;
+    --badge-border: #05653f;
+    --badge-label-bg: #75cf40;
+    --badge-label-color: #fff;
+}
+.guide_info_badge.is_orange {
+    --badge-bg-1: #e65100;
+    --badge-bg-2: #f57c00;
+    --badge-bg-3: #ef6c00;
+    --badge-border: #b23c00;
+    --badge-label-bg: #ffd180;
+    --badge-label-color: #b23c00;
+}
+.guide_info_badge.is_red {
+    --badge-bg-1: #ef5350;
+    --badge-bg-2: #d92f39;
+    --badge-bg-3: #b91c2b;
+    --badge-border: #a21927;
+    --badge-label-bg: #ffd7da;
+    --badge-label-color: #a21927;
+}
+
+
+/*************  MORE SUB ASSET — auto_renewal_icon  *******************************************************************************************************/
+.auto_renewal_icon {
+    --size: 132px;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.auto_renewal_ring {
+    position: absolute;
+    inset: calc(var(--size) * 8 / 132);
+    border: calc(var(--size) * 10 / 132) solid #dce5ff;
+    border-top-color: #4669df;
+    border-right-color: #1034ac;
+    border-radius: 50%;
+    transform: rotate(24deg);
+}
+.auto_renewal_arrow {
+    position: absolute;
+    top: calc(var(--size) * 8 / 132);
+    right: calc(var(--size) * 11 / 132);
+    width: 0;
+    height: 0;
+    border-top: calc(var(--size) * 13 / 132) solid transparent;
+    border-bottom: calc(var(--size) * 13 / 132) solid transparent;
+    border-left: calc(var(--size) * 20 / 132) solid #1034ac;
+    transform: rotate(26deg);
+}
+.auto_renewal_center {
+    position: absolute;
+    inset: calc(var(--size) * 29 / 132);
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    color: #0b2a91;
+    background: linear-gradient(145deg, #fff, #eaf0ff);
+    box-shadow: 0 calc(var(--size) * 5 / 132) calc(var(--size) * 14 / 132) rgba(16, 52, 172, .17);
+    text-align: center;
+    font-size: calc(var(--size) * 15 / 132);
+    font-weight: 900;
+    line-height: 1.2;
+}
+
+
+/*************  MORE SUB ASSET — subscription_flow_card  *******************************************************************************************************/
+.subscription_flow_card {
+    --size: 340px;
+    width: var(--size);
+    padding: calc(var(--size) * 18 / 340);
+    border-radius: calc(var(--size) * 18 / 340);
+    color: #1f2937;
+    background: #fff;
+    box-shadow: 0 calc(var(--size) * 8 / 340) calc(var(--size) * 24 / 340) rgba(31, 41, 55, .13);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.subscription_flow_title {
+    margin-bottom: calc(var(--size) * 14 / 340);
+    color: #0b2a91;
+    font-size: calc(var(--size) * 17 / 340);
+    font-weight: 900;
+}
+.subscription_flow_track {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--size) * 7 / 340);
+}
+.subscription_flow_month {
+    display: grid;
+    place-items: center;
+    width: calc(var(--size) * 50 / 340);
+    height: calc(var(--size) * 50 / 340);
+    flex: 0 0 auto;
+    border-radius: calc(var(--size) * 12 / 340);
+    color: #0b2a91;
+    background: #eaf0ff;
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 340) #c8d5ff;
+    font-size: calc(var(--size) * 13 / 340);
+    font-weight: 900;
+    line-height: 1.15;
+    text-align: center;
+}
+.subscription_flow_month.is_next {
+    color: #fff;
+    background: linear-gradient(145deg, #4669df, #1034ac);
+}
+.subscription_flow_line {
+    height: calc(var(--size) * 3 / 340);
+    flex: 1;
+    border-radius: 999px;
+    background: #bdc9de;
+}
+.subscription_flow_line.is_renew {
+    position: relative;
+    background: #ee3338;
+}
+.subscription_flow_line.is_renew::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 0;
+    height: 0;
+    border-top: calc(var(--size) * 6 / 340) solid transparent;
+    border-bottom: calc(var(--size) * 6 / 340) solid transparent;
+    border-left: calc(var(--size) * 9 / 340) solid #ee3338;
+    transform: translate(40%, -50%);
+}
+
+
+/*************  MORE SUB ASSET — autoship_discount_summary_card  *******************************************************************************************************/
+.autoship_discount_summary_card {
+    --size: 260px;
+    width: var(--size);
+    min-height: calc(var(--size) * 52 / 260);
+    padding: calc(var(--size) * 14 / 260) calc(var(--size) * 16 / 260);
+    padding-top: max(18px, calc(var(--size) * 26 / 260));
+    border-radius: calc(var(--size) * 14 / 260);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    background: linear-gradient(120deg, #2c51ca, #1034AC, #462db3);
+    box-shadow:
+        inset 0 0 0 calc(var(--size) * 2 / 260) #0B2A91,
+        0 calc(var(--size) * 6 / 260) calc(var(--size) * 18 / 260) rgba(16, 52, 172, .28);
+}
+.autoship_discount_summary_card .ads_row {
+    color: #fff;
+    font-size: max(18px, calc(var(--size) * 18 / 260));
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: center;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(calc(var(--size) * 4 / 260));
+    transition:
+        opacity 380ms ease,
+        max-height 420ms ease,
+        transform 420ms ease,
+        margin 420ms ease;
+    margin: 0;
+}
+.autoship_discount_summary_card .ads_row.is-visible {
+    opacity: 1;
+    max-height: calc(var(--size) * 48 / 260);
+    transform: translateY(0);
+    margin: calc(var(--size) * 5 / 260) 0;
+}
+.autoship_discount_summary_card .ads_row.is-visible:first-child {
+    margin-top: 0;
+}
+.autoship_discount_summary_card .ads_row.is-visible:last-child {
+    margin-bottom: 0;
+}
+.autoship_discount_summary_card .ads_row[data-row="4"] {
+    color: #FFE566;
+    line-height: 2;
+    text-shadow: 0 0 calc(var(--size) * 8 / 260) rgba(255, 214, 80, .35);
+}
+.autoship_discount_summary_card .ads_row[data-row="4"].is-visible {
+    max-height: calc(var(--size) * 56 / 260);
+}
+
+
+/*************  MORE SUB ASSET — reward_plan_basis_box  *******************************************************************************************************/
+.reward_plan_basis_box {
+    --size: 260px;
+    width: var(--size);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    padding: calc(var(--size) * 14 / 260) calc(var(--size) * 16 / 260) calc(var(--size) * 16 / 260);
+    border-radius: calc(var(--size) * 14 / 260);
+    background: linear-gradient(145deg, #fff, #f4f7ff);
+    box-shadow:
+        inset 0 0 0 calc(var(--size) * 1.5 / 260) #c7d2fe,
+        0 calc(var(--size) * 6 / 260) calc(var(--size) * 18 / 260) rgba(16, 52, 172, .14);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    text-align: center;
+}
+.reward_plan_basis_box .rpb_title {
+    margin-bottom: calc(var(--size) * 12 / 260);
+    color: #0b2a91;
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1.25;
+    word-break: keep-all;
+}
+.reward_plan_basis_box .rpb_row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+    gap: calc(var(--size) * 8 / 260);
+    min-height: calc(var(--size) * 44 / 260);
+}
+
+
+/*************  MORE SUB ASSET — member_basis_card  *******************************************************************************************************/
+.member_basis_card {
+    --size: 220px;
+    width: var(--size);
+    padding: calc(var(--size) * 18 / 220);
+    border-radius: calc(var(--size) * 18 / 220);
+    background: linear-gradient(145deg, #fff, #f4f7ff);
+    box-shadow: 0 calc(var(--size) * 8 / 220) calc(var(--size) * 22 / 220) rgba(31, 41, 55, .12);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    text-align: center;
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.member_basis_person {
+    position: relative;
+    width: calc(var(--size) * 64 / 220);
+    height: calc(var(--size) * 64 / 220);
+    margin: 0 auto calc(var(--size) * 10 / 220);
+}
+.member_basis_person::before {
+    content: '';
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    width: 34%;
+    height: 34%;
+    border-radius: 50%;
+    background: #73a5f0;
+    transform: translateX(-50%);
+}
+.member_basis_person::after {
+    content: '';
+    position: absolute;
+    bottom: 2%;
+    left: 50%;
+    width: 74%;
+    height: 48%;
+    border-radius: 50% 50% 12% 12% / 75% 75% 18% 18%;
+    background: #73a5f0;
+    transform: translateX(-50%);
+}
+.member_basis_point {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--size) * 5 / 220);
+    padding: calc(var(--size) * 7 / 220) calc(var(--size) * 11 / 220);
+    border-radius: 999px;
+    color: #665308;
+    background: linear-gradient(120deg, #ffd738, #ffeca0, #ffe373);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 220) #c7a417;
+    font-size: calc(var(--size) * 15 / 220);
+    font-weight: 900;
+}
+.member_basis_caption {
+    margin-top: calc(var(--size) * 9 / 220);
+    color: #6b7280;
+    font-size: calc(var(--size) * 12 / 220);
+    font-weight: 700;
+}
+
+
+/*************  MORE SUB ASSET — group_bracket  *******************************************************************************************************/
+.group_bracket {
+    --size: 250px;
+    position: relative;
+    width: var(--size);
+    min-height: calc(var(--size) * 68 / 250);
+    padding-top: calc(var(--size) * 22 / 250);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.group_bracket_line {
+    position: absolute;
+    top: 0;
+    left: 4%;
+    width: 92%;
+    height: calc(var(--size) * 18 / 250);
+    border-top: calc(var(--size) * 3 / 250) solid #4669df;
+    border-left: calc(var(--size) * 3 / 250) solid #4669df;
+    border-right: calc(var(--size) * 3 / 250) solid #4669df;
+    border-radius: calc(var(--size) * 9 / 250) calc(var(--size) * 9 / 250) 0 0;
+}
+.group_bracket_label {
+    color: #0b2a91;
+    font-size: calc(var(--size) * 15 / 250);
+    font-weight: 900;
+    text-align: center;
+}
+
+
+/*************  MORE SUB ASSET — product_swap_icon  *******************************************************************************************************/
+.product_swap_icon {
+    --size: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--size) * 12 / 190);
+    width: var(--size);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.product_swap_box {
+    display: grid;
+    place-items: center;
+    width: calc(var(--size) * 58 / 190);
+    height: calc(var(--size) * 52 / 190);
+    border-radius: calc(var(--size) * 8 / 190);
+    color: #fff8e8;
+    background: linear-gradient(145deg, #b97a3f, #8c552b);
+    box-shadow: inset 0 calc(var(--size) * 6 / 190) 0 rgba(255, 255, 255, .13), 0 calc(var(--size) * 5 / 190) calc(var(--size) * 10 / 190) rgba(82, 50, 25, .2);
+    font-size: calc(var(--size) * 24 / 190);
+    font-weight: 900;
+}
+.product_swap_arrows {
+    position: relative;
+    width: calc(var(--size) * 44 / 190);
+    height: calc(var(--size) * 36 / 190);
+}
+.product_swap_arrows::before,
+.product_swap_arrows::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 85%;
+    height: calc(var(--size) * 3 / 190);
+    border-radius: 999px;
+    background: #8a98ae;
+}
+.product_swap_arrows::before { top: 25%; }
+.product_swap_arrows::after { bottom: 25%; transform: rotate(180deg); }
+.product_swap_block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: calc(var(--size) * 36 / 190);
+    height: calc(var(--size) * 36 / 190);
+    border: calc(var(--size) * 4 / 190) solid #ee3338;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+.product_swap_block::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 112%;
+    height: calc(var(--size) * 4 / 190);
+    border-radius: 999px;
+    background: #ee3338;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+
+/*************  MORE SUB ASSET — cancel_request_card  *******************************************************************************************************/
+.cancel_request_card {
+    --size: 240px;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--size) * 12 / 240);
+    width: var(--size);
+    padding: calc(var(--size) * 14 / 240);
+    border-radius: calc(var(--size) * 16 / 240);
+    color: #8e202b;
+    background: linear-gradient(145deg, #fff, #fff1f2);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 240) #ffc8cd, 0 calc(var(--size) * 7 / 240) calc(var(--size) * 18 / 240) rgba(142, 32, 43, .10);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.cancel_request_doc {
+    position: relative;
+    width: calc(var(--size) * 48 / 240);
+    height: calc(var(--size) * 58 / 240);
+    flex: 0 0 auto;
+    border-radius: calc(var(--size) * 7 / 240);
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 240) #e65c68;
+}
+.cancel_request_doc::before,
+.cancel_request_doc::after {
+    content: '';
+    position: absolute;
+    left: 22%;
+    width: 56%;
+    height: calc(var(--size) * 3 / 240);
+    border-radius: 999px;
+    background: #f0a0a8;
+}
+.cancel_request_doc::before {
+    top: 31%;
+    box-shadow: 0 calc(var(--size) * 11 / 240) 0 #f0a0a8;
+}
+.cancel_request_doc::after {
+    bottom: 18%;
+    width: 35%;
+}
+.cancel_request_text strong {
+    display: block;
+    margin-bottom: calc(var(--size) * 4 / 240);
+    font-size: calc(var(--size) * 19 / 240);
+}
+.cancel_request_text span {
+    display: block;
+    color: #a95b62;
+    font-size: calc(var(--size) * 12 / 240);
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+
+/*************  MORE SUB ASSET — payment_stop_icon  *******************************************************************************************************/
+.payment_stop_icon {
+    --size: 150px;
+    position: relative;
+    width: var(--size);
+    height: calc(var(--size) * 105 / 150);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+}
+.payment_stop_card {
+    position: absolute;
+    top: 12%;
+    left: 5%;
+    width: 90%;
+    height: 70%;
+    border-radius: calc(var(--size) * 12 / 150);
+    background: linear-gradient(145deg, #98a5b8, #66758b);
+    box-shadow: 0 calc(var(--size) * 7 / 150) calc(var(--size) * 14 / 150) rgba(31, 41, 55, .2);
+}
+.payment_stop_card::before {
+    content: '';
+    position: absolute;
+    top: 26%;
+    left: 0;
+    width: 100%;
+    height: 16%;
+    background: #3f4d61;
+}
+.payment_stop_card::after {
+    content: '';
+    position: absolute;
+    right: 10%;
+    bottom: 16%;
+    width: 25%;
+    height: 12%;
+    border-radius: 999px;
+    background: #cbd3df;
+}
+.payment_stop_mark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 54%;
+    height: 54%;
+    border: calc(var(--size) * 7 / 150) solid #ee3338;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+.payment_stop_mark::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 116%;
+    height: calc(var(--size) * 7 / 150);
+    border-radius: 999px;
+    background: #ee3338;
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+
+/*************  MORE SUB ASSET — business_flow_card  *******************************************************************************************************/
+.business_flow_card {
+    --size: 390px;
+    display: flex;
+    align-items: center;
+    width: var(--size);
+    padding: calc(var(--size) * 18 / 390);
+    border-radius: calc(var(--size) * 18 / 390);
+    background: #fff;
+    box-shadow: 0 calc(var(--size) * 8 / 390) calc(var(--size) * 24 / 390) rgba(31, 41, 55, .12);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.business_flow_step {
+    flex: 0 0 calc(var(--size) * 94 / 390);
+    text-align: center;
+}
+.business_flow_symbol {
+    display: grid;
+    place-items: center;
+    width: calc(var(--size) * 54 / 390);
+    height: calc(var(--size) * 54 / 390);
+    margin: 0 auto calc(var(--size) * 8 / 390);
+    border-radius: 50%;
+    color: #fff;
+    background: linear-gradient(145deg, #4669df, #1034ac);
+    box-shadow: 0 calc(var(--size) * 5 / 390) calc(var(--size) * 12 / 390) rgba(16, 52, 172, .2);
+    font-size: calc(var(--size) * 22 / 390);
+    font-weight: 900;
+}
+.business_flow_step:nth-child(3) .business_flow_symbol {
+    background: linear-gradient(145deg, #35a76b, #087348);
+}
+.business_flow_step:nth-child(5) .business_flow_symbol {
+    color: #665308;
+    background: linear-gradient(145deg, #ffe77a, #fdd503);
+}
+.business_flow_label {
+    font-size: calc(var(--size) * 14 / 390);
+    font-weight: 900;
+    white-space: nowrap;
+}
+.business_flow_arrow {
+    position: relative;
+    height: calc(var(--size) * 4 / 390);
+    flex: 1;
+    border-radius: 999px;
+    background: #c7d1e2;
+}
+.business_flow_arrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    border-top: calc(var(--size) * 6 / 390) solid transparent;
+    border-bottom: calc(var(--size) * 6 / 390) solid transparent;
+    border-left: calc(var(--size) * 9 / 390) solid #9aa8be;
+    transform: translate(40%, -50%);
+}
+
+
+/*************  MORE SUB ASSET — subscription_system_frame  *******************************************************************************************************/
+.subscription_system_frame {
+    --size: 430px;
+    width: var(--size);
+    padding: calc(var(--size) * 22 / 430);
+    border: calc(var(--size) * 3 / 430) solid transparent;
+    border-radius: calc(var(--size) * 24 / 430);
+    background: linear-gradient(#fff, #fff) padding-box, linear-gradient(120deg, #2c51ca, #8c64ef, #ee3338) border-box;
+    box-shadow: 0 calc(var(--size) * 10 / 430) calc(var(--size) * 28 / 430) rgba(31, 41, 55, .12);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.subscription_system_title {
+    margin-bottom: calc(var(--size) * 13 / 430);
+    color: #0b2a91;
+    font-size: calc(var(--size) * 19 / 430);
+    font-weight: 900;
+    text-align: center;
+}
+.subscription_system_body {
+    padding: calc(var(--size) * 14 / 430);
+    border-radius: calc(var(--size) * 15 / 430);
+    background: linear-gradient(145deg, #f7f9ff, #fff5f6);
+    color: #6b7280;
+    font-size: calc(var(--size) * 13 / 430);
+    font-weight: 700;
+    text-align: center;
+    line-height: 1.45;
+}
+
+
+/*************  MORE SUB ASSET — cursor_click_icon  *******************************************************************************************************/
+.cursor_click_icon {
+    --size: 72px;
+    position: relative;
+    width: var(--size);
+    height: var(--size);
+    flex-shrink: 0;
+}
+.cursor_click_pointer {
+    position: absolute;
+    top: 12%;
+    left: 18%;
+    width: 0;
+    height: 0;
+    border-top: calc(var(--size) * 52 / 72) solid #fff;
+    border-right: calc(var(--size) * 31 / 72) solid transparent;
+    filter: drop-shadow(0 calc(var(--size) * 2 / 72) calc(var(--size) * 2 / 72) rgba(0, 0, 0, .45));
+    transform: rotate(-12deg);
+}
+.cursor_click_pointer::after {
+    content: '';
+    position: absolute;
+    top: calc(var(--size) * -49 / 72);
+    left: calc(var(--size) * 2 / 72);
+    width: calc(var(--size) * 18 / 72);
+    height: calc(var(--size) * 4 / 72);
+    border-radius: 999px;
+    background: #202938;
+    transform: rotate(63deg);
+    transform-origin: left center;
+}
+.cursor_click_ray {
+    position: absolute;
+    width: calc(var(--size) * 13 / 72);
+    height: calc(var(--size) * 3 / 72);
+    border-radius: 999px;
+    background: #ee3338;
+}
+.cursor_click_ray.is_1 { top: 3%; left: 52%; transform: rotate(-68deg); }
+.cursor_click_ray.is_2 { top: 19%; right: 2%; transform: rotate(-10deg); }
+.cursor_click_ray.is_3 { top: 43%; right: 8%; transform: rotate(40deg); }
+

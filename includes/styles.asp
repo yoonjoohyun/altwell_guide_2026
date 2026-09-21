@@ -280,7 +280,7 @@
   background-image:radial-gradient(circle,rgba(255,255,255,.3) 1px,transparent 1px);
   background-size:28px 28px;
 }
-/* 7×7 존 그리드 — MOTION_GRID_GUIDE.md (안전 여백 내 작업 영역) */
+/* 7×7 존 그리드 — SMART_GUIDE_DOCS.md §4 (안전 여백 내 작업 영역) */
 #motion-zone-grid{
   --motion-safe-inset:10px;
   position:absolute;

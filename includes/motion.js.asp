@@ -464,7 +464,18 @@ function setSceneBullets(items){
     var li = document.createElement('li');
     li.className = 'bullet-item';
     li.id = 'bullet-'+(i+1);
-    li.innerHTML = '<span class="bullet-dot"></span><span class="bullet-text">'+item+'</span>';
+    var text = typeof item === 'string' ? item : (item && item.text ? item.text : '');
+    var sub = item && typeof item === 'object' && item.sub ? item.sub : '';
+    if(sub){
+      li.innerHTML =
+        '<span class="bullet-dot"></span>' +
+        '<div class="bullet-body">' +
+          '<span class="bullet-text">' + text + '</span>' +
+          '<span class="bullet-sub">' + sub + '</span>' +
+        '</div>';
+    } else {
+      li.innerHTML = '<span class="bullet-dot"></span><span class="bullet-text">' + text + '</span>';
+    }
     list.appendChild(li);
   });
 }

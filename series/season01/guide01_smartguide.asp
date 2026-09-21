@@ -50,6 +50,9 @@
 <!--#include virtual="/includes/series/guide01/scenes/scene01.constants.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene01.setup.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene01.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene02.constants.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene02.setup.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene02.js.asp"-->
 
 <!--#include virtual="/includes/series/guide01/guide01.asp"-->
 

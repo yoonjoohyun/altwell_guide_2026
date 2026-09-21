@@ -7,49 +7,92 @@ var SeriesGuide01 = {
     chapterTitle: '오토십 알아보기'
   },
 
+  _sceneMediaMeta: function(){
+    return [
+      { config: typeof Scene01Config !== 'undefined' ? Scene01Config : null },
+      { config: typeof Scene02Config !== 'undefined' ? Scene02Config : null }
+    ];
+  },
+
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
 
     SceneRunner.registerScene(Guide01Scene01);
+    SceneRunner.registerScene(Guide01Scene02);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
       var scenes = SceneRunner.getScenes();
-      var s0 = scenes[0];
-      function probeScene01TitleMs(done){
-        if(!SceneMedia.getMediaPath || !SceneMedia.probeDurationPath) return done();
+      var metaList = this._sceneMediaMeta();
+
+      function probeTitleMs(sceneIndex, config, sceneObj, done){
+        if(!config || !config.media || !SceneMedia.getMediaPath || !SceneMedia.probeDurationPath){
+          return done();
+        }
+        var seq = config.media.sequence;
+        if(!seq || !seq.length || seq[0].part !== 'title'){
+          return done();
+        }
         SceneMedia.probeDurationPath(
-          SceneMedia.getMediaPath(0, 'title'),
-          Scene01Config.media.fallbackMs[0]
+          SceneMedia.getMediaPath(sceneIndex, 'title'),
+          config.media.fallbackMs[0]
         ).then(function(ms){
           if(ms > 0){
-            Scene01Config.media.titleMs = ms;
-            if(s0) s0.mediaTitleMs = ms;
+            config.media.titleMs = ms;
+            if(sceneObj) sceneObj.mediaTitleMs = ms;
           }
           done();
         });
       }
 
-      if(s0 && s0.mediaSequence && SceneMedia.filterSequence){
-        SceneMedia.filterSequence(0, s0.mediaSequence).then(function(filtered){
-          s0.mediaSequence = filtered.length >= 2 ? filtered : Scene01Config.media.sequence;
-          if(SceneMedia.prepareSequence){
-            SceneMedia.prepareSequence(0, s0.mediaSequence);
-          }
-          probeScene01TitleMs(function(){
-            SceneMedia.applyDurations(scenes, onGuide01DurationsReady);
-          });
-        });
-      } else {
-        probeScene01TitleMs(function(){
+      function probeAllTitleMs(done){
+        var i = 0;
+        function next(){
+          if(i >= scenes.length) return done();
+          var idx = i++;
+          probeTitleMs(idx, metaList[idx] && metaList[idx].config, scenes[idx], next);
+        }
+        next();
+      }
+
+      function prepareSceneSequences(done){
+        var chain = Promise.resolve();
+        var i;
+        for(i = 0; i < scenes.length; i++){
+          (function(idx, scene){
+            if(scene && scene.mediaSequence && SceneMedia.filterSequence){
+              chain = chain.then(function(){
+                return SceneMedia.filterSequence(idx, scene.mediaSequence).then(function(filtered){
+                  var fallback = metaList[idx] && metaList[idx].config
+                    ? metaList[idx].config.media.sequence
+                    : scene.mediaSequence;
+                  scene.mediaSequence = filtered.length >= 2 ? filtered : fallback;
+                  if(SceneMedia.prepareSequence){
+                    SceneMedia.prepareSequence(idx, scene.mediaSequence);
+                  }
+                });
+              });
+            }
+          })(i, scenes[i]);
+        }
+        chain.then(done);
+      }
+
+      prepareSceneSequences(function(){
+        probeAllTitleMs(function(){
           SceneMedia.applyDurations(scenes, onGuide01DurationsReady);
         });
-      }
+      });
     }
 
     function onGuide01DurationsReady(){
-      var scene0 = SceneRunner.getScenes()[0];
-      if(scene0 && scene0.duration) Scene01Config.duration = scene0.duration;
+      var list = SceneRunner.getScenes();
+      if(list[0] && list[0].duration && typeof Scene01Config !== 'undefined'){
+        Scene01Config.duration = list[0].duration;
+      }
+      if(list[1] && list[1].duration && typeof Scene02Config !== 'undefined'){
+        Scene02Config.duration = list[1].duration;
+      }
       SceneRunner.renderTimelineMarkers();
       SceneRunner.updatePlayerUI();
     }

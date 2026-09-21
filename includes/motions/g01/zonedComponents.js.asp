@@ -1,5 +1,5 @@
 <script>
-/* G01 Zoned Motion Components — asset_animation_rull.md 규칙 기반 */
+/* G01 Zoned Motion Components — SMART_GUIDE_DOCS.md §5 규칙 기반 */
 
 var MotionG01ZonedEnterFade = MotionComponent.define('g01.zoned.enterFade', {
   target: null,
