@@ -559,9 +559,9 @@ var Guide01 = (function(){
     showElement(wrap);
     var icon = wrap.querySelector('.member_icon');
     if(!icon) return;
-    icon.classList.add('asset-enter');
+    icon.classList.add('member-enter');
     await wait(500);
-    icon.classList.remove('asset-enter');
+    icon.classList.remove('member-enter');
   }
 
   async function flyAttachToMember(ctx, canvas, plan, options){

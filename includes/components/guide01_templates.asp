@@ -12,9 +12,11 @@
   <div data-template="discount_benefit_badge_c"><!--#include file="discount_benefit_badge_c.asp"--></div>
   <div data-template="member_icon"><!--#include file="member_icon.asp"--></div>
   <div data-template="person_icon"><!--#include file="person_icon.asp"--></div>
+  <div data-template="lev_d"><!--#include file="lev_d.asp"--></div>
   <div data-template="lev_p"><!--#include file="lev_p.asp"--></div>
   <div data-template="calendar_month_card"><!--#include file="calendar_month_card.asp"--></div>
   <div data-template="product_silhouette_card"><!--#include file="product_silhouette_card.asp"--></div>
+  <div data-template="unavailable_stamp"><!--#include file="unavailable_stamp.asp"--></div>
   <div data-template="price_step_card"><!--#include file="price_step_card.asp"--></div>
   <div data-template="status_check_icon"><!--#include file="status_check_icon.asp"--></div>
   <div data-template="cashback_icon"><!--#include file="cashback_icon.asp"--></div>
@@ -28,6 +30,7 @@
   <div data-template="reward_plan_basis_box"><!--#include file="reward_plan_basis_box.asp"--></div>
   <div data-template="member_basis_card"><!--#include file="member_basis_card.asp"--></div>
   <div data-template="group_bracket"><!--#include file="group_bracket.asp"--></div>
+  <div data-template="product_swap_box"><!--#include file="product_swap_box.asp"--></div>
   <div data-template="product_swap_icon"><!--#include file="product_swap_icon.asp"--></div>
   <div data-template="cancel_request_card"><!--#include file="cancel_request_card.asp"--></div>
   <div data-template="payment_stop_icon"><!--#include file="payment_stop_icon.asp"--></div>

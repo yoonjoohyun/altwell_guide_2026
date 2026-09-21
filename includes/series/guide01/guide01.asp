@@ -10,7 +10,8 @@ var SeriesGuide01 = {
   _sceneMediaMeta: function(){
     return [
       { config: typeof Scene01Config !== 'undefined' ? Scene01Config : null },
-      { config: typeof Scene02Config !== 'undefined' ? Scene02Config : null }
+      { config: typeof Scene02Config !== 'undefined' ? Scene02Config : null },
+      { config: typeof Scene03Config !== 'undefined' ? Scene03Config : null }
     ];
   },
 
@@ -19,6 +20,7 @@ var SeriesGuide01 = {
 
     SceneRunner.registerScene(Guide01Scene01);
     SceneRunner.registerScene(Guide01Scene02);
+    SceneRunner.registerScene(Guide01Scene03);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
@@ -92,6 +94,9 @@ var SeriesGuide01 = {
       }
       if(list[1] && list[1].duration && typeof Scene02Config !== 'undefined'){
         Scene02Config.duration = list[1].duration;
+      }
+      if(list[2] && list[2].duration && typeof Scene03Config !== 'undefined'){
+        Scene03Config.duration = list[2].duration;
       }
       SceneRunner.renderTimelineMarkers();
       SceneRunner.updatePlayerUI();

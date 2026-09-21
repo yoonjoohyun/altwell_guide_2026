@@ -184,6 +184,15 @@
   to{opacity:1;transform:scale(1.15) translateY(0)}
 }
 
+@keyframes g01-member-enter{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.guide01-canvas .member_icon.member-enter{
+  animation:g01-member-enter .5s cubic-bezier(.22,1,.36,1) both;
+}
+
 .g01-card{
   position:absolute;
   z-index:11;
@@ -501,6 +510,7 @@
 
 .guide01-canvas .g01-zone-wrap .calendar_month_card,
 .guide01-canvas .g01-zone-wrap .product_silhouette_card,
+.guide01-canvas .g01-zone-wrap .product_swap_box,
 .guide01-canvas .g01-zone-wrap .price_step_card,
 .guide01-canvas .g01-zone-wrap .status_check_icon,
 .guide01-canvas .g01-zone-wrap .discount_benefit_icon,
@@ -763,14 +773,17 @@
   opacity:1;
 }
 
-/* Scene 01 · 02 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
+/* Scene 01 · 02 · 03 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
 #lo-panel.scene01-panel .scene-title,
 #lo-panel.scene01-panel .bullet-item .bullet-text,
 #lo-panel.scene01-panel .bullet-item .bullet-dot,
 #lo-panel.scene02-panel .scene-title,
 #lo-panel.scene02-panel .bullet-item .bullet-text,
 #lo-panel.scene02-panel .bullet-item .bullet-sub,
-#lo-panel.scene02-panel .bullet-item .bullet-dot{
+#lo-panel.scene02-panel .bullet-item .bullet-dot,
+#lo-panel.scene03-panel .scene-title,
+#lo-panel.scene03-panel .bullet-item .bullet-text,
+#lo-panel.scene03-panel .bullet-item .bullet-dot{
   transition:
     color 420ms ease-in-out,
     opacity 420ms ease-in-out,
@@ -781,22 +794,27 @@
 #lo-panel.scene01-panel .scene-title.motion-slide-up,
 #lo-panel.scene01-panel .bullet-item.motion-slide-up,
 #lo-panel.scene02-panel .scene-title.motion-slide-up,
-#lo-panel.scene02-panel .bullet-item.motion-slide-up{
+#lo-panel.scene02-panel .bullet-item.motion-slide-up,
+#lo-panel.scene03-panel .scene-title.motion-slide-up,
+#lo-panel.scene03-panel .bullet-item.motion-slide-up{
   animation-timing-function:ease-in-out !important;
 }
 
 #lo-panel.scene01-panel .bullet-item.is-dim .bullet-dot,
-#lo-panel.scene02-panel .bullet-item.is-dim .bullet-dot{
+#lo-panel.scene02-panel .bullet-item.is-dim .bullet-dot,
+#lo-panel.scene03-panel .bullet-item.is-dim .bullet-dot{
   background-color:#B8BDC5;
 }
 
 #lo-panel.scene01-panel .bullet-item.is-emphasis .bullet-dot,
-#lo-panel.scene02-panel .bullet-item.is-emphasis .bullet-dot{
+#lo-panel.scene02-panel .bullet-item.is-emphasis .bullet-dot,
+#lo-panel.scene03-panel .bullet-item.is-emphasis .bullet-dot{
   background-color:#222222;
 }
 
 #lo-panel.scene01-panel .bullet-item.g01-flash .bullet-dot,
-#lo-panel.scene02-panel .bullet-item.g01-flash .bullet-dot{
+#lo-panel.scene02-panel .bullet-item.g01-flash .bullet-dot,
+#lo-panel.scene03-panel .bullet-item.g01-flash .bullet-dot{
   animation:g01-bullet-dot-flash .6s ease-in-out;
 }
 
@@ -837,9 +855,255 @@
   40%{opacity:.35}
 }
 
+/* Scene 03 — 멤버 + 상품 1열 */
+.guide01-canvas.scene03-canvas .scene03-stack-group{
+  z-index:12;
+}
+
+.guide01-canvas.scene03-canvas .scene03-group-inner{
+  position:relative;
+  width:0;
+  height:0;
+}
+
+.guide01-canvas.scene03-canvas .scene03-group-child{
+  position:absolute;
+  left:50%;
+  top:50%;
+  margin:0;
+  transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px)));
+  transition:transform 480ms cubic-bezier(.22,1,.36,1);
+  will-change:transform;
+}
+
+.guide01-canvas.scene03-canvas .scene03-group-child.s03-layout-instant{
+  transition:none;
+}
+
+.guide01-canvas.scene03-canvas .g01-member-unit.scene03-group-child{
+  z-index:3;
+}
+
+.guide01-canvas.scene03-canvas #s03-member.scene03-group-child.s03-member-fixed{
+  transition:none !important;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-member-stack{
+  transform:scale(1.15);
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-member-stack .member_icon{
+  --size:140px;
+  display:block;
+}
+
+/* title — 피플과 동일 톤(#b1c1da) · D지위 시 멤버 블루(#73a5f0)로 전환 */
+.guide01-canvas.scene03-canvas #s03-member .member_icon.s03-toned-as-person{
+  --color:#b1c1da;
+}
+
+.guide01-canvas.scene03-canvas #s03-member.is-member-promoted .member_icon{
+  --color:#73a5f0;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .member_icon::before,
+.guide01-canvas.scene03-canvas #s03-member .member_icon::after{
+  transition:background-color 520ms ease-in-out;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-member-stack.g01-idle-float .member_icon{
+  animation:s03-member-body-idle 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-member-stack.g01-idle-float .s03-d-rank-badge.s03-rank-idle-active{
+  animation:s03-member-body-idle 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+
+@keyframes s03-member-body-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+@keyframes s03-autoship-follow-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+
+.guide01-canvas.scene03-canvas #s03-member.is-member-promoted .g01-member-stack.g01-idle-float .s03-autoship-attached.s03-autoship-idle-active{
+  animation:s03-autoship-follow-idle 3s ease-in-out infinite;
+  animation-delay:0.48s;
+  will-change:transform;
+}
+
+.guide01-canvas.scene03-canvas #s03-product-row.scene03-group-child{
+  transition:transform 480ms cubic-bezier(.22,1,.36,1);
+}
+
+/* Scene 03 — 부착 뱃지: 멤버 아이콘(g01-member-slots) 기준 고정 */
+.guide01-canvas.scene03-canvas #s03-member .g01-member-slots{
+  z-index:2;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="rank"]{
+  bottom:auto;
+  right:auto;
+  left:68%;
+  top:42%;
+  transform:translate(-50%, calc(-50% + 30px));
+  z-index:4;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="rank"] .lev_d{
+  --size:40px;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="rank"] .lev_d.s03-d-rank-enter{
+  animation:s03-d-rank-float-in 480ms cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes s03-d-rank-float-in{
+  from{opacity:0;transform:scale(.82) translateY(8px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="autoship"]{
+  top:auto;
+  right:auto;
+  left:50%;
+  bottom:0;
+  width:max-content;
+  height:auto;
+  transform:translate(-50%, 0%);
+  z-index:3;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="autoship"] .autoship_icon_o,
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="autoship"] .s03-autoship-attached{
+  --size:30px;
+  display:inline-flex;
+  align-items:center;
+  flex-shrink:0;
+  transform:none;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="autoship"] .autoship_text{
+  display:block;
+}
+
+.guide01-canvas.scene03-canvas #s03-member .g01-attach-slot[data-slot="autoship"] .s03-autoship-attached{
+  filter:drop-shadow(0 2px 6px rgba(16,52,172,.22));
+}
+
+.guide01-canvas.scene03-canvas #s03-autoship-float .autoship_icon_o{
+  --size:30px;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:center;
+  flex-wrap:nowrap;
+  gap:var(--s03-product-gap, 12px);
+  position:relative;
+  z-index:2;
+  min-height:calc(52px * var(--s03-product-scale, 0.88));
+  padding-bottom:calc(8px * var(--s03-product-scale, 0.88));
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row.is-stacked{
+  min-height:calc(52px * var(--s03-product-scale, 0.88));
+  padding-bottom:calc(10px * var(--s03-product-scale, 0.88));
+}
+
+.guide01-canvas.scene03-canvas .s03-product-wrap{
+  position:relative;
+  left:auto;
+  top:auto;
+  transform:none !important;
+  transition:filter 420ms ease, opacity 420ms ease, transform 480ms cubic-bezier(.22,1,.36,1);
+  flex-shrink:0;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-wrap .g01-float-inner{
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-box{
+  flex-shrink:0;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-wrap.is-grayscale .s03-product-box{
+  filter:grayscale(1);
+  opacity:.78;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row.is-stacked .s03-product-wrap.is-stacked-target{
+  position:absolute;
+  left:50%;
+  top:0;
+  margin-left:0;
+  transform:translateX(-50%) !important;
+  z-index:1;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row.is-stacked .s03-product-wrap[data-letter="B"].is-stacked-target{
+  z-index:3;
+  transform:translateX(calc(-50% - 10px)) translateY(0) !important;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row.is-stacked .s03-product-wrap[data-letter="C"].is-stacked-target{
+  z-index:4;
+  transform:translateX(-50%) translateY(-3px) !important;
+}
+
+.guide01-canvas.scene03-canvas .s03-product-row.is-stacked .s03-product-wrap[data-letter="D"].is-stacked-target{
+  z-index:2;
+  transform:translateX(calc(-50% + 10px)) translateY(2px) !important;
+}
+
+.guide01-canvas.scene03-canvas .s03-unavailable-host{
+  position:absolute;
+  left:50%;
+  top:42%;
+  transform:translate(-50%, -50%);
+  z-index:8;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity 420ms ease;
+}
+
+.guide01-canvas.scene03-canvas .s03-unavailable-host .unavailable_stamp{
+  --size:calc(120px * var(--s03-product-scale, 0.88));
+}
+
+.guide01-canvas.scene03-canvas .s03-unavailable-host.is-visible{
+  opacity:1;
+}
+
+.guide01-canvas.scene03-canvas .s03-check-host{
+  position:absolute;
+  left:50%;
+  top:calc(100% + 10px);
+  bottom:auto;
+  transform:translateX(-50%);
+  z-index:5;
+  pointer-events:none;
+}
+
 @media(max-width:900px){
   .guide01-canvas .lo-zone-place{
     left:calc(5px + (var(--zone-col) - 0.5) / 7 * (100% - 10px));
     top:calc(5px + (var(--zone-row) - 0.5) / 7 * (100% - 10px));
   }
+
+  .guide01-canvas.scene03-canvas .s03-product-row{
+    flex-wrap:wrap;
+    max-width:92vw;
+  }
 }
+

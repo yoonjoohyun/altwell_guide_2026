@@ -1063,6 +1063,33 @@
 
 
 
+/*************  SUB ASSET — 사용 불가 스탬프  *******************************************************************************************************/
+.unavailable_stamp {
+    --size: 120px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: calc(var(--size) * 0.72);
+    padding: calc(var(--size) * 8 / 120) calc(var(--size) * 14 / 120);
+    border-radius: calc(var(--size) * 8 / 120);
+    background: rgba(185, 28, 28, 0.92);
+    box-shadow:
+        inset 0 0 0 calc(var(--size) * 2 / 120) rgba(255, 255, 255, 0.35),
+        0 calc(var(--size) * 4 / 120) calc(var(--size) * 12 / 120) rgba(127, 29, 29, 0.35);
+    transform: rotate(-8deg);
+    flex-shrink: 0;
+}
+.unavailable_stamp_text {
+    color: #fff;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    font-size: max(16px, calc(var(--size) * 18 / 120));
+    font-weight: 900;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+}
+
+
 /*************  SUB ASSET — 상품 실루엣 카드  *******************************************************************************************************/
 .product_silhouette_card {
     --size: 112px;
@@ -1715,6 +1742,7 @@
     flex-shrink: 0;
 }
 .product_swap_box {
+    --size: 190px;
     display: grid;
     place-items: center;
     width: calc(var(--size) * 58 / 190);
