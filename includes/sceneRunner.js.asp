@@ -11,15 +11,28 @@ var SceneRunner = (function(){
 
   function getCanvas(){ return document.getElementById('motion-canvas'); }
 
+  function getInterSceneGapMs(){
+    if(typeof SceneTransition !== 'undefined' && SceneTransition.gapMs > 0){
+      return SceneTransition.gapMs;
+    }
+    return 0;
+  }
+
   function getTotalDuration(){
     var total = 0;
-    for(var i=0;i<scenes.length;i++) total += (scenes[i].duration || 0);
+    var i;
+    for(i = 0; i < scenes.length; i++) total += (scenes[i].duration || 0);
+    if(scenes.length > 1) total += (scenes.length - 1) * getInterSceneGapMs();
     return total;
   }
 
   function getSceneStartMs(index){
     var t = 0;
-    for(var i=0;i<index;i++) t += (scenes[i].duration || 0);
+    var i;
+    for(i = 0; i < index; i++){
+      t += (scenes[i].duration || 0);
+      t += getInterSceneGapMs();
+    }
     return t;
   }
 
@@ -213,14 +226,20 @@ var SceneRunner = (function(){
 
     if(scene.endState) scene.endState();
 
+    elapsedMs = startElapsed + (scene.duration || 0);
+    updatePlayerUI();
+
     if(index < scenes.length - 1){
-      await wait(40);
+      if(typeof SceneTransition !== 'undefined' && SceneTransition.runBetweenScenes){
+        await SceneTransition.runBetweenScenes(getCanvas(), function(){
+          return !isRunActive(runToken);
+        });
+      } else {
+        await wait(40);
+      }
     }
 
     if(!isRunActive(runToken)) return;
-
-    elapsedMs = startElapsed + (scene.duration || 0);
-    updatePlayerUI();
   }
 
   async function playLesson(){

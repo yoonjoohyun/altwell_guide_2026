@@ -35,10 +35,10 @@ var Scene02Config = {
   T: {
     main: {
       foldAutoship: 3000,
-      revealRow1: 8000,
-      revealRow2: 10000,
-      revealRow3: 12000,
-      revealRow4: 14000,
+      revealRow1: 6000,
+      revealRow2: 8000,
+      revealRow3: 10000,
+      revealRow4: 12000,
       base: 21000,
       cashback: 24000,
       recommend: 27000,

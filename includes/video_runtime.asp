@@ -3,4 +3,5 @@
 <!--#include file="motion.js.asp"-->
 <!--#include file="motions/_load.asp"-->
 <!--#include file="sceneMedia.js.asp"-->
+<!--#include file="sceneTransition.js.asp"-->
 <!--#include file="sceneRunner.js.asp"-->

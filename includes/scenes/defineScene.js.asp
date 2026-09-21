@@ -12,6 +12,10 @@
  *   panel:  { reset, endState },
  *   play: async function(ctx){ … motion·panel 타임라인 … }
  * });
+ *
+ * 씬 종료 → 다음 씬 시작: SceneRunner + SceneTransition
+ *   · 3초 간격 (fade 2초 + 1초 여유)
+ *   · 캔버스 에셋·패널 텍스트 자연스러운 퇴장 (씬별 코드 불필요)
  */
 function defineScene(spec){
   spec = spec || {};
