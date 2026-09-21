@@ -1096,8 +1096,9 @@
   }
 
   .guide01-canvas.scene03-canvas .s03-product-row{
-    flex-wrap:wrap;
-    max-width:92vw;
+    flex-wrap:nowrap;
+    width:max-content;
+    max-width:none;
   }
 }
 
