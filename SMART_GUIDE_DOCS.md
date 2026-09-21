@@ -726,6 +726,7 @@ panel: title hidden
 - [ ] `sceneNN.constants.js.asp` — duration, media, panel, `T.*`, layout
 - [ ] `sceneNN.setup.js.asp` — `setupSceneNNAssets(canvas)`
 - [ ] `sceneNN.js.asp` — `Guide01SceneNN = defineScene({ … })`
+- [ ] (스택 씬) `SceneNNLayout` + `sceneNNPrepStackSlot` — [§7-7 패턴 B](#패턴-b--그룹-중앙-정렬-스택-scene-0203-기본)
 
 **배선**
 
@@ -960,13 +961,73 @@ function setupScene02Assets(canvas){
 }
 ```
 
-#### 패턴 B — 그룹 상대 배치 (씬1 전용급)
+#### 패턴 B — 그룹 중앙 정렬 스택 (Scene 02/03+ **기본**)
 
-여러 에셋을 **한 앵커(d4) 기준 상대 좌표**로 묶을 때. 겹침·모바일 간격 조정이 필요한 복잡 레이아웃.
+**한 앵커 존(d4 등)에 세로로 쌓이는 에셋**이 2개 이상일 때는 이 패턴을 **기본**으로 사용한다.  
+에셋이 하나씩 등장할 때마다 **현재 보이는 전체 스택의 세로 중심이 inner (0,0)에 맞춰지도록** `--offset-y`를 재계산한다 (씬2와 동일).
+
+| 참조 | 파일 |
+|------|------|
+| Scene 02 | `scene02.setup.js.asp` · `Scene02Layout` · `scene02PrepStackSlot` |
+| Scene 03 | `scene03.setup.js.asp` · `Scene03Layout` · `scene03PrepStackSlot` |
+
+**setup (`SceneNNLayout` IIFE) 필수 요소**
+
+1. `createGroup(canvas, anchorZone)` — `#sNN-stack-group` + `.sceneNN-group-inner` (width/height 0)
+2. `reparentAsChild(wrap, inner)` — 존 절대좌표 제거 → `.sceneNN-group-child` + `--offset-x/y`
+3. `applyLayout` — visible 항목만 측정 → `totalH` → `cursor = -totalH / 2` → 각 wrap에 `setOffset(0, cursor + h/2)`
+4. `scheduleLayout(immediate)` — rAF coalesce; `bindResize` → `window.resize`
+5. setup 마지막: `applyLayout` 1회 + rAF에서 `.sNN-layout-instant` 제거 (첫 배치는 transition 없음)
+
+**js — 에셋 등장 시 (필수)**
+
+```javascript
+async function sceneNNPrepStackSlot(wrap){
+  wrap.style.opacity = '0';
+  showElement(wrap);                              // is-hidden 해제 → 측정 대상 포함
+  SceneNNLayout.scheduleLayout(!hasVisibleSibling); // 첫 자식: immediate, 이후: rAF
+  if(hasVisibleSibling) await wait(sceneNNLayoutSettleMs()); // motion.layoutTransition
+  wrap.style.removeProperty('opacity');
+}
+
+async function sceneNNEnterAsset(wrap, opts){
+  await sceneNNPrepStackSlot(wrap);   // ★ enter 애니 **전** 레이아웃
+  await Guide01.fadeZoned(wrap, true, opts);
+  Guide01.startIdleFloat(wrap);
+  SceneNNLayout.scheduleLayout(false); // enter **후** 한 번 더
+}
+```
+
+**크기가 바뀌는 경우** (뱃지 부착·fold·행 추가·스탬프·체크 등)에도 `scheduleLayout(false)` 호출.
+
+**스택 자식 안의 하위 에셋** (예: Scene 03 제품 A~E)은 그룹 child가 아니라 **부모 wrap 크기만 키운다**.  
+→ 하위 슬롯 prep(`scene03PrepProductSlot` 등) 후 **동일하게** `SceneNNLayout.scheduleLayout` 호출.
+
+**CSS (`guide01.css`)**
+
+```css
+.guide01-canvas.sceneNN-canvas .sceneNN-group-child{
+  position:absolute; left:50%; top:50%;
+  transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px)));
+  transition:transform 480ms cubic-bezier(.22,1,.36,1); /* motion.layoutTransition 과 동기 */
+}
+.sceneNN-group-child.sNN-layout-instant { transition:none; }
+```
+
+**constants**
+
+```javascript
+layout: { anchorZone: 'd4', gaps: { stackGap: 10, /* 키별 gap */ } },
+motion: { layoutTransition: 480 }
+```
+
+#### 패턴 B-1 — 그룹 상대 배치 (씬1 전용급)
+
+멤버·추천인 **2인 배치** + canvas fit-scale 등 **비대칭·복합** 레이아웃.
 
 - 참조: `scene01.setup.js.asp` · `Scene01Layout`
 - `reparentZonedWrap` + `--offset-x/y` + `gridProportionalScale` + `mobileGaps`
-- **단순 씬에 무리하게 도입하지 말 것** — 패턴 A로 충분하면 A 사용
+- **단순 스택 씬에는 패턴 B(중앙 정렬) 사용** — 씬1급 복잡도일 때만 B-1
 
 #### 패턴 C — 멤버·추천 (레거시)
 
@@ -986,7 +1047,7 @@ function setupScene02Assets(canvas){
 ```javascript
 function setupSceneNNAssets(canvas){
   var assets = { /* … */ };
-  /* layout.apply / bindResize — 패턴 B일 때만 */
+  /* 패턴 B: applyLayout + bindResize + rAF에서 layout-instant 제거 */
   return assets;   /* js play에서 참조 */
 }
 ```
@@ -1163,7 +1224,7 @@ Guide01.mountStage(canvas, 'sceneNN-canvas');
 
 | 항목 | Scene 01 | Scene 02+ (일반) |
 |------|----------|------------------|
-| 레이아웃 | 그룹 상대 배치 (패턴 B) | 존 직접 (패턴 A) 권장 |
+| 레이아웃 | 그룹 상대 배치 (패턴 B-1) | 단일 존: 패턴 A · **앵커 스택: 패턴 B (중앙 정렬)** |
 | 음성 | title → main 순차 | 단일 mp4 또는 동일 패턴 |
 | 패널 | bullet flash 4줄 | 씬 주제에 맞게 §7-9 선택 |
 | 베이스 뱃지 | `BASE 사업자 기준` 예외 | 컴포넌트 기본 `베이스 사업자` |

@@ -4,7 +4,6 @@ var Scene03Layout = (function(){
   var _resizeBound = false;
   var _pending = false;
   var _ctx = null;
-  var _memberBelow = null;
 
   function setOffset(wrap, x, y){
     if(!wrap) return;
@@ -56,17 +55,15 @@ var Scene03Layout = (function(){
     var stampHost = document.createElement('div');
     stampHost.id = 's03-unavailable-host';
     stampHost.className = 's03-unavailable-host is-hidden';
+    var stampFloat = document.createElement('div');
+    stampFloat.className = 'g01-float-inner s03-stamp-float-inner';
+    stampFloat.style.setProperty('--g01-base-scale', '1');
     var stamp = cloneFromTemplate('unavailable_stamp');
     if(stamp){
       stamp.classList.add('guide01-asset');
-      stampHost.appendChild(stamp);
+      stampFloat.appendChild(stamp);
     }
-    row.appendChild(stampHost);
-
-    var checkHost = document.createElement('div');
-    checkHost.id = 's03-check-host';
-    checkHost.className = 's03-check-host is-hidden';
-    row.appendChild(checkHost);
+    stampHost.appendChild(stampFloat);
 
     var products = {};
     var i;
@@ -88,11 +85,18 @@ var Scene03Layout = (function(){
       scene03ConfigureProductBox(node, letter);
       floatInner.appendChild(node);
       wrap.appendChild(floatInner);
+
+      var checkHost = document.createElement('div');
+      checkHost.className = 's03-product-check is-hidden';
+      wrap.appendChild(checkHost);
+
       row.appendChild(wrap);
       products[letter] = wrap;
     }
 
-    return { row: row, products: products, stampHost: stampHost, checkHost: checkHost };
+    row.appendChild(stampHost);
+
+    return { row: row, products: products, stampHost: stampHost };
   }
 
   function localSizeFromRect(rect, inner){
@@ -167,39 +171,6 @@ var Scene03Layout = (function(){
     return measureWrap(wrap, inner);
   }
 
-  /* 멤버 wrap 중심(y=0) 기준 — member_icon 박스 안에서만 측정(부착 뱃지는 member 내부) */
-  function measureMemberExtents(wrap, inner){
-    if(!wrap) return { above: 0, below: 0, width: 0, height: 0 };
-
-    var anchor = wrap.querySelector('.g01-member-stack') || wrap;
-    var icon = wrap.querySelector('.member_icon');
-    var gs = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
-    var anchorRect;
-    var iconRect;
-    var anchorCenterY;
-
-    if(!icon){
-      var fallback = measureWrap(wrap, inner);
-      return {
-        above: fallback.height / 2,
-        below: fallback.height / 2,
-        width: fallback.width,
-        height: fallback.height
-      };
-    }
-
-    anchorRect = anchor.getBoundingClientRect();
-    iconRect = icon.getBoundingClientRect();
-    anchorCenterY = anchorRect.top + anchorRect.height / 2;
-
-    return {
-      above: Math.max(0, anchorCenterY - iconRect.top) / gs,
-      below: Math.max(0, iconRect.bottom - anchorCenterY) / gs,
-      width: iconRect.width / gs,
-      height: iconRect.height / gs
-    };
-  }
-
   function collectProductRowNodes(row){
     var nodes = [];
     var wraps;
@@ -207,11 +178,7 @@ var Scene03Layout = (function(){
 
     if(!row) return nodes;
 
-    if(row.classList.contains('is-stacked')){
-      wraps = row.querySelectorAll('.s03-product-wrap.is-stacked-target:not(.is-hidden)');
-    } else {
-      wraps = row.querySelectorAll('.s03-product-wrap:not(.is-hidden)');
-    }
+    wraps = row.querySelectorAll('.s03-product-wrap:not(.is-hidden)');
 
     for(i = 0; i < wraps.length; i++){
       nodes.push(wraps[i].querySelector('.g01-float-inner') || wraps[i]);
@@ -221,9 +188,9 @@ var Scene03Layout = (function(){
       nodes.push(row.querySelector('.s03-unavailable-host'));
     }
 
-    var checkHost = row.querySelector('.s03-check-host:not(.is-hidden)');
-    if(checkHost && checkHost.firstElementChild){
-      nodes.push(checkHost);
+    var checkSlots = row.querySelectorAll('.s03-product-check:not(.is-hidden)');
+    for(i = 0; i < checkSlots.length; i++){
+      if(checkSlots[i].firstElementChild) nodes.push(checkSlots[i]);
     }
 
     return nodes;
@@ -266,22 +233,29 @@ var Scene03Layout = (function(){
     };
   }
 
-  function pinMember(member){
-    if(!member) return;
-    setOffset(member, 0, 0);
-    member.classList.add('s03-member-fixed');
+  function stackOrder(){
+    return ['member', 'productRow'];
   }
 
-  function lockMemberAnchor(assets, inner){
-    if(!assets || !assets.member || !inner) return;
-    pinMember(assets.member);
-    _memberBelow = measureMemberExtents(assets.member, inner).below;
+  function gapAfterKey(key, gaps, assets){
+    if(key === 'member') return memberProductGap(assets, gaps);
+    return gaps.stackGap != null ? gaps.stackGap : 10;
   }
 
-  function getMemberBelow(assets, inner){
-    if(_memberBelow != null) return _memberBelow;
-    if(!assets || !assets.member || !inner) return 0;
-    return measureMemberExtents(assets.member, inner).below;
+  function measureStackItem(assets, key, inner){
+    var wrap;
+
+    if(key === 'member'){
+      wrap = assets.member;
+      if(!isWrapVisible(wrap)) return null;
+      return { key: key, wrap: wrap, size: measureMemberWrap(wrap, inner) };
+    }
+    if(key === 'productRow'){
+      wrap = assets.productRow;
+      if(!isWrapVisible(wrap)) return null;
+      return { key: key, wrap: wrap, size: measureProductRow(wrap, inner) };
+    }
+    return null;
   }
 
   function applyLayout(canvas, group, assets){
@@ -292,20 +266,34 @@ var Scene03Layout = (function(){
 
     var gaps = Scene03Config.layout.gaps;
     var endMeasure = beginMeasurePass(group);
-    var memberVisible = isWrapVisible(assets.member);
-    var productVisible = assets.productRow && isWrapVisible(assets.productRow);
-    var productSize;
-    var gap;
+    var order = stackOrder();
+    var chain = [];
+    var totalH = 0;
+    var cursor;
+    var i;
+    var h;
 
-    /* 멤버 offset은 pinMember/lockMemberAnchor에서만 설정 — 제품 레이아웃과 분리 */
-    if(productVisible){
-      productSize = measureProductRow(assets.productRow, inner);
-      gap = memberVisible ? memberProductGap(assets, gaps) : 0;
-      setOffset(
-        assets.productRow,
-        0,
-        getMemberBelow(assets, inner) + gap + productSize.height / 2
-      );
+    for(i = 0; i < order.length; i++){
+      var item = measureStackItem(assets, order[i], inner);
+      if(item) chain.push(item);
+    }
+
+    if(!chain.length){
+      endMeasure();
+      return;
+    }
+
+    for(i = 0; i < chain.length; i++){
+      totalH += chain[i].size.height;
+      if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps, assets);
+    }
+
+    cursor = -totalH / 2;
+    for(i = 0; i < chain.length; i++){
+      h = chain[i].size.height;
+      setOffset(chain[i].wrap, 0, cursor + h / 2);
+      cursor += h;
+      if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps, assets);
     }
 
     endMeasure();
@@ -339,15 +327,12 @@ var Scene03Layout = (function(){
     _resizeBound = false;
     _ctx = null;
     _pending = false;
-    _memberBelow = null;
   }
 
   return {
     createGroup: createGroup,
     reparentAsChild: reparentAsChild,
     mountProductRow: mountProductRow,
-    pinMember: pinMember,
-    lockMemberAnchor: lockMemberAnchor,
     applyLayout: applyLayout,
     scheduleLayout: scheduleLayout,
     bindResize: bindResize,
@@ -363,9 +348,8 @@ function scene03ConfigureProductBox(box, letter){
   box.setAttribute('aria-label', '품목 ' + letter);
 }
 
-function scene03SetProductLetter(wrap, letter){
+function scene03SetProductDisplay(wrap, letter){
   if(!wrap) return;
-  wrap.setAttribute('data-letter', letter);
   var box = wrap.querySelector('.product_swap_box');
   if(!box) return;
   box.textContent = letter;
@@ -382,7 +366,6 @@ function setupScene03Assets(canvas){
   var member = Guide01.mountMemberAtZone(canvas, 's03-member', Scene03Config.layout.anchorZone);
   member.classList.add('scene03-group-child', 's03-layout-instant');
   Scene03Layout.reparentAsChild(member, group._scene03Inner);
-  Scene03Layout.pinMember(member);
 
   var memberIcon = member.querySelector('.member_icon');
   if(memberIcon) memberIcon.classList.add('s03-toned-as-person');
@@ -425,8 +408,7 @@ function setupScene03Assets(canvas){
     autoshipAttach: autoshipAttach,
     productRow: productPack.row,
     products: productPack.products,
-    stampHost: productPack.stampHost,
-    checkHost: productPack.checkHost
+    stampHost: productPack.stampHost
   };
 
   Scene03Layout.applyLayout(canvas, group, assets);

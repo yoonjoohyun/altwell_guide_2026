@@ -35,7 +35,8 @@ var Scene03Config = {
       autoshipAttach: 5000,
       productStart: 7000,
       productStagger: 400,
-      duplicateBlock: 12000,
+      duplicateRename: 12000,
+      duplicateUnavailable: 14000,
       restoreProducts: 18000
     }
   },
@@ -66,8 +67,11 @@ var Scene03Config = {
     FOLD: { duration: 620 },
     layoutTransition: 480,
     colorPromote: { duration: 520 },
-    stack: { duration: 520 },
-    check: { duration: 480 }
+    rename: { duration: 480 },
+    unavailable: { duration: 520 },
+    check: { duration: 480 },
+    checkStagger: 120,
+    restoreCheckSpeed: 0.35
   }
 };
 

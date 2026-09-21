@@ -52,6 +52,69 @@ function scene03LayoutSettleMs(){
   return (Scene03Config.motion && Scene03Config.motion.layoutTransition) || 480;
 }
 
+async function scene03PrepStackSlot(wrap){
+  if(!wrap) return;
+
+  var inner = wrap.parentElement;
+  var hasVisibleSibling = false;
+  var siblings;
+  var i;
+
+  if(inner){
+    siblings = inner.querySelectorAll('.scene03-group-child');
+    for(i = 0; i < siblings.length; i++){
+      if(siblings[i] !== wrap && !siblings[i].classList.contains('is-hidden')){
+        hasVisibleSibling = true;
+        break;
+      }
+    }
+  }
+
+  wrap.style.opacity = '0';
+  showElement(wrap);
+  if(typeof Scene03Layout !== 'undefined'){
+    Scene03Layout.scheduleLayout(!hasVisibleSibling);
+  }
+
+  if(hasVisibleSibling){
+    await wait(scene03LayoutSettleMs());
+  }
+
+  wrap.style.removeProperty('opacity');
+}
+
+async function scene03PrepProductSlot(wrap){
+  if(!wrap) return;
+
+  var row = wrap.closest('.s03-product-row');
+  var visible;
+  var hasVisibleSibling = false;
+  var i;
+
+  wrap.style.opacity = '0';
+  showElement(wrap);
+
+  if(row){
+    visible = row.querySelectorAll('.s03-product-wrap:not(.is-hidden)');
+    for(i = 0; i < visible.length; i++){
+      if(visible[i] !== wrap){
+        hasVisibleSibling = true;
+        break;
+      }
+    }
+  }
+
+  if(typeof Scene03Layout !== 'undefined'){
+    Scene03Layout.scheduleLayout(!hasVisibleSibling);
+  }
+
+  if(hasVisibleSibling){
+    await wait(scene03LayoutSettleMs());
+  }
+
+  wrap.style.removeProperty('opacity');
+}
+
 function scene03StartMemberIdle(memberWrap){
   if(!memberWrap) return;
   var stack = memberWrap.querySelector('.g01-member-stack');
@@ -115,6 +178,7 @@ async function scene03ShowDRank(dRank, memberWrap){
   dRank.classList.remove('s03-d-rank-enter');
   dRank.classList.add('s03-rank-idle-active');
   scene03SyncRankIdlePhase(memberWrap);
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
 }
 
 async function scene03PromoteMemberColor(memberWrap){
@@ -246,88 +310,128 @@ async function scene03AttachAutoshipOpen(canvas, assets, opts){
   plan.attached.classList.add('s03-autoship-attached', 's03-autoship-idle-active');
   scene03SyncAutoshipIdlePhase(assets.member);
 
-  if(typeof Scene03Layout !== 'undefined' && Scene03Layout.lockMemberAnchor){
-    Scene03Layout.lockMemberAnchor(assets, assets.group._scene03Inner);
-  }
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
 }
 
 async function scene03RevealProductRow(assets){
-  showElement(assets.productRow);
-  Scene03Layout.scheduleLayout(false);
-  await wait(scene03LayoutSettleMs());
+  await scene03PrepStackSlot(assets.productRow);
 }
 
 async function scene03EnterProduct(wrap, opts){
   if(!wrap) return;
+  await scene03PrepProductSlot(wrap);
   await Guide01.fadeZoned(wrap, true, opts || scene03Motion('FADE'));
   Guide01.startIdleFloat(wrap);
-  Scene03Layout.scheduleLayout(false);
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
 }
 
-async function scene03StackDuplicates(assets){
-  var row = assets.productRow;
-  var letters = ['B', 'C', 'D'];
+function scene03DuplicateTargets(){
+  return ['B', 'C', 'D'];
+}
+
+function scene03RestoreAnimScale(){
+  var speed = Scene03Config.motion.restoreCheckSpeed;
+  if(speed == null || speed <= 0) return 1;
+  return 1 / speed;
+}
+
+function scene03RestoreCheckTimings(){
+  var scale = scene03RestoreAnimScale();
+  var checkDur = (Scene03Config.motion.check && Scene03Config.motion.check.duration) || 480;
+  var stagger = Scene03Config.motion.checkStagger != null ? Scene03Config.motion.checkStagger : 120;
+  var renameDur = (Scene03Config.motion.rename && Scene03Config.motion.rename.duration) || 480;
+
+  return {
+    check: Math.round(checkDur * scale),
+    hold: Math.round(120 * scale),
+    stagger: Math.round(stagger * scale),
+    rename: Math.round(renameDur * scale)
+  };
+}
+
+async function scene03RenameDuplicates(assets){
+  var letters = scene03DuplicateTargets();
+  var dur = (Scene03Config.motion.rename && Scene03Config.motion.rename.duration) || 480;
   var i;
+  var wrap;
 
-  if(!row) return;
-
-  row.classList.add('is-stacked');
   for(i = 0; i < letters.length; i++){
-    var wrap = assets.products[letters[i]];
+    wrap = assets.products[letters[i]];
     if(!wrap) continue;
-    scene03SetProductLetter(wrap, 'A');
-    wrap.classList.add('is-stacked-target', 'is-grayscale');
+    wrap.classList.add('s03-letter-swapping', 'is-duplicate-a');
+    scene03SetProductDisplay(wrap, 'A');
   }
 
-  if(assets.stampHost){
-    showElement(assets.stampHost);
-    assets.stampHost.classList.add('is-visible');
+  await wait(dur);
+
+  for(i = 0; i < letters.length; i++){
+    wrap = assets.products[letters[i]];
+    if(!wrap) continue;
+    wrap.classList.remove('s03-letter-swapping');
+  }
+}
+
+async function scene03ShowUnavailable(assets){
+  var letters = scene03DuplicateTargets();
+  var host = assets.stampHost;
+  var floatInner = host && host.querySelector('.s03-stamp-float-inner');
+  var dur = (Scene03Config.motion.unavailable && Scene03Config.motion.unavailable.duration) || 520;
+  var i;
+  var wrap;
+
+  for(i = 0; i < letters.length; i++){
+    wrap = assets.products[letters[i]];
+    if(!wrap) continue;
+    wrap.classList.add('is-grayscale', 'is-unavailable');
+  }
+
+  if(host && floatInner){
+    showElement(host);
+    host.classList.add('is-visible');
+    floatInner.classList.add('g01-anim-pop');
+    await wait(dur);
+    floatInner.classList.remove('g01-anim-pop');
+    floatInner.classList.add('g01-idle-float');
   }
 
   Scene03Layout.scheduleLayout(false);
-  await wait((Scene03Config.motion.stack && Scene03Config.motion.stack.duration) || 520);
 }
 
-async function scene03RestoreProducts(assets){
-  var row = assets.productRow;
-  var restoreMap = { B: 'B', C: 'C', D: 'D' };
-  var key;
+async function scene03HideUnavailable(assets){
+  var host = assets.stampHost;
+  var floatInner = host && host.querySelector('.s03-stamp-float-inner');
+  var dur = (Scene03Config.motion.unavailable && Scene03Config.motion.unavailable.duration) || 520;
 
-  if(!row) return;
+  if(!host) return;
 
-  row.classList.remove('is-stacked');
-  for(key in restoreMap){
-    if(!restoreMap.hasOwnProperty(key)) continue;
-    var wrap = assets.products[key];
-    if(!wrap) continue;
-    scene03SetProductLetter(wrap, restoreMap[key]);
-    wrap.classList.remove('is-stacked-target', 'is-grayscale');
-  }
+  host.classList.remove('is-visible');
+  if(floatInner) floatInner.classList.remove('g01-idle-float');
 
-  if(assets.stampHost){
-    assets.stampHost.classList.remove('is-visible');
-    hideElement(assets.stampHost);
-  }
-
-  Scene03Layout.scheduleLayout(false);
-  await wait(scene03LayoutSettleMs());
-
-  await scene03FlashCheck(assets);
+  await wait(dur);
+  hideElement(host);
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
 }
 
-async function scene03FlashCheck(assets){
-  var host = assets.checkHost;
+async function scene03FlashProductCheck(wrap){
+  var host = wrap && wrap.querySelector('.s03-product-check');
+  var check;
+  var timings = scene03RestoreCheckTimings();
+  var dur = timings.check;
+  var hold = timings.hold;
+  var scale = (Scene03Config.layout.scales && Scene03Config.layout.scales.check) || 0.85;
+
   if(!host) return;
 
   host.innerHTML = '';
-  var check = Scene03Layout.cloneFromTemplate('status_check_icon');
+  check = Scene03Layout.cloneFromTemplate('status_check_icon');
   if(!check) return;
 
   check.classList.add('guide01-asset', 's03-restore-check');
+  check.style.setProperty('--size', Math.round(32 * scale) + 'px');
   host.appendChild(check);
   showElement(host);
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
 
-  var dur = (Scene03Config.motion.check && Scene03Config.motion.check.duration) || 480;
   check.style.opacity = '0';
   check.style.transform = 'translateY(8px) scale(0.88)';
   check.style.transition = 'opacity ' + dur + 'ms cubic-bezier(.22,1,.36,1), transform ' + dur + 'ms cubic-bezier(.22,1,.36,1)';
@@ -335,13 +439,63 @@ async function scene03FlashCheck(assets){
   check.style.opacity = '1';
   check.style.transform = 'translateY(0) scale(1)';
 
-  await wait(dur + 120);
+  await wait(dur + hold);
 
   check.style.opacity = '0';
   check.style.transform = 'translateY(-6px) scale(0.92)';
   await wait(dur);
+
   hideElement(host);
   host.innerHTML = '';
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
+}
+
+async function scene03RestoreProducts(assets){
+  var letters = scene03DuplicateTargets();
+  var timings = scene03RestoreCheckTimings();
+  var renameDur = timings.rename;
+  var stagger = timings.stagger;
+  var i;
+  var wrap;
+  var checkJobs = [];
+  var row = assets.productRow;
+
+  await scene03HideUnavailable(assets);
+
+  if(row){
+    row.style.setProperty('--s03-letter-swap-dur', renameDur + 'ms');
+  }
+
+  for(i = 0; i < letters.length; i++){
+    wrap = assets.products[letters[i]];
+    if(!wrap) continue;
+    wrap.classList.add('s03-letter-swapping');
+    wrap.classList.remove('is-grayscale', 'is-unavailable', 'is-duplicate-a');
+    scene03SetProductDisplay(wrap, letters[i]);
+  }
+
+  Scene03Layout.scheduleLayout(false);
+
+  for(i = 0; i < letters.length; i++){
+    wrap = assets.products[letters[i]];
+    if(!wrap) continue;
+    checkJobs.push((function(productWrap, delay){
+      return wait(delay).then(function(){
+        return scene03FlashProductCheck(productWrap);
+      });
+    })(wrap, i * stagger));
+  }
+
+  checkJobs.push(wait(renameDur).then(function(){
+    var j;
+    for(j = 0; j < letters.length; j++){
+      wrap = assets.products[letters[j]];
+      if(!wrap) continue;
+      wrap.classList.remove('s03-letter-swapping');
+    }
+  }));
+
+  await Promise.all(checkJobs);
 }
 
 async function runScene03MotionCore(tl, assets, canvas, ctx){
@@ -355,11 +509,10 @@ async function runScene03MotionCore(tl, assets, canvas, ctx){
 
   /* title — 멤버(피플 톤) 등장 */
   showElement(assets.group);
+  await scene03PrepStackSlot(assets.member);
   await Guide01.showMemberWrap(assets.member);
-  if(typeof Scene03Layout !== 'undefined' && Scene03Layout.pinMember){
-    Scene03Layout.pinMember(assets.member);
-  }
   scene03StartMemberIdle(assets.member);
+  if(typeof Scene03Layout !== 'undefined') Scene03Layout.scheduleLayout(false);
   if(scene03Cancelled(ctx)) return;
 
   /* main+2s — D 지위 + 멤버 컬러 복원 */
@@ -386,12 +539,17 @@ async function runScene03MotionCore(tl, assets, canvas, ctx){
     if(scene03Cancelled(ctx)) return;
   }
 
-  /* main+12s — B,C,D → A 중복 · 사용 불가 */
-  await tl.wait(at(T.duplicateBlock));
+  /* main+12s — B,C,D 타이틀 A로 변경 */
+  await tl.wait(at(T.duplicateRename));
   if(scene03Cancelled(ctx)) return;
-  await scene03StackDuplicates(assets);
+  await scene03RenameDuplicates(assets);
 
-  /* main+18s — B,C,D 복원 + 체크 */
+  /* main+14s — B,C,D 회색 + 사용불가 스탬프 플로팅 */
+  await tl.wait(at(T.duplicateUnavailable));
+  if(scene03Cancelled(ctx)) return;
+  await scene03ShowUnavailable(assets);
+
+  /* main+18s — B,C,D 타이틀 복원 + 체크 */
   await tl.wait(at(T.restoreProducts));
   if(scene03Cancelled(ctx)) return;
   await scene03RestoreProducts(assets);
