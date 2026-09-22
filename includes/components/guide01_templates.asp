@@ -37,4 +37,11 @@
   <div data-template="business_flow_card"><!--#include file="business_flow_card.asp"--></div>
   <div data-template="subscription_system_frame"><!--#include file="subscription_system_frame.asp"--></div>
   <div data-template="cursor_click_icon"><!--#include file="cursor_click_icon.asp"--></div>
+  <div data-template="payment_batch_box"><!--#include file="payment_batch_box.asp"--></div>
+  <div data-template="delivery_batch_box"><!--#include file="delivery_batch_box.asp"--></div>
+  <div data-template="installment_mini_badge"><!--#include file="installment_mini_badge.asp"--></div>
+  <div data-template="quarter_renew_summary"><!--#include file="quarter_renew_summary.asp"--></div>
+  <div data-template="subscription_renew_payment_box"><!--#include file="subscription_renew_payment_box.asp"--></div>
+  <div data-template="delivery_box_icon"><!--#include file="delivery_box_icon.asp"--></div>
+  <div data-template="payment_card_icon"><!--#include file="payment_card_icon.asp"--></div>
 </div>
