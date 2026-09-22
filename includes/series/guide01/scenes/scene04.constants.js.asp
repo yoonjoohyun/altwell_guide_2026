@@ -49,12 +49,10 @@ var Scene04Config = {
     anchorZone: 'd4',
     gaps: {
       autoshipPayment: 18,
+      payDelCalendar: 14,
       calendarRenew: 14,
       stackGap: 12,
       payDelGap: 16
-    },
-    offsets: {
-      calendarWrap: { y: 40 }
     },
     scales: {
       autoship: 1,

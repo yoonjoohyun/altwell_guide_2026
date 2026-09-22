@@ -255,10 +255,13 @@ async function scene04ActivateCalendarSteps(assets){
       checksHost.appendChild(cell);
     }
 
+    if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
+
     await wait(stagger);
   }
 
   await wait(dur);
+  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
 }
 
 async function scene04ShowRenewArrow(assets){
@@ -275,6 +278,8 @@ async function scene04ShowRenewArrow(assets){
       showElement(assets.renewBadgeHost);
     }
   }
+
+  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
 
   await wait(520);
 }

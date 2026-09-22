@@ -183,7 +183,7 @@ var Scene04Layout = (function(){
     var scale = S.renewWrap != null ? S.renewWrap : 1;
     var wrap = document.createElement('div');
     wrap.id = 's04-renew-wrap';
-    wrap.className = 'g01-zone-wrap s04-renew-wrap scene04-group-child s04-layout-instant is-hidden';
+    wrap.className = 's04-renew-wrap scene04-group-child s04-layout-instant is-hidden';
 
     var floatInner = document.createElement('div');
     floatInner.className = 'g01-float-inner';
@@ -285,8 +285,15 @@ var Scene04Layout = (function(){
     return _mode;
   }
 
+  function stackOrder(mode){
+    if(mode === 'summary') return ['summaryWrap'];
+    return ['autoship', 'payDelCluster', 'calendarWrap', 'renewWrap'];
+  }
+
   function gapAfterKey(prevKey, gaps){
     if(prevKey === 'autoship') return gaps.autoshipPayment != null ? gaps.autoshipPayment : 18;
+    if(prevKey === 'payDelCluster') return gaps.payDelCalendar != null ? gaps.payDelCalendar : 14;
+    if(prevKey === 'calendarWrap') return gaps.calendarRenew != null ? gaps.calendarRenew : 14;
     return gaps.stackGap != null ? gaps.stackGap : 12;
   }
 
@@ -313,43 +320,11 @@ var Scene04Layout = (function(){
     }
   }
 
-  function positionCalendarWrap(assets, offsets){
-    var calendar = assets.calendarWrap;
-    var off = offsets && offsets.calendarWrap;
-
-    if(!calendar || !isWrapVisible(calendar)) return;
-
-    setOffset(calendar, 0, (off && off.y != null) ? off.y : 0);
-    setScale(calendar, 1);
-  }
-
-  function positionRenewBelowCalendar(assets, inner, gaps){
-    var calendar = assets.calendarWrap;
-    var renew = assets.renewWrap;
-    var gs;
-    var calendarY;
-    var calH;
-    var renewH;
-    var gap;
-    var renewY;
-
-    if(!calendar || !renew || !isWrapVisible(renew) || !isWrapVisible(calendar)) return;
-
-    gs = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
-    calendarY = parseFloat(calendar.style.getPropertyValue('--offset-y')) || 0;
-    calH = measureBlock(calendar, inner).height;
-    renewH = measureWrap(renew, inner).height;
-    gap = gaps.calendarRenew != null ? gaps.calendarRenew : 14;
-    renewY = calendarY + calH / 2 + gap / gs + renewH / 2;
-    setOffset(renew, 0, renewY);
-    setScale(renew, 1);
-  }
-
   function measureStackItem(assets, key, inner){
     var wrap = assets[key];
     if(!wrap || !isWrapVisible(wrap)) return null;
 
-    if(key === 'autoship' || key === 'renewWrap'){
+    if(key === 'autoship' || key === 'calendarWrap' || key === 'renewWrap'){
       return { key: key, wrap: wrap, size: measureWrap(wrap, inner) };
     }
     return { key: key, wrap: wrap, size: measureBlock(wrap, inner) };
@@ -400,9 +375,8 @@ var Scene04Layout = (function(){
   }
 
   function applyD4StackLayout(canvas, assets, inner, gaps, mode){
-    var offsets = Scene04Config.layout.offsets || {};
-    var headKeys = ['autoship', 'payDelCluster'];
-    var headChain = [];
+    var order = stackOrder(mode);
+    var chain = [];
     var i;
     var item;
     var summaryItem;
@@ -414,15 +388,12 @@ var Scene04Layout = (function(){
       return;
     }
 
-    for(i = 0; i < headKeys.length; i++){
-      item = measureStackItem(assets, headKeys[i], inner);
-      if(item) headChain.push(item);
+    for(i = 0; i < order.length; i++){
+      item = measureStackItem(assets, order[i], inner);
+      if(item) chain.push(item);
     }
 
-    if(headChain.length) layoutVerticalChain(headChain, gaps);
-
-    positionCalendarWrap(assets, offsets);
-    positionRenewBelowCalendar(assets, inner, gaps);
+    if(chain.length) layoutVerticalChain(chain, gaps);
 
     fitGroupScale(canvas, inner);
   }
