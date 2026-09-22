@@ -327,14 +327,25 @@ var Scene01Layout = (function(){
   /* #motion-zone-grid 셀 상단 — 보이는 그리드 라인과 동기 */
   function zoneCellTopFromGrid(canvas, zone){
     var z = Guide01.parseZone(zone);
+    var cellRect;
+    var gridEl;
+    var idx;
+    var cell;
+    var canvasRect;
+
     if(!z || !canvas) return zoneTopPx(canvas, zone);
-    var gridEl = document.getElementById('motion-zone-grid');
+    gridEl = document.getElementById('motion-zone-grid');
     if(!gridEl || !gridEl.children.length) return zoneTopPx(canvas, zone);
-    var idx = (z.row - 1) * 7 + (z.col - 1);
-    var cell = gridEl.children[idx];
+    if(typeof window.getComputedStyle === 'function'){
+      if(window.getComputedStyle(gridEl).display === 'none') return zoneTopPx(canvas, zone);
+    }
+    idx = (z.row - 1) * 7 + (z.col - 1);
+    cell = gridEl.children[idx];
     if(!cell) return zoneTopPx(canvas, zone);
-    var canvasRect = canvas.getBoundingClientRect();
-    return cell.getBoundingClientRect().top - canvasRect.top;
+    cellRect = cell.getBoundingClientRect();
+    if(cellRect.height < 1) return zoneTopPx(canvas, zone);
+    canvasRect = canvas.getBoundingClientRect();
+    return cellRect.top - canvasRect.top;
   }
 
   function getOffset(wrap){

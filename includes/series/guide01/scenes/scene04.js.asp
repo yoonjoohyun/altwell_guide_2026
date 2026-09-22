@@ -152,8 +152,9 @@ async function scene04SlideDeliveryTrackOut(track, slideDur){
   track.style.removeProperty('transition');
 }
 
-async function scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track, cfg){
+async function scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track, cfg, opts){
   var fadeOpts = Object.assign({}, scene04Motion('FADE'), { duration: cfg.fadeDuration });
+  var withSlideOut = !opts || opts.withSlideOut !== false;
   var i;
 
   scene04ResetDeliveryCycle(deliveryBox, productWraps, track);
@@ -169,6 +170,8 @@ async function scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track,
   }
 
   await wait(cfg.floatHold);
+  if(!withSlideOut) return;
+
   scene04StopDeliveryProductFloats(productWraps);
   scene04CenterDeliveryTrack(stack, track);
   await scene04SlideDeliveryTrackOut(track, cfg.slideDuration);
@@ -201,9 +204,16 @@ function scene04StartDeliveryProductLoop(deliveryBox, productWraps, ctx){
   scene04ResetDeliveryCycle(deliveryBox, productWraps, track);
 
   (async function run(){
+    var cycleCount = 0;
+    var totalCycles = loop.totalCycles != null ? loop.totalCycles : 2;
+
     while(!scene04Cancelled(ctx)){
-      await scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track, cfg);
+      cycleCount++;
+      await scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track, cfg, {
+        withSlideOut: cycleCount < totalCycles
+      });
       if(scene04Cancelled(ctx)) return;
+      if(cycleCount >= totalCycles) return;
       if(cfg.cycleGap > 0) await wait(cfg.cycleGap);
     }
   })();
@@ -226,42 +236,127 @@ async function scene04ShowInstallment(host){
   badge.classList.remove('s04-installment-flash');
 }
 
+function scene04GetFlowMonthEntries(flow){
+  var slots = flow.querySelectorAll('.s04-flow-month-slot');
+  var entries = [];
+  var months;
+  var i;
+  var slot;
+  var month;
+
+  if(slots.length){
+    for(i = 0; i < slots.length; i++){
+      slot = slots[i];
+      month = slot.querySelector('.subscription_flow_month');
+      if(!month) continue;
+      entries.push({
+        month: month,
+        coin: slot.querySelector('.s04-flow-payment-coin'),
+        index: i
+      });
+    }
+    return entries;
+  }
+
+  months = flow.querySelectorAll('.subscription_flow_track .subscription_flow_month');
+  for(i = 0; i < months.length; i++){
+    entries.push({ month: months[i], coin: null, index: i });
+  }
+  return entries;
+}
+
+function scene04RunMonthJump(month, jumpDur){
+  var motion = Scene04Config.motion.calendarStep || {};
+  var slot = month && month.closest('.s04-flow-month-slot');
+  var target = slot || month;
+  var peak = motion.jumpPeak != null ? motion.jumpPeak : -10;
+  var settle = motion.jumpSettle != null ? motion.jumpSettle : 3;
+
+  if(!target) return Promise.resolve();
+
+  target.style.transform = 'translate3d(0,0,0)';
+
+  if(typeof target.animate === 'function'){
+    return target.animate([
+      { transform: 'translate3d(0,0,0) scale(1)' },
+      { transform: 'translate3d(0,' + peak + 'px,0) scale(1.03)' },
+      { transform: 'translate3d(0,' + settle + 'px,0) scale(0.99)' },
+      { transform: 'translate3d(0,0,0) scale(1)' }
+    ], {
+      duration: jumpDur,
+      easing: 'cubic-bezier(.22,1,.36,1)',
+      fill: 'none'
+    }).finished.then(function(){
+      target.style.transform = '';
+    }).catch(function(){
+      target.style.transform = '';
+    });
+  }
+
+  return wait(jumpDur).then(function(){
+    target.style.transform = '';
+  });
+}
+
 async function scene04ActivateCalendarSteps(assets){
   var flow = assets.subscriptionFlow;
-  var checksHost = assets.calendarChecks;
-  var months;
-  var dur = (Scene04Config.motion.calendarStep && Scene04Config.motion.calendarStep.duration) || 420;
-  var stagger = Scene04Config.motion.calendarStep.stagger || 380;
+  var motion = Scene04Config.motion.calendarStep || {};
+  var jumpDur = motion.jumpDuration != null ? motion.jumpDuration : 520;
+  var stagger = motion.stagger != null ? motion.stagger : 380;
+  var entries;
   var i;
+  var entry;
   var month;
-  var check;
+  var coin;
+  var isPaymentMonth;
 
-  if(!flow || !checksHost) return;
+  if(!flow) return;
 
-  months = flow.querySelectorAll('.subscription_flow_month');
-  checksHost.innerHTML = '';
+  if(typeof Scene04Layout !== 'undefined' && Scene04Layout.ensureFlowMonthSlots){
+    Scene04Layout.ensureFlowMonthSlots(flow);
+  }
 
-  for(i = 0; i < 3 && i < months.length; i++){
-    month = months[i];
-    month.classList.add('is-active-month');
+  Guide01.stopIdleFloat(assets.calendarWrap);
+  entries = scene04GetFlowMonthEntries(flow);
 
-    check = Scene04Layout.cloneFromTemplate('status_check_icon');
-    if(check){
-      var cell = document.createElement('div');
-      cell.className = 's04-month-check-cell';
-      check.classList.add('guide01-asset', 's04-month-check');
-      check.setAttribute('data-month-index', String(i));
-      cell.appendChild(check);
-      checksHost.appendChild(cell);
+  if(!entries.length) return;
+
+  await new Promise(function(resolve){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resolve);
+    });
+  });
+
+  for(i = 0; i < entries.length; i++){
+    entry = entries[i];
+    month = entry.month;
+    coin = entry.coin;
+    isPaymentMonth = (entry.index === 0 || entry.index === 3);
+
+    month.classList.remove('is-payment-month', 'is-active-month');
+    month.style.transform = '';
+    if(coin){
+      coin.classList.add('is-hidden');
+      coin.classList.remove('s04-payment-coin-pop');
+    }
+
+    await scene04RunMonthJump(month, jumpDur);
+
+    if(isPaymentMonth){
+      month.classList.add('is-payment-month');
+      if(coin){
+        coin.classList.remove('is-hidden');
+        coin.classList.add('s04-payment-coin-pop');
+      }
     }
 
     if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 
-    await wait(stagger);
+    if(i < entries.length - 1) await wait(stagger);
   }
 
-  await wait(dur);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
+  Guide01.startIdleFloat(assets.calendarWrap);
 }
 
 async function scene04ShowRenewArrow(assets){
@@ -269,60 +364,21 @@ async function scene04ShowRenewArrow(assets){
   if(!flow) return;
   flow.classList.add('s04-renew-arrow-visible');
 
-  if(assets.renewBadgeHost){
-    var badge = Scene04Layout.cloneFromTemplate('guide_info_badge');
-    if(badge){
-      badge.classList.add('guide01-asset', 's04-auto-renew-badge');
-      assets.renewBadgeHost.innerHTML = '';
-      assets.renewBadgeHost.appendChild(badge);
-      showElement(assets.renewBadgeHost);
-    }
-  }
-
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
 
   await wait(520);
 }
 
-async function scene04ShowRenewCalendar(assets, opts){
-  if(!assets.renewWrap) return;
-  await scene04PrepStackSlot(assets.renewWrap);
-  await Guide01.fadeZoned(assets.renewWrap, true, opts || scene04Motion('FADE'));
+function scene04EnsureIdleFloatAll(assets){
+  if(!assets) return;
+  if(assets.autoship) Guide01.startIdleFloat(assets.autoship);
+  if(assets.payDelCluster) Guide01.startIdleFloat(assets.payDelCluster);
+  if(assets.calendarWrap) Guide01.startIdleFloat(assets.calendarWrap);
+}
+
+async function scene04HoldWithIdleFloat(assets){
+  scene04EnsureIdleFloatAll(assets);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
-}
-
-async function scene04MergeSummary(assets){
-  if(typeof Scene04Layout !== 'undefined'){
-    Scene04Layout.ensureSummaryWrap(assets);
-    Scene04Layout.setLayoutMode('summary');
-  }
-
-  var summary = assets.quarterSummary;
-  if(!summary || !assets.summaryWrap) return;
-
-  hideElement(assets.autoship);
-  hideElement(assets.payDelCluster);
-  hideElement(assets.calendarWrap);
-  hideElement(assets.renewWrap);
-
-  if(typeof Scene04Layout !== 'undefined'){
-    Scene04Layout.scheduleLayout(false);
-    await wait(scene04LayoutSettleMs());
-  }
-
-  await scene04PrepStackSlot(assets.summaryWrap);
-  summary.classList.add('s04-summary-enter');
-  await wait((Scene04Config.motion.merge && Scene04Config.motion.merge.duration) || 620);
-  summary.classList.add('s04-orbit-spin');
-  await wait(900);
-  summary.classList.add('s04-summary-emphasis');
-}
-
-async function scene04FinalCompare(summary){
-  if(!summary) return;
-  var dur = (Scene04Config.motion.compare && Scene04Config.motion.compare.duration) || 520;
-  summary.classList.add('is-compare-active');
-  await wait(dur);
 }
 
 async function runScene04MotionCore(tl, assets, canvas, ctx){
@@ -373,12 +429,11 @@ async function runScene04MotionCore(tl, assets, canvas, ctx){
     await wait(scene04LayoutSettleMs());
   }
 
-  /* 13s — 캘린더 1~3개월 활성 + 체크 */
+  /* 13s — 캘린더 1~4개월 순차 활성 */
   await tl.wait(at(T.calendarSteps));
   if(scene04Cancelled(ctx)) return;
   await scene04PrepStackSlot(assets.calendarWrap);
   await Guide01.fadeZoned(assets.calendarWrap, true, FADE);
-  Guide01.startIdleFloat(assets.calendarWrap);
   await scene04ActivateCalendarSteps(assets);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 
@@ -387,20 +442,10 @@ async function runScene04MotionCore(tl, assets, canvas, ctx){
   if(scene04Cancelled(ctx)) return;
   await scene04ShowRenewArrow(assets);
 
-  /* 20s — 연장 캘린더 + 자동 결제 */
-  await tl.wait(at(T.renewCalendar));
+  /* 23s — 전체 에셋 idle float 유지 */
+  await tl.wait(at(T.holdFloat));
   if(scene04Cancelled(ctx)) return;
-  await scene04ShowRenewCalendar(assets, FADE);
-
-  /* 23s — 통합 요약 */
-  await tl.wait(at(T.mergeSummary));
-  if(scene04Cancelled(ctx)) return;
-  await scene04MergeSummary(assets);
-
-  /* 27s — 매월 주문 취소선 / 3개월 정기구독 */
-  await tl.wait(at(T.finalCompare));
-  if(scene04Cancelled(ctx)) return;
-  await scene04FinalCompare(assets.quarterSummary);
+  await scene04HoldWithIdleFloat(assets);
 }
 
 </script>

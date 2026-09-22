@@ -4,8 +4,6 @@ var Scene04Layout = (function(){
   var _resizeBound = false;
   var _pending = false;
   var _ctx = null;
-  var _mode = 'full';
-
   function setOffset(wrap, x, y){
     if(!wrap) return;
     wrap.style.setProperty('--offset-x', (Math.round(x * 10) / 10) + 'px');
@@ -74,7 +72,7 @@ var Scene04Layout = (function(){
   function mountPayDelCluster(inner){
     var cluster = document.createElement('div');
     cluster.id = 's04-pay-del-cluster';
-    cluster.className = 's04-pay-del-cluster scene04-group-child s04-layout-instant is-hidden';
+    cluster.className = 's04-pay-del-cluster scene04-group-child g01-float-host s04-layout-instant is-hidden';
 
     var row = document.createElement('div');
     row.className = 's04-pay-del-row';
@@ -104,7 +102,13 @@ var Scene04Layout = (function(){
       delivery._deliveryProducts = mountDeliveryProducts(delivery, (Scene04Config.layout.scales && Scene04Config.layout.scales.deliveryProduct) || 1);
     }
 
-    cluster.appendChild(row);
+    var floatInner = document.createElement('div');
+    floatInner.className = 'g01-float-inner';
+    floatInner.style.setProperty('--g01-base-scale', '1');
+    floatInner.style.transform = 'scale(1)';
+    floatInner.appendChild(row);
+    cluster.appendChild(floatInner);
+    cluster._float = floatInner;
 
     inner.appendChild(cluster);
     return cluster;
@@ -144,10 +148,51 @@ var Scene04Layout = (function(){
     return products;
   }
 
+  function wrapFlowMonthSlots(flow){
+    var track = flow && flow.querySelector('.subscription_flow_track');
+    var nodes = [];
+    var monthIndex = 0;
+    var i;
+    var node;
+    var slot;
+    var coin;
+
+    if(!track || track.dataset.s04MonthSlots === '1') return;
+
+    for(i = 0; i < track.childNodes.length; i++){
+      if(track.childNodes[i].nodeType === 1) nodes.push(track.childNodes[i]);
+    }
+
+    track.textContent = '';
+
+    for(i = 0; i < nodes.length; i++){
+      node = nodes[i];
+      if(node.classList.contains('subscription_flow_month')){
+        slot = document.createElement('div');
+        slot.className = 's04-flow-month-slot';
+        slot.setAttribute('data-month-index', String(monthIndex));
+        node.classList.remove('is_next');
+        slot.appendChild(node);
+
+        coin = document.createElement('div');
+        coin.className = 's04-flow-payment-coin is-hidden';
+        coin.innerHTML = '<span class="s04-flow-payment-coin-inner">결제</span>';
+        slot.appendChild(coin);
+
+        track.appendChild(slot);
+        monthIndex++;
+      }else if(!node.classList.contains('subscription_flow_line')){
+        track.appendChild(node);
+      }
+    }
+
+    track.dataset.s04MonthSlots = '1';
+  }
+
   function mountCalendarWrap(inner){
     var wrap = document.createElement('div');
     wrap.id = 's04-calendar-wrap';
-    wrap.className = 's04-calendar-wrap scene04-group-child s04-layout-instant is-hidden';
+    wrap.className = 's04-calendar-wrap scene04-group-child g01-float-host s04-layout-instant is-hidden';
 
     var floatInner = document.createElement('div');
     floatInner.className = 'g01-float-inner';
@@ -158,79 +203,13 @@ var Scene04Layout = (function(){
     if(flow){
       flow.id = 's04-subscription-flow';
       flow.classList.add('guide01-asset', 's04-subscription-flow');
+      wrapFlowMonthSlots(flow);
       floatInner.appendChild(flow);
-    }
-
-    if(flow){
-      var checkRow = document.createElement('div');
-      checkRow.id = 's04-calendar-checks';
-      checkRow.className = 's04-calendar-checks';
-      flow.appendChild(checkRow);
-
-      var renewHost = document.createElement('div');
-      renewHost.id = 's04-renew-badge-host';
-      renewHost.className = 's04-renew-badge-host is-hidden';
-      flow.appendChild(renewHost);
-    }
-
-    wrap.appendChild(floatInner);
-    inner.appendChild(wrap);
-    return wrap;
-  }
-
-  function mountRenewWrap(inner){
-    var S = Scene04Config.layout.scales || {};
-    var scale = S.renewWrap != null ? S.renewWrap : 1;
-    var wrap = document.createElement('div');
-    wrap.id = 's04-renew-wrap';
-    wrap.className = 's04-renew-wrap scene04-group-child s04-layout-instant is-hidden';
-
-    var floatInner = document.createElement('div');
-    floatInner.className = 'g01-float-inner';
-    floatInner.style.setProperty('--g01-base-scale', String(scale));
-    floatInner.style.transform = 'scale(' + scale + ')';
-
-    var box = cloneFromTemplate('subscription_renew_payment_box');
-    if(box){
-      box.id = 's04-renew-payment-box';
-      box.classList.add('guide01-asset');
-      floatInner.appendChild(box);
     }
 
     wrap.appendChild(floatInner);
     wrap._float = floatInner;
     inner.appendChild(wrap);
-    return wrap;
-  }
-
-  function mountSummaryWrap(inner){
-    var wrap = document.createElement('div');
-    wrap.id = 's04-summary-wrap';
-    wrap.className = 's04-summary-wrap scene04-group-child s04-layout-instant is-hidden';
-
-    var summary = cloneFromTemplate('quarter_renew_summary');
-    if(summary){
-      summary.id = 's04-quarter-summary';
-      summary.classList.add('guide01-asset');
-      wrap.appendChild(summary);
-    }
-
-    inner.appendChild(wrap);
-    return wrap;
-  }
-
-  function ensureSummaryWrap(assets){
-    var inner;
-    var wrap;
-
-    if(assets.summaryWrap) return assets.summaryWrap;
-
-    inner = assets.group && assets.group._scene04Inner;
-    if(!inner) return null;
-
-    wrap = mountSummaryWrap(inner);
-    assets.summaryWrap = wrap;
-    assets.quarterSummary = wrap.querySelector('#s04-quarter-summary');
     return wrap;
   }
 
@@ -277,23 +256,13 @@ var Scene04Layout = (function(){
     };
   }
 
-  function setLayoutMode(mode){
-    _mode = mode || 'full';
-  }
-
-  function getLayoutMode(){
-    return _mode;
-  }
-
-  function stackOrder(mode){
-    if(mode === 'summary') return ['summaryWrap'];
-    return ['autoship', 'payDelCluster', 'calendarWrap', 'renewWrap'];
+  function stackOrder(){
+    return ['autoship', 'payDelCluster', 'calendarWrap'];
   }
 
   function gapAfterKey(prevKey, gaps){
     if(prevKey === 'autoship') return gaps.autoshipPayment != null ? gaps.autoshipPayment : 18;
     if(prevKey === 'payDelCluster') return gaps.payDelCalendar != null ? gaps.payDelCalendar : 14;
-    if(prevKey === 'calendarWrap') return gaps.calendarRenew != null ? gaps.calendarRenew : 14;
     return gaps.stackGap != null ? gaps.stackGap : 12;
   }
 
@@ -324,7 +293,7 @@ var Scene04Layout = (function(){
     var wrap = assets[key];
     if(!wrap || !isWrapVisible(wrap)) return null;
 
-    if(key === 'autoship' || key === 'calendarWrap' || key === 'renewWrap'){
+    if(key === 'autoship' || key === 'calendarWrap'){
       return { key: key, wrap: wrap, size: measureWrap(wrap, inner) };
     }
     return { key: key, wrap: wrap, size: measureBlock(wrap, inner) };
@@ -374,19 +343,11 @@ var Scene04Layout = (function(){
     inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
   }
 
-  function applyD4StackLayout(canvas, assets, inner, gaps, mode){
-    var order = stackOrder(mode);
+  function applyD4StackLayout(canvas, assets, inner, gaps){
+    var order = stackOrder();
     var chain = [];
     var i;
     var item;
-    var summaryItem;
-
-    if(mode === 'summary'){
-      summaryItem = measureStackItem(assets, 'summaryWrap', inner);
-      if(summaryItem) layoutVerticalChain([summaryItem], gaps);
-      fitGroupScale(canvas, inner);
-      return;
-    }
 
     for(i = 0; i < order.length; i++){
       item = measureStackItem(assets, order[i], inner);
@@ -407,7 +368,7 @@ var Scene04Layout = (function(){
     var gaps = Scene04Config.layout.gaps || {};
     var endMeasure = beginMeasurePass(group);
 
-    applyD4StackLayout(canvas, assets, inner, gaps, _mode);
+    applyD4StackLayout(canvas, assets, inner, gaps);
 
     endMeasure();
   }
@@ -440,7 +401,6 @@ var Scene04Layout = (function(){
     _resizeBound = false;
     _ctx = null;
     _pending = false;
-    _mode = 'full';
   }
 
   return {
@@ -449,16 +409,12 @@ var Scene04Layout = (function(){
     mountFloatChild: mountFloatChild,
     mountPayDelCluster: mountPayDelCluster,
     mountCalendarWrap: mountCalendarWrap,
-    mountRenewWrap: mountRenewWrap,
-    mountSummaryWrap: mountSummaryWrap,
-    ensureSummaryWrap: ensureSummaryWrap,
     applyLayout: applyLayout,
     scheduleLayout: scheduleLayout,
-    setLayoutMode: setLayoutMode,
-    getLayoutMode: getLayoutMode,
     bindResize: bindResize,
     unbindResize: unbindResize,
-    cloneFromTemplate: cloneFromTemplate
+    cloneFromTemplate: cloneFromTemplate,
+    ensureFlowMonthSlots: wrapFlowMonthSlots
   };
 })();
 
@@ -476,15 +432,12 @@ function setupScene04Assets(canvas){
 
   var payDelCluster = Scene04Layout.mountPayDelCluster(inner);
   var calendarWrap = Scene04Layout.mountCalendarWrap(inner);
-  var renewWrap = Scene04Layout.mountRenewWrap(inner);
 
   var paymentBox = payDelCluster.querySelector('#s04-payment-box');
   var deliveryBox = payDelCluster.querySelector('#s04-delivery-box');
   var deliveryProducts = (deliveryBox && deliveryBox._deliveryProducts) || [];
   var subscriptionFlow = calendarWrap.querySelector('#s04-subscription-flow');
-  var calendarChecks = calendarWrap.querySelector('#s04-calendar-checks');
   var installmentHost = payDelCluster.querySelector('#s04-installment-host');
-  var renewBadgeHost = calendarWrap.querySelector('#s04-renew-badge-host');
   var assets = {
     group: group,
     autoship: autoshipWrap,
@@ -494,12 +447,7 @@ function setupScene04Assets(canvas){
     deliveryProducts: deliveryProducts,
     installmentHost: installmentHost,
     calendarWrap: calendarWrap,
-    subscriptionFlow: subscriptionFlow,
-    renewWrap: renewWrap,
-    calendarChecks: calendarChecks,
-    renewBadgeHost: renewBadgeHost,
-    summaryWrap: null,
-    quarterSummary: null
+    subscriptionFlow: subscriptionFlow
   };
 
   Scene04Layout.applyLayout(canvas, group, assets);

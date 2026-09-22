@@ -23,6 +23,8 @@ var G01ZonedAnim = (function(){
     if(!target) return null;
     var el = typeof target === 'string' ? document.querySelector(target) : target;
     if(!el) return null;
+    /* g01-float-host — 그룹 자식 등 g01-zone-wrap 밖 float 래퍼 (씬별 opt-in) */
+    if(el.classList && el.classList.contains('g01-float-host')) return el;
     if(el.classList && el.classList.contains('g01-zone-wrap')) return el;
     return el.closest ? el.closest('.g01-zone-wrap') : null;
   }

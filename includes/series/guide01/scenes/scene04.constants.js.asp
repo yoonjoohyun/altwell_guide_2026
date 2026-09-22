@@ -39,9 +39,7 @@ var Scene04Config = {
       splitLayout: 11000,
       calendarSteps: 13000,
       renewArrow: 18000,
-      renewCalendar: 20000,
-      mergeSummary: 23000,
-      finalCompare: 27000
+      holdFloat: 23000
     }
   },
 
@@ -50,7 +48,6 @@ var Scene04Config = {
     gaps: {
       autoshipPayment: 18,
       payDelCalendar: 14,
-      calendarRenew: 14,
       stackGap: 12,
       payDelGap: 16
     },
@@ -60,8 +57,6 @@ var Scene04Config = {
       deliveryBox: 1,
       deliveryProduct: 1,
       calendar: 1,
-      renewWrap: 1,
-      summary: 1,
       minFit: 0.42
     }
   },
@@ -74,11 +69,9 @@ var Scene04Config = {
     connector: { duration: 700 },
     cardTap: { duration: 680 },
     deliveryStack: { stagger: 140, fadeDuration: 420 },
-    deliveryLoop: { floatHold: 360, slideDuration: 360, cycleGap: 2000 },
+    deliveryLoop: { floatHold: 360, slideDuration: 360, cycleGap: 2000, totalCycles: 2 },
     installment: { duration: 480 },
-    calendarStep: { duration: 420, stagger: 380 },
-    merge: { duration: 620 },
-    compare: { duration: 520 }
+    calendarStep: { jumpDuration: 520, stagger: 380, jumpPeak: -10, jumpSettle: 3 }
   }
 };
 
