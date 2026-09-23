@@ -2,7 +2,7 @@
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
 > **미리보기:** `asset_design.asp` · **guide01:** `series/season01/guide01_smartguide.asp`  
-> **Last updated:** 2026-09-21 (§6 시나리오 필수 항목 · §7 씬 추가)
+> **Last updated:** 2026-09-23 (§5-8 씬1~4 제작 프로세스 · Scene 03/04 반영)
 
 ---
 
@@ -15,6 +15,7 @@
 5. [존 애니메이션 규칙](#5-존-애니메이션-규칙)
 6. [시나리오 작성 (부록 A)](#6-시나리오-작성-부록-a)
 7. [guide01 씬 추가 가이드](#7-guide01-씬-추가-가이드)
+8. [씬1~4 제작 프로세스 요약](#8-씬14-제작-프로세스-요약)
 
 ---
 
@@ -103,9 +104,10 @@ guide_page/
     └── series/guide01/
         ├── guide01.asp, guide01_common.js.asp
         └── scenes/
-            ├── scene01.constants.js.asp
-            ├── scene01.setup.js.asp
-            └── scene01.js.asp
+            ├── scene01.constants.js.asp · setup · js
+            ├── scene02.constants.js.asp · setup · js
+            ├── scene03.constants.js.asp · setup · js
+            └── scene04.constants.js.asp · setup · js
 ```
 
 ### 1-6. guide01 Include 체인
@@ -116,7 +118,8 @@ guide01_smartguide.asp
 ├── virtual /includes/components/guide01_templates.asp
 ├── virtual /includes/video_runtime.asp
 ├── virtual /includes/series/guide01/guide01_common.js.asp
-├── scene01.constants · setup · js
+├── scene01~04.constants · setup · js (씬별)
+├── virtual /includes/sceneTransition.js.asp
 ├── virtual /includes/series/guide01/guide01.asp
 └── SeriesGuide01.init()
 ```
@@ -274,6 +277,11 @@ SceneRunner.registerScene(MyScene);
 | `business_flow_card` | 제품→추천→비즈니스 |
 | `subscription_system_frame` | 정기 구독 시스템 프레임 |
 | `cursor_click_icon` | 클릭 커서 |
+| `payment_batch_box` | 3개월분 일괄 결제 박스 (씬4) |
+| `delivery_batch_box` | 3개월분 일괄 배송 박스 (씬4) |
+| `installment_mini_badge` | 카드사 할부 가능 뱃지 (씬4) |
+| `product_swap_box` | 상품 A~E 슬롯 (씬3) |
+| `unavailable_stamp` | 변경 불가 스탬프 (씬3) |
 
 ### 3-8. guide01 clone (`guide01_templates.asp`)
 
@@ -411,27 +419,24 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 - 펼침: track 확장 → 텍스트 fade-in (15% overlap)
 - 등장: `Guide01.enterZonedBadge` — `_c` → zone 등장 → unfold
 
-### 5-5. guide01 Scene 01 · 02 (현행)
+### 5-5. guide01 Scene 01 ~ 04 (현행)
 
-**Scene 01**
+| 씬 | 레이아웃 패턴 | 핵심 에셋·연출 |
+|----|-------------|--------------|
+| **01** | B-1 그룹 상대 배치 | 멤버 2인 + 오토십·베이스·캐시백·추천 존 배치, `Scene01Layout` grid scale |
+| **02** | B 중앙 정렬 스택 | 오토십 fold → 할인가 4행 → BASE·캐시백·추천, `Scene02Layout` |
+| **03** | B + 하위 슬롯 | 멤버 승격 + 상품 A~E 1열 + 변경불가 스탬프, `Scene03Layout` |
+| **04** | B + 가로 클러스터 | 결제·배송 박스 + 캘린더 4개월 + 할부·자동결제, `Scene04Layout` |
 
-| 파일 | 역할 |
-|------|------|
-| `scene01.constants.js.asp` | media sequence (title→main), `T.main.*`, panel flashes |
-| `scene01.setup.js.asp` | 멤버 그룹(d4), 상대 레이아웃, 모바일 grid scale |
-| `scene01.js.asp` | title(멤버) → main(오토십~베이스) 순차 등장 |
-
-- 그룹 앵커 `d4`, 멤버 머리 → `c4` 상단 라인 · 혜택 row 캐시백 중심
-
-**Scene 02**
+**공통 3파일**
 
 | 파일 | 역할 |
 |------|------|
-| `scene02.constants.js.asp` | title→main, `T.main.*`, panel 4 bullet flash |
-| `scene02.setup.js.asp` | d4 세로 스택 (`Scene02Layout`) |
-| `scene02.js.asp` | title(오토십) → fold → 할인가 4행 → BASE·캐시백·추천 |
+| `sceneNN.constants.js.asp` | `T.main`, panel flashes, `layout`, `motion` 프리셋 |
+| `sceneNN.setup.js.asp` | DOM 마운트, `SceneNNLayout` IIFE, `setupSceneNNAssets` |
+| `sceneNN.js.asp` | `defineScene`, 타임라인, `sceneNNPrepStackSlot`, 연출 함수 |
 
-**Scene 02 `T.main` (ms)**
+**Scene 02 `T.main` (ms) — 참고**
 
 | 시점 | 에셋 |
 |------|------|
@@ -442,6 +447,21 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 | main+24s | 캐시백 |
 | main+27s | 추천 보너스 |
 
+**Scene 04 `T.main` (ms) — 참고**
+
+| 시점 | 에셋 |
+|------|------|
+| main+0s | 오토십 |
+| main+1s | 결제 박스 (pay-del 클러스터) |
+| main+3s | 카드 탭 연출 |
+| main+5s | 배송 박스 확장 + 제품 루프 |
+| main+8s | 할부 가능 뱃지 |
+| main+13s | 캘린더 1~4개월 순차 점프 |
+| main+18s | 3→4 자동 연장 |
+| main+23s | 전체 idle float 홀드 |
+
+> 씬1~4에서 쌓인 **에셋 조합·플로팅·중앙정렬·레이아웃 안정화** 절차는 [§8 씬1~4 제작 프로세스 요약](#8-씬14-제작-프로세스-요약) 참고.
+
 ### 5-6. Anti-patterns
 
 | ❌ | ✅ |
@@ -450,8 +470,24 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 | keyframe `scale(1)` 고정 | `scale(var(--g01-base-scale))` |
 | `--zone-row/col` rAF 보간 | `moveZoned` |
 | idle `motion-idle-float` on inner | `g01-idle-float` |
+| pop 직후 `setTimeout`으로 idle 시작 | `animationend` 후 soft idle 연결 ([§8-3](#8-3-부드러운-플로팅-애니메이션)) |
+| 코인·배지 `display:none` 토글 | `visibility`/`opacity`로 공간 예약 ([§8-4](#8-4-레이아웃-안정화)) |
+| 캘린더 스텝마다 `scheduleLayout` | 연출 루프 밖·크기 변화 1회만 호출 |
+| 존재하지 않는 keyframe 이름 | `@keyframes` 정의 후 class에 연결 (`s04-installment-pop` 등) |
 
-### 5-7. 신규 씬 체크리스트 (모션)
+### 5-7. 씬 간 전환 (`sceneTransition.js.asp`)
+
+| 단계 | 시간 | 동작 |
+|------|------|------|
+| hold | 1s | 현재 씬 잔존 |
+| fade | 2s | canvas **직계** `.g01-zone-wrap` + 패널 **opacity** 퇴장 |
+| gap | 3s | SceneRunner가 다음 씬 시작까지 대기 |
+
+- 중첩 `g01-zone-wrap`(스택 자식)은 **개별 퇴장하지 않음** — 스택 그룹 1개만 fade
+- scale/transform 퇴장 제거 → 다음 씬 중앙정렬이 깨지지 않음
+- `#motion-zone-grid`는 `video_layout.asp`에서 항상 유지 (씬1 grid fallback과 연동)
+
+### 5-8. 신규 씬 체크리스트 (모션)
 
 - [ ] `addZonedAsset` / `addZonedBadge` 마운트
 - [ ] `--g01-base-scale` 설정
@@ -969,7 +1005,8 @@ function setupScene02Assets(canvas){
 | 참조 | 파일 |
 |------|------|
 | Scene 02 | `scene02.setup.js.asp` · `Scene02Layout` · `scene02PrepStackSlot` |
-| Scene 03 | `scene03.setup.js.asp` · `Scene03Layout` · `scene03PrepStackSlot` |
+| Scene 03 | `scene03.setup.js.asp` · `Scene03Layout` · `scene03PrepStackSlot` · `scene03PrepProductSlot` |
+| Scene 04 | `scene04.setup.js.asp` · `Scene04Layout` · `scene04PrepStackSlot` · `syncStackContentWidth` |
 
 **setup (`SceneNNLayout` IIFE) 필수 요소**
 
@@ -1173,7 +1210,8 @@ Guide01.panelBulletTimeline(
 | `enterZonedBadge(wrap, opts)` | 등장 + unfold |
 | `fadeZoned` / `popScaleZoned` | 등장·퇴장 |
 | `moveZoned(wrap, toZone, opts)` | 존 이동 |
-| `startIdleFloat` / `stopIdleFloat` | idle float |
+| `startIdleFloat` / `stopIdleFloat` | idle float (`g01-idle-float` on inner) |
+| `sceneNNWaitAnimEnd(el, name, fallbackMs)` | pop → soft idle 연결 (씬4 패턴, [§8-4](#8-4-부드러운-플로팅-애니메이션)) |
 
 **연결·부가**
 
@@ -1230,7 +1268,204 @@ Guide01.mountStage(canvas, 'sceneNN-canvas');
 | 베이스 뱃지 | `BASE 사업자 기준` 예외 | 컴포넌트 기본 `베이스 사업자` |
 | init | title 프로브 index 0 | title 씬마다 index 맞춰 추가 |
 
-씬1 상세 타이밍·레이아웃: [§5-5](#5-5-guide01-scene-01-현행).
+씬1~4 상세·공통 프로세스: [§5-5](#5-5-guide01-scene-01--04-현행) · [§8](#8-씬14-제작-프로세스-요약).
+
+---
+
+## 8. 씬1~4 제작 프로세스 요약
+
+> Scene 01~04 작업에서 정리된 **실전 패턴**. 신규 씬(Scene 05+)은 §7 절차 + 본 §8 체크리스트를 함께 따른다.
+
+### 8-1. 3파일 역할 분담
+
+```
+constants  →  “언제·얼마나”  (T.main, panel.flashes, layout.gaps, motion 프리셋)
+setup      →  “어디에·무엇을”  (DOM 마운트, SceneNNLayout, template clone)
+js         →  “어떻게 움직일지”  (타임라인, prepStackSlot, 연출 함수)
+```
+
+**원칙:** setup은 **DOM만** 만든다. 등장·플로팅·순차 연출은 js에서 실행한다.
+
+### 8-2. 에셋 활용 2경로
+
+#### 경로 A — 존 직접 배치 (`Guide01.addZoned*`)
+
+단독 에셋 1개 = 존 1개. 씬1 멤버·뱃지, 씬2 첫 오토십 등.
+
+```javascript
+Guide01.addZonedBadge(canvas, 'autoship_icon', 's02-autoship', 'd4', { scale: 0.88 });
+Guide01.addZonedAsset(canvas, 'subscription_flow_card', 's04-flow', 'd4', { scale: 1 });
+```
+
+#### 경로 B — template clone + 스택 조합 (`SceneNNLayout.cloneFromTemplate`)
+
+**여러 컴포넌트를 한 덩어리로 조립**할 때 (씬3 상품 슬롯, 씬4 결제·배송 박스).
+
+```javascript
+var payment = Scene04Layout.cloneFromTemplate('payment_batch_box');
+var delivery = Scene04Layout.cloneFromTemplate('delivery_batch_box');
+/* row / cluster / host 슬롯에 append → mountFloatChild / mountPayDelCluster */
+```
+
+| 구분 | addZoned* | cloneFromTemplate |
+|------|-----------|-------------------|
+| wrap | `g01-zone-wrap` 자동 | 직접 `g01-float-inner` 또는 `.guide01-asset` |
+| 존 좌표 | `--zone-row/col` | 스택 `--offset-x/y` 로 대체 |
+| CSS `--size` | `icon_style.css` + scale | 씬 CSS에서 `--size:min(220px,42vw)` 등 박스별 지정 |
+
+**신규 박스형 에셋 추가 순서:** `components/*.asp` → `icon_style.css` → `guide01_templates.asp` `data-template` → setup에서 clone.
+
+### 8-3. 그룹 중앙 정렬 스택 (패턴 B — 씬2~4 기본)
+
+```
+#g01-zone-wrap.sceneNN-stack-group          ← 앵커 존(d4) 1곳
+  └── .sceneNN-group-inner                  ← width/height:0, transform-origin:center
+        └── .sceneNN-group-child × N        ← position:absolute; left:50%; top:50%
+              └── .g01-float-inner          ← scale(--g01-base-scale), idle float 대상
+                    └── .guide01-asset
+```
+
+**레이아웃 알고리즘 (`applyLayout`)**
+
+1. visible `.sceneNN-group-child`만 측정 (height 합산)
+2. `cursor = -totalH / 2` 에서 시작 → 각 wrap 중심에 `--offset-y` 부여
+3. (씬4) `fitGroupScale` + `syncStackContentWidth` — 캔버스 넘침 시 `--group-scale`, 캘린더 폭 동기화
+4. `scheduleLayout(false)` — rAF coalesce (연속 호출 1회로 합침)
+
+**에셋 등장 필수 순서 (`sceneNNPrepStackSlot`)**
+
+```javascript
+wrap.style.opacity = '0';
+showElement(wrap);                                    // is-hidden 해제 → 측정 포함
+SceneNNLayout.scheduleLayout(!hasVisibleSibling);     // 첫 자식: immediate
+if(hasVisibleSibling) await wait(layoutTransition); // 480ms — offset 이동 대기
+wrap.style.removeProperty('opacity');
+await Guide01.fadeZoned(wrap, true, opts);            // 또는 enterZonedBadge
+Guide01.startIdleFloat(wrap);
+SceneNNLayout.scheduleLayout(false);
+```
+
+**CSS 동기화**
+
+```css
+.sceneNN-group-child {
+  transform: translate(calc(-50% + var(--offset-x)), calc(-50% + var(--offset-y)));
+  transition: transform 480ms cubic-bezier(.22,1,.36,1);  /* motion.layoutTransition */
+}
+.sceneNN-group-child.sNN-layout-instant { transition: none; }  /* 첫 applyLayout 직후 제거 */
+```
+
+**씬1 예외 (패턴 B-1):** 2인 비대칭 배치 + `gridProportionalScale` — 단순 세로 스택에는 B만 사용.
+
+### 8-4. 부드러운 플로팅 애니메이션
+
+#### 계층 1 — 클러스터 idle float (`Guide01.startIdleFloat`)
+
+- 대상: `.g01-float-inner` (wrap의 `_float` 또는 querySelector)
+- class: `g01-idle-float` — 3s, ±3px, `scale(var(--g01-base-scale))` 포함
+- API: `startIdleFloat(wrap)` / `stopIdleFloat(wrap)` — 연출 전후 토글
+
+#### 계층 2 — 씬4 soft idle (`s04-soft-idle-float`)
+
+- 키프레임: ±2px, 4s — **pop 직후** 하위 요소에 적용
+- 대상 예: 결제 코인 inner, 할부 뱃지+카드(`.pbb_card-slot`), pay-del·캘린더 클러스터 override
+- **23s 홀드**에서 클러스터 `g01-idle-float`로 전환 시 하위 soft idle **제거** 후 통합
+
+#### pop → idle 연결 (끊김 방지)
+
+```javascript
+el.classList.add('s04-installment-pop');
+await scene04WaitAnimEnd(el, 's04-installment-pop', popDur + 80);
+el.classList.remove('s04-installment-pop');
+el.classList.add('s04-soft-idle-float');   // 또는 부모 슬롯에 float
+```
+
+- `animationend` + fallback timeout 병행
+- pop class **제거 후** idle class 추가 (both fill 충돌 방지)
+
+#### `g01-float-host` (opt-in)
+
+`g01-zone-wrap`이 아닌 클러스터 wrap에 idle float를 걸 때 `zonedCore.js` `resolveWrap`이 인식하도록 클래스 추가.
+
+```html
+<div class="s04-pay-del-cluster scene04-group-child g01-float-host">
+  <div class="g01-float-inner">…</div>
+</div>
+```
+
+### 8-5. 레이아웃 안정화
+
+| 상황 | ❌ 피할 것 | ✅ 권장 |
+|------|-----------|--------|
+| 숨김 토글 | `display:none` (슬롯 높이 변동) | `visibility:hidden` + inner `opacity:0` (코인 슬롯 `min-height` 예약) |
+| 박스 확장 | pending class 즉시 제거 | `is-hidden` 해제 → rAF → pending 제거 → `layoutTransition` 대기 (배송 박스) |
+| 폭 동기화 | 매 프레임 `--s04-stack-content-width` 갱신 | 2px 미만 변화 무시 + `width` CSS transition |
+| 순차 연출 중 | 스텝마다 `scheduleLayout` | 루프 **밖**에서 1회, 또는 크기 변화 시점만 |
+| 할부 뱃지 | card-slot flow 삽입 (타이틀 밀림) | `position:absolute; bottom:100%` — 카드 위 오버레이 |
+| 할부 float | 배지만 float | `.pbb_card-slot`에 soft idle → **카드+배지 동시** |
+
+**전역 `is-hidden`:** `opacity:0; pointer-events:none` (display 아님).  
+**예외:** `.scene04-group-child.is-hidden { display:none!important }` — 스택 자식만 DOM에서 제외.
+
+### 8-6. 하위 슬롯 prep (스택 child 내부)
+
+스택 **child**가 아닌 **child 안의 요소**가 늘어날 때:
+
+| 씬 | 함수 | 예 |
+|----|------|-----|
+| 03 | `scene03PrepProductSlot` | 상품 A~E wrap — row 너비만 키움 |
+| 04 | `scene04RevealDeliveryBox` | 배송 pending 해제 + layout settle |
+| 04 | `wrapFlowMonthSlots` | 월별 slot + 결제/자동결제 코인 DOM 생성 |
+
+공통: prep 시 `opacity:0` → show → `scheduleLayout` → settle 대기 → opacity 복원.
+
+### 8-7. Web Animations API (미세 연출)
+
+캘린더 월 점프 등 **transform 충돌**이 잦을 때 CSS infinite 대신 WAAPI 1회 재생:
+
+```javascript
+target.animate([…], { duration, easing, fill: 'none' }).finished.then(function(){
+  target.style.transform = '';
+});
+```
+
+- idle float와 **동시에 같은 요소**에 걸지 않음
+- 점프 중 `stopIdleFloat(calendarWrap)` → 스텝 종료 후 재시작 또는 홀드에서 통합
+
+### 8-8. 씬별 특기 사항
+
+**Scene 01**
+- `Scene01Layout` — 멤버·혜택 **상대 offset**, canvas `--group-scale`
+- `#motion-zone-grid` 유지 — grid 비율 fallback
+
+**Scene 02**
+- `mountInGroup` — addZoned 후 즉시 `reparentZonedWrap`
+- fold·할인가 행 추가마다 `scheduleLayout`
+
+**Scene 03**
+- `MemberUnit` + `g01-member-stack` idle (멤버·뱃지 연동)
+- `scene03PrepProductSlot` — product row 내부 순차 등장
+- unavailable 스탬프 — host 내부 `g01-float-inner` 별도 float
+
+**Scene 04**
+- `mountPayDelCluster` — 결제+배송 가로 row, 배송 `s04-delivery-pending` (width:0 → transition)
+- `syncStackContentWidth` — pay-del row 실측 → `--s04-stack-content-width` → 캘린더 박스 폭
+- 1·4개월 코인: `결제` / `자동 결제` (`s04-flow-payment-coin-auto` 캡슐형)
+- 배송 제품 `deliveryLoop.totalCycles: 2` — fade in → idle float → slide out ×2
+- 캘린더 스텝: WAAPI jump + `scene04RevealPaymentCoin` (pop → soft idle)
+
+### 8-9. 신규 씬 적용 체크리스트
+
+- [ ] constants: `T.main`, `motion.layoutTransition`, panel flashes
+- [ ] setup: `createGroup` + `SceneNNLayout` + `setupSceneNNAssets`
+- [ ] js: `sceneNNPrepStackSlot` + `sceneNNLayoutSettleMs()`
+- [ ] CSS: `.guide01-canvas.sceneNN-canvas` 스코프, `--size`·gap·transition
+- [ ] template 등록 (`guide01_templates.asp`) — clone 사용 시
+- [ ] pop/keyframe 이름 실제 `@keyframes`와 일치
+- [ ] 등장 시 layout 예약 · 연출 루프 내 layout 최소화
+- [ ] idle float 계층 정리 (하위 soft → 클러스터 g01-idle)
+- [ ] `reset`에서 `Layout.unbindResize()` + panel class 제거
+- [ ] `ctx.isCancelled()` await마다 확인
 
 ---
 
@@ -1242,6 +1477,8 @@ Guide01.mountStage(canvas, 'sceneNN-canvas');
 | `includes/components/guide01_templates.asp` | clone template |
 | `includes/motions/g01/preview.js.asp` | G01 미리보기 |
 | `includes/series/guide01/scenes/sceneNN.*` | 씬별 constants · setup · js |
+| `includes/sceneTransition.js.asp` | 씬 간 1s hold + 2s opacity 퇴장 |
+| `includes/motions/g01/zonedCore.js.asp` | `g01-float-host`, idle float, resolveWrap |
 | `includes/series/guide01/guide01.asp` | registerScene · init |
 | `series/season01/guide01_smartguide.asp` | 씬 include · 페이지 진입 |
 | `voice/guide_season01/guide01/` | guide01 음성 mp4 |
