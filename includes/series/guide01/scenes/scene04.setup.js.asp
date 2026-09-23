@@ -176,7 +176,11 @@ var Scene04Layout = (function(){
 
         coin = document.createElement('div');
         coin.className = 's04-flow-payment-coin is-hidden';
-        coin.innerHTML = '<span class="s04-flow-payment-coin-inner">결제</span>';
+        if(monthIndex === 3){
+          coin.innerHTML = '<span class="s04-flow-payment-coin-inner s04-flow-payment-coin-auto">자동 결제</span>';
+        }else{
+          coin.innerHTML = '<span class="s04-flow-payment-coin-inner">결제</span>';
+        }
         slot.appendChild(coin);
 
         track.appendChild(slot);
@@ -343,6 +347,30 @@ var Scene04Layout = (function(){
     inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
   }
 
+  function syncStackContentWidth(assets, inner){
+    var cluster = assets.payDelCluster;
+    var row = cluster && cluster.querySelector('.s04-pay-del-row');
+    var gs = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
+    var width = 0;
+    var rect;
+    var prev;
+    var next;
+
+    if(!row || cluster.classList.contains('is-hidden')) return;
+
+    rect = row.getBoundingClientRect();
+    if(rect.width > 0) width = rect.width / gs;
+
+    if(width > 0){
+      next = Math.round(width * 10) / 10;
+      prev = parseFloat(getComputedStyle(inner).getPropertyValue('--s04-stack-content-width'));
+      if(!isNaN(prev) && Math.abs(next - prev) < 2) return;
+      inner.style.setProperty('--s04-stack-content-width', next + 'px');
+    }else{
+      inner.style.removeProperty('--s04-stack-content-width');
+    }
+  }
+
   function applyD4StackLayout(canvas, assets, inner, gaps){
     var order = stackOrder();
     var chain = [];
@@ -357,6 +385,7 @@ var Scene04Layout = (function(){
     if(chain.length) layoutVerticalChain(chain, gaps);
 
     fitGroupScale(canvas, inner);
+    syncStackContentWidth(assets, inner);
   }
 
   function applyLayout(canvas, group, assets){

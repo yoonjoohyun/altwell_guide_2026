@@ -70,8 +70,9 @@ var Scene04Config = {
     cardTap: { duration: 680 },
     deliveryStack: { stagger: 140, fadeDuration: 420 },
     deliveryLoop: { floatHold: 360, slideDuration: 360, cycleGap: 2000, totalCycles: 2 },
-    installment: { duration: 480 },
-    calendarStep: { jumpDuration: 520, stagger: 380, jumpPeak: -10, jumpSettle: 3 }
+    installment: { popDuration: 480, flashDuration: 480, duration: 480 },
+    paymentCoin: { popDuration: 420 },
+    calendarStep: { jumpDuration: 600, stagger: 380, jumpPeak: -5, jumpSettle: 2, jumpScalePeak: 1.015, jumpScaleSettle: 0.995 }
   }
 };
 

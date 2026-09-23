@@ -165,9 +165,10 @@ async function scene04PlayDeliveryCycle(deliveryBox, productWraps, stack, track,
     await Guide01.fadeZoned(productWraps[i], true, fadeOpts);
     Guide01.startIdleFloat(productWraps[i]);
     scene04CenterDeliveryTrack(stack, track);
-    if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
     if(i < productWraps.length - 1) await wait(cfg.stagger);
   }
+
+  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 
   await wait(cfg.floatHold);
   if(!withSlideOut) return;
@@ -219,10 +220,47 @@ function scene04StartDeliveryProductLoop(deliveryBox, productWraps, ctx){
   })();
 }
 
+function scene04WaitAnimEnd(el, animName, fallbackMs){
+  return new Promise(function(resolve){
+    var done = false;
+    var finish = function(){
+      if(done) return;
+      done = true;
+      el.removeEventListener('animationend', onEnd);
+      resolve();
+    };
+    var onEnd = function(e){
+      if(e.target !== el) return;
+      if(animName && e.animationName !== animName) return;
+      finish();
+    };
+
+    el.addEventListener('animationend', onEnd);
+    if(fallbackMs != null) setTimeout(finish, fallbackMs);
+  });
+}
+
+async function scene04RevealDeliveryBox(deliveryBox){
+  if(!deliveryBox) return;
+
+  deliveryBox.classList.remove('is-hidden');
+  await new Promise(function(resolve){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(resolve);
+    });
+  });
+  deliveryBox.classList.remove('s04-delivery-pending');
+  await wait(scene04LayoutSettleMs());
+  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
+}
+
 async function scene04ShowInstallment(host){
   if(!host) return;
   var badge = Scene04Layout.cloneFromTemplate('installment_mini_badge');
-  var dur = (Scene04Config.motion.installment && Scene04Config.motion.installment.duration) || 480;
+  var inst = Scene04Config.motion.installment || {};
+  var popDur = inst.popDuration != null ? inst.popDuration : 480;
+  var flashDur = inst.flashDuration != null ? inst.flashDuration : (inst.duration || 480);
+  var cardSlot;
   if(!badge) return;
 
   host.innerHTML = '';
@@ -230,10 +268,32 @@ async function scene04ShowInstallment(host){
   host.appendChild(badge);
   showElement(host);
   badge.classList.add('s04-installment-pop');
-  await wait(dur);
+  await scene04WaitAnimEnd(badge, 's04-installment-pop', popDur + 80);
+  badge.classList.remove('s04-installment-pop');
   badge.classList.add('s04-installment-flash');
-  await wait(dur);
+  await scene04WaitAnimEnd(badge, 's04-emphasis-flash', flashDur + 80);
   badge.classList.remove('s04-installment-flash');
+  cardSlot = host.closest('.pbb_card-slot');
+  if(cardSlot) cardSlot.classList.add('s04-soft-idle-float');
+}
+
+async function scene04RevealPaymentCoin(coin){
+  var motion = Scene04Config.motion.paymentCoin || {};
+  var popDur = motion.popDuration != null ? motion.popDuration : 420;
+  var inner;
+
+  if(!coin) return;
+
+  inner = coin.querySelector('.s04-flow-payment-coin-inner');
+  if(!inner) return;
+
+  inner.classList.remove('s04-soft-idle-float');
+  coin.classList.remove('s04-payment-coin-pop');
+  coin.classList.remove('is-hidden');
+  coin.classList.add('s04-payment-coin-pop');
+  await scene04WaitAnimEnd(inner, 's04-payment-coin-pop', popDur + 80);
+  coin.classList.remove('s04-payment-coin-pop');
+  inner.classList.add('s04-soft-idle-float');
 }
 
 function scene04GetFlowMonthEntries(flow){
@@ -269,8 +329,10 @@ function scene04RunMonthJump(month, jumpDur){
   var motion = Scene04Config.motion.calendarStep || {};
   var slot = month && month.closest('.s04-flow-month-slot');
   var target = slot || month;
-  var peak = motion.jumpPeak != null ? motion.jumpPeak : -10;
-  var settle = motion.jumpSettle != null ? motion.jumpSettle : 3;
+  var peak = motion.jumpPeak != null ? motion.jumpPeak : -5;
+  var settle = motion.jumpSettle != null ? motion.jumpSettle : 2;
+  var scalePeak = motion.jumpScalePeak != null ? motion.jumpScalePeak : 1.015;
+  var scaleSettle = motion.jumpScaleSettle != null ? motion.jumpScaleSettle : 0.995;
 
   if(!target) return Promise.resolve();
 
@@ -278,13 +340,13 @@ function scene04RunMonthJump(month, jumpDur){
 
   if(typeof target.animate === 'function'){
     return target.animate([
-      { transform: 'translate3d(0,0,0) scale(1)' },
-      { transform: 'translate3d(0,' + peak + 'px,0) scale(1.03)' },
-      { transform: 'translate3d(0,' + settle + 'px,0) scale(0.99)' },
-      { transform: 'translate3d(0,0,0) scale(1)' }
+      { transform: 'translate3d(0,0,0) scale(1)', offset: 0 },
+      { transform: 'translate3d(0,' + peak + 'px,0) scale(' + scalePeak + ')', offset: 0.38 },
+      { transform: 'translate3d(0,' + settle + 'px,0) scale(' + scaleSettle + ')', offset: 0.68 },
+      { transform: 'translate3d(0,0,0) scale(1)', offset: 1 }
     ], {
       duration: jumpDur,
-      easing: 'cubic-bezier(.22,1,.36,1)',
+      easing: 'cubic-bezier(.33,1,.42,1)',
       fill: 'none'
     }).finished.then(function(){
       target.style.transform = '';
@@ -308,6 +370,7 @@ async function scene04ActivateCalendarSteps(assets){
   var entry;
   var month;
   var coin;
+  var inner;
   var isPaymentMonth;
 
   if(!flow) return;
@@ -338,33 +401,25 @@ async function scene04ActivateCalendarSteps(assets){
     if(coin){
       coin.classList.add('is-hidden');
       coin.classList.remove('s04-payment-coin-pop');
+      inner = coin.querySelector('.s04-flow-payment-coin-inner');
+      if(inner) inner.classList.remove('s04-soft-idle-float');
     }
 
     await scene04RunMonthJump(month, jumpDur);
 
     if(isPaymentMonth){
       month.classList.add('is-payment-month');
-      if(coin){
-        coin.classList.remove('is-hidden');
-        coin.classList.add('s04-payment-coin-pop');
-      }
+      if(coin) await scene04RevealPaymentCoin(coin);
     }
-
-    if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 
     if(i < entries.length - 1) await wait(stagger);
   }
-
-  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
-  Guide01.startIdleFloat(assets.calendarWrap);
 }
 
 async function scene04ShowRenewArrow(assets){
   var flow = assets.subscriptionFlow;
   if(!flow) return;
   flow.classList.add('s04-renew-arrow-visible');
-
-  if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(true);
 
   await wait(520);
 }
@@ -377,6 +432,24 @@ function scene04EnsureIdleFloatAll(assets){
 }
 
 async function scene04HoldWithIdleFloat(assets){
+  var flow = assets.subscriptionFlow;
+  var coins;
+  var j;
+  var coinInner;
+  var cardSlot;
+
+  if(flow){
+    coins = flow.querySelectorAll('.s04-flow-payment-coin-inner.s04-soft-idle-float');
+    for(j = 0; j < coins.length; j++){
+      coins[j].classList.remove('s04-soft-idle-float');
+    }
+  }
+
+  if(assets.paymentBox){
+    cardSlot = assets.paymentBox.querySelector('.pbb_card-slot.s04-soft-idle-float');
+    if(cardSlot) cardSlot.classList.remove('s04-soft-idle-float');
+  }
+
   scene04EnsureIdleFloatAll(assets);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 }
@@ -409,11 +482,8 @@ async function runScene04MotionCore(tl, assets, canvas, ctx){
   await tl.wait(at(T.delivery));
   if(scene04Cancelled(ctx)) return;
   if(assets.deliveryBox){
-    assets.deliveryBox.classList.remove('is-hidden', 's04-delivery-pending');
-    if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
-    await wait(120);
+    await scene04RevealDeliveryBox(assets.deliveryBox);
     scene04StartDeliveryProductLoop(assets.deliveryBox, assets.deliveryProducts, ctx);
-    if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
   }
 
   /* 8s — 할부 가능 */
