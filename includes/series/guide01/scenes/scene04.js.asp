@@ -99,10 +99,43 @@ async function scene04EnterCluster(cluster, enterFn){
 }
 
 async function scene04PaymentTap(paymentBox){
+  var tap = Scene04Config.motion.cardTap || {};
+  var coinMotion = Scene04Config.motion.paymentCoin || {};
+  var dur = tap.duration != null ? tap.duration : 680;
+  var popDur = coinMotion.popDuration != null ? coinMotion.popDuration : 420;
+  var floatHold = tap.paymentFloatHold != null ? tap.paymentFloatHold : 360;
+  var fadeDur = tap.paymentFade != null ? tap.paymentFade : 200;
+  var host;
+  var inner;
+
   if(!paymentBox) return;
-  var dur = (Scene04Config.motion.cardTap && Scene04Config.motion.cardTap.duration) || 680;
+
+  host = paymentBox.querySelector('#s04-tap-payment-host');
   paymentBox.classList.add('s04-payment-tap-active');
-  await wait(dur);
+
+  await Promise.all([
+    wait(dur),
+    (async function runTapPaymentCoin(){
+      if(!host) return;
+
+      host.innerHTML = '<span class="s04-tap-payment-coin-inner">결제</span>';
+      showElement(host);
+      inner = host.querySelector('.s04-tap-payment-coin-inner');
+      if(!inner) return;
+
+      inner.classList.add('s04-tap-payment-coin-pop');
+      await scene04WaitAnimEnd(inner, 's04-payment-coin-pop', popDur + 80);
+      inner.classList.remove('s04-tap-payment-coin-pop');
+      host.classList.add('s04-soft-idle-float');
+      await wait(floatHold);
+      host.classList.remove('s04-soft-idle-float');
+      inner.classList.add('s04-tap-payment-coin-out');
+      await wait(fadeDur);
+      hideElement(host);
+      host.innerHTML = '';
+    })()
+  ]);
+
   paymentBox.classList.remove('s04-payment-tap-active');
 }
 
@@ -360,11 +393,161 @@ function scene04RunMonthJump(month, jumpDur){
   });
 }
 
-async function scene04ActivateCalendarSteps(assets){
+function scene04PositionPaymentProgress(track, progress){
+  var slots;
+  var slot0;
+  var slot3;
+  var trackRect;
+  var s0Rect;
+  var s3Rect;
+  var leftCenter;
+  var rightCenter;
+
+  if(!track || !progress) return;
+
+  slots = track.querySelectorAll('.s04-flow-month-slot');
+  slot0 = slots[0];
+  slot3 = slots[3];
+  if(!slot0 || !slot3) return;
+
+  trackRect = track.getBoundingClientRect();
+  s0Rect = slot0.getBoundingClientRect();
+  s3Rect = slot3.getBoundingClientRect();
+  leftCenter = s0Rect.left + s0Rect.width / 2 - trackRect.left;
+  rightCenter = s3Rect.left + s3Rect.width / 2 - trackRect.left;
+
+  progress.style.left = leftCenter + 'px';
+  progress.style.width = Math.max(0, rightCenter - leftCenter) + 'px';
+}
+
+function scene04EnsureProgressDotCount(progress){
+  var motion = Scene04Config.motion.calendarStep || {};
+  var target = motion.progressDotCount != null ? motion.progressDotCount : 7;
+  var dots;
+  var dot;
+
+  if(!progress) return;
+
+  while(progress.querySelectorAll('.s04-flow-progress-dot').length < target){
+    dot = document.createElement('span');
+    dot.className = 's04-flow-progress-dot';
+    progress.appendChild(dot);
+  }
+  dots = progress.querySelectorAll('.s04-flow-progress-dot');
+  while(dots.length > target){
+    progress.removeChild(dots[dots.length - 1]);
+    dots = progress.querySelectorAll('.s04-flow-progress-dot');
+  }
+}
+
+function scene04ResetProgressDots(progress){
+  var dots;
+  var i;
+
+  if(!progress) return;
+
+  scene04EnsureProgressDotCount(progress);
+  dots = progress.querySelectorAll('.s04-flow-progress-dot');
+  for(i = 0; i < dots.length; i++){
+    dots[i].classList.remove('is-active', 'is-lit');
+  }
+}
+
+function scene04ClearProgressDotTimers(progress){
+  if(!progress) return;
+
+  progress._progressRunning = false;
+  if(progress._progressBlinkTimer){
+    clearTimeout(progress._progressBlinkTimer);
+    progress._progressBlinkTimer = null;
+  }
+  if(progress._progressGapTimer){
+    clearTimeout(progress._progressGapTimer);
+    progress._progressGapTimer = null;
+  }
+  progress.classList.remove('is-running');
+}
+
+function scene04FreezeProgressDots(progress){
+  var dots;
+  var i;
+
+  if(!progress) return;
+
+  scene04ClearProgressDotTimers(progress);
+  dots = progress.querySelectorAll('.s04-flow-progress-dot');
+  for(i = 0; i < dots.length; i++){
+    dots[i].classList.remove('is-active');
+    dots[i].classList.add('is-lit');
+  }
+}
+
+function scene04StopProgressDots(progress, hide){
+  if(!progress) return;
+
+  scene04ClearProgressDotTimers(progress);
+  scene04ResetProgressDots(progress);
+  if(hide) hideElement(progress);
+}
+
+function scene04StartProgressDots(progress, ctx){
+  var motion = Scene04Config.motion.calendarStep || {};
+  var blinkMs = motion.progressDotBlink != null ? motion.progressDotBlink : 260;
+  var gapMs = motion.progressDotGap != null ? motion.progressDotGap : 90;
+  var dots;
+  var step = 0;
+
+  if(!progress) return;
+
+  scene04StopProgressDots(progress);
+  dots = progress.querySelectorAll('.s04-flow-progress-dot');
+  if(!dots.length) return;
+
+  progress.classList.add('is-running');
+  progress._progressRunning = true;
+
+  (function tick(){
+    var idx;
+    var j;
+
+    if(!progress._progressRunning || scene04Cancelled(ctx)){
+      scene04StopProgressDots(progress);
+      return;
+    }
+
+    if(step >= dots.length){
+      for(j = 0; j < dots.length; j++){
+        dots[j].classList.remove('is-active');
+        dots[j].classList.add('is-lit');
+      }
+      progress._progressRunning = false;
+      progress.classList.remove('is-running');
+      return;
+    }
+
+    idx = step;
+    for(j = 0; j < dots.length; j++){
+      if(j !== idx) dots[j].classList.remove('is-active');
+    }
+    dots[idx].classList.add('is-active');
+
+    progress._progressBlinkTimer = setTimeout(function(){
+      if(!progress._progressRunning) return;
+      dots[idx].classList.remove('is-active');
+      dots[idx].classList.add('is-lit');
+      step++;
+      progress._progressGapTimer = setTimeout(tick, gapMs);
+    }, blinkMs);
+  })();
+}
+
+async function scene04ActivateCalendarSteps(assets, ctx){
   var flow = assets.subscriptionFlow;
   var motion = Scene04Config.motion.calendarStep || {};
   var jumpDur = motion.jumpDuration != null ? motion.jumpDuration : 520;
   var stagger = motion.stagger != null ? motion.stagger : 380;
+  var track;
+  var progress;
   var entries;
   var i;
   var entry;
@@ -377,6 +560,12 @@ async function scene04ActivateCalendarSteps(assets){
 
   if(typeof Scene04Layout !== 'undefined' && Scene04Layout.ensureFlowMonthSlots){
     Scene04Layout.ensureFlowMonthSlots(flow);
+  }
+
+  track = flow.querySelector('.subscription_flow_track');
+  progress = track && track.querySelector('.s04-flow-payment-progress');
+  if(progress){
+    scene04StopProgressDots(progress, true);
   }
 
   Guide01.stopIdleFloat(assets.calendarWrap);
@@ -409,11 +598,24 @@ async function scene04ActivateCalendarSteps(assets){
 
     if(isPaymentMonth){
       month.classList.add('is-payment-month');
-      if(coin) await scene04RevealPaymentCoin(coin);
+      if(coin){
+        if(entry.index === 3 && progress){
+          scene04FreezeProgressDots(progress);
+          showElement(progress);
+        }
+        await scene04RevealPaymentCoin(coin);
+        if(entry.index === 0 && progress && track){
+          scene04PositionPaymentProgress(track, progress);
+          scene04ResetProgressDots(progress);
+          showElement(progress);
+          scene04StartProgressDots(progress, ctx);
+        }
+      }
     }
 
     if(i < entries.length - 1) await wait(stagger);
   }
+
 }
 
 async function scene04ShowRenewArrow(assets){
@@ -504,7 +706,7 @@ async function runScene04MotionCore(tl, assets, canvas, ctx){
   if(scene04Cancelled(ctx)) return;
   await scene04PrepStackSlot(assets.calendarWrap);
   await Guide01.fadeZoned(assets.calendarWrap, true, FADE);
-  await scene04ActivateCalendarSteps(assets);
+  await scene04ActivateCalendarSteps(assets, ctx);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 
   /* 18s — 3→4 화살표 + 자동 연장 */

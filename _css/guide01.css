@@ -1267,7 +1267,13 @@
   --size:58px;
 }
 
-.guide01-canvas.scene04-canvas .payment_batch_box.s04-payment-tap-active .pbb_card{
+.guide01-canvas.scene04-canvas .payment_batch_box .s04-card-anchor{
+  position:relative;
+  display:inline-block;
+  flex-shrink:0;
+}
+
+.guide01-canvas.scene04-canvas .payment_batch_box.s04-payment-tap-active .s04-card-anchor{
   animation:s04-card-tap 680ms cubic-bezier(.22,1,.36,1) both;
 }
 
@@ -1286,6 +1292,52 @@
   margin-bottom:calc(var(--size) * 4 / 220);
   z-index:4;
   pointer-events:none;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-host{
+  position:absolute;
+  left:0;
+  bottom:100%;
+  margin-bottom:calc(var(--size) * 4 / 220);
+  z-index:5;
+  pointer-events:none;
+  will-change:transform;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-host.s04-soft-idle-float{
+  animation:s04-soft-idle-float 4s ease-in-out infinite;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-host.is-hidden{
+  visibility:hidden;
+  opacity:0;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-coin-inner{
+  display:grid;
+  place-items:center;
+  width:calc(var(--size) * 27.2 / 220);
+  height:calc(var(--size) * 27.2 / 220);
+  border-radius:50%;
+  background:linear-gradient(135deg,#ffd738,#ffeca0 45%,#e6c92a 80%,#ffd738);
+  box-shadow:inset 0 0 0 calc(var(--size) * 1.7 / 220) #c7a417,
+    0 calc(var(--size) * 1.7 / 220) calc(var(--size) * 5.1 / 220) rgba(0,0,0,.2);
+  font-size:max(9px, calc(var(--size) * 8.5 / 220));
+  font-weight:900;
+  color:#665308;
+  line-height:1;
+  transform:scale(1) translateY(0);
+  will-change:transform,opacity;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-coin-inner.s04-tap-payment-coin-pop{
+  animation:s04-payment-coin-pop 420ms cubic-bezier(.22,1,.36,1) both;
+}
+
+.guide01-canvas.scene04-canvas .s04-tap-payment-coin-inner.s04-tap-payment-coin-out{
+  opacity:0;
+  transform:scale(.88) translateY(-4px);
+  transition:opacity 200ms ease, transform 200ms ease;
 }
 
 .guide01-canvas.scene04-canvas .s04-installment-host.is-hidden,
@@ -1427,6 +1479,7 @@
 }
 
 .guide01-canvas.scene04-canvas .s04-subscription-flow .subscription_flow_track{
+  position:relative;
   justify-content:center;
   align-items:flex-start;
   width:100%;
@@ -1434,6 +1487,56 @@
   padding:0 calc(var(--size) * 4.2 / 460);
   box-sizing:border-box;
   overflow:visible;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-payment-progress{
+  position:absolute;
+  bottom:0;
+  height:calc(var(--size) * 32 / 460);
+  display:flex;
+  align-items:center;
+  justify-content:space-evenly;
+  box-sizing:border-box;
+  pointer-events:none;
+  z-index:2;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-payment-progress.is-hidden{
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-payment-progress:not(.is-hidden){
+  visibility:visible;
+  opacity:1;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-progress-dot{
+  flex-shrink:0;
+  width:calc(var(--size) * 5.1 / 460);
+  height:calc(var(--size) * 5.1 / 460);
+  border-radius:50%;
+  background:#b8bcc6;
+  opacity:0;
+  transform:scale(.78);
+  transition:opacity 200ms ease, transform 200ms ease, background-color 200ms ease, box-shadow 200ms ease;
+  visibility:hidden;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-progress-dot.is-lit{
+  opacity:.48;
+  visibility:visible;
+  background:#b8bcc6;
+  box-shadow:none;
+}
+
+.guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-progress-dot.is-active{
+  opacity:1;
+  visibility:visible;
+  transform:scale(1);
+  background:#4669df;
+  box-shadow:0 0 calc(var(--size) * 2.1 / 460) rgba(70,105,223,.32);
 }
 
 .guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-month-slot{

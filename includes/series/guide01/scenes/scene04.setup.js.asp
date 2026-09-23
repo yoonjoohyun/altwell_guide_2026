@@ -84,13 +84,28 @@ var Scene04Layout = (function(){
     installmentHost.id = 's04-installment-host';
     installmentHost.className = 's04-installment-host is-hidden';
 
+    var tapPaymentHost = document.createElement('div');
+    tapPaymentHost.id = 's04-tap-payment-host';
+    tapPaymentHost.className = 's04-tap-payment-host is-hidden';
+
     if(payment){
       payment.id = 's04-payment-box';
       payment.classList.add('guide01-asset');
       var cardSlot = payment.querySelector('.pbb_card-slot');
-      if(cardSlot){
+      var card = cardSlot && cardSlot.querySelector('.pbb_card');
+      var cardAnchor;
+      if(cardSlot && card){
+        cardAnchor = document.createElement('div');
+        cardAnchor.className = 's04-card-anchor';
+        cardSlot.insertBefore(cardAnchor, card);
+        cardAnchor.appendChild(card);
+        cardSlot.insertBefore(installmentHost, cardAnchor);
+        cardSlot.insertBefore(tapPaymentHost, cardAnchor);
+      }else if(cardSlot){
+        cardSlot.insertBefore(tapPaymentHost, cardSlot.firstChild);
         cardSlot.insertBefore(installmentHost, cardSlot.firstChild);
       }else{
+        payment.appendChild(tapPaymentHost);
         payment.appendChild(installmentHost);
       }
       row.appendChild(payment);
@@ -189,6 +204,18 @@ var Scene04Layout = (function(){
         track.appendChild(node);
       }
     }
+
+    var progress = document.createElement('div');
+    var dot;
+    var dotCount = (Scene04Config.motion.calendarStep && Scene04Config.motion.calendarStep.progressDotCount) || 7;
+    progress.className = 's04-flow-payment-progress is-hidden';
+    progress.setAttribute('aria-hidden', 'true');
+    for(i = 0; i < dotCount; i++){
+      dot = document.createElement('span');
+      dot.className = 's04-flow-progress-dot';
+      progress.appendChild(dot);
+    }
+    track.appendChild(progress);
 
     track.dataset.s04MonthSlots = '1';
   }
