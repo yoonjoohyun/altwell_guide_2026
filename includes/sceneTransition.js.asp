@@ -2,15 +2,17 @@
 /* SceneTransition — 씬 간 퇴장 연출 (신규 씬 추가 시 SceneRunner가 자동 적용) */
 var SceneTransition = (function(){
   var gapMs = 3000;
+  var holdMs = 1000;
   var fadeMs = 2000;
 
   function isCancelled(isCancelledFn){
     return isCancelledFn && isCancelledFn();
   }
 
+  /* canvas 직계 스택 그룹만 — 중첩 g01-zone-wrap 개별 퇴장 방지 */
   function collectCanvasWraps(canvas){
     if(!canvas) return [];
-    var list = canvas.querySelectorAll('.g01-zone-wrap:not(.is-hidden)');
+    var list = canvas.querySelectorAll(':scope > .g01-zone-wrap:not(.is-hidden)');
     var out = [];
     var i;
     for(i = 0; i < list.length; i++) out.push(list[i]);
@@ -28,18 +30,18 @@ var SceneTransition = (function(){
     return out;
   }
 
-  function fadeElement(el, duration){
+  function fadeOpacityOnly(el, duration){
     if(!el) return Promise.resolve();
     return new Promise(function(resolve){
-      el.style.transition =
-        'opacity ' + duration + 'ms cubic-bezier(.22,1,.36,1), ' +
-        'transform ' + duration + 'ms cubic-bezier(.22,1,.36,1)';
-      el.style.opacity = '1';
-      el.style.transform = 'translateY(0)';
+      el.style.transition = 'opacity ' + duration + 'ms cubic-bezier(.22,1,.36,1)';
+      el.style.opacity = window.getComputedStyle(el).opacity || '1';
       void el.offsetWidth;
       el.style.opacity = '0';
-      el.style.transform = 'translateY(6px)';
-      setTimeout(resolve, duration);
+      setTimeout(function(){
+        el.style.transition = '';
+        el.style.removeProperty('opacity');
+        resolve();
+      }, duration);
     });
   }
 
@@ -72,39 +74,32 @@ var SceneTransition = (function(){
     stripScenePanelClasses();
   }
 
+  function finalizeCanvasExit(wraps){
+    var i;
+    for(i = 0; i < wraps.length; i++){
+      wraps[i].style.transition = '';
+      wraps[i].style.removeProperty('opacity');
+      if(typeof hideElement === 'function') hideElement(wraps[i]);
+      else wraps[i].classList.add('is-hidden');
+    }
+  }
+
   async function fadeOutCanvasWraps(wraps, duration){
     if(!wraps.length) return;
-
-    var i;
-    if(typeof Guide01 !== 'undefined'){
-      for(i = 0; i < wraps.length; i++){
-        if(Guide01.stopIdleFloat) Guide01.stopIdleFloat(wraps[i]);
-      }
-    }
-
     var jobs = [];
+    var i;
     for(i = 0; i < wraps.length; i++){
-      if(typeof Guide01 !== 'undefined' && Guide01.fadeZoned){
-        jobs.push(Guide01.fadeZoned(wraps[i], false, { duration: duration }));
-      } else if(typeof G01ZonedAnim !== 'undefined' && G01ZonedAnim.exitHide){
-        jobs.push(G01ZonedAnim.exitHide(wraps[i], { duration: duration }));
-      } else {
-        jobs.push(fadeElement(wraps[i], duration));
-      }
+      jobs.push(fadeOpacityOnly(wraps[i], duration));
     }
-
     await Promise.all(jobs);
+    finalizeCanvasExit(wraps);
   }
 
   async function fadeOutCanvasFallback(canvas, duration){
     if(!canvas) return;
-    canvas.style.transition = 'opacity ' + duration + 'ms cubic-bezier(.22,1,.36,1)';
-    canvas.style.opacity = '1';
-    void canvas.offsetWidth;
-    canvas.style.opacity = '0';
-    await wait(duration);
+    await fadeOpacityOnly(canvas, duration);
     canvas.style.transition = '';
-    canvas.style.opacity = '';
+    canvas.style.removeProperty('opacity');
   }
 
   async function fadeOutPanel(duration){
@@ -113,32 +108,33 @@ var SceneTransition = (function(){
       finalizePanelExit([]);
       return;
     }
-    await Promise.all(els.map(function(el){ return fadeElement(el, duration); }));
+    await Promise.all(els.map(function(el){ return fadeOpacityOnly(el, duration); }));
     finalizePanelExit(els);
   }
 
   async function runBetweenScenes(canvas, isCancelledFn){
-    var duration = fadeMs;
     var wraps = collectCanvasWraps(canvas);
 
+    if(holdMs > 0){
+      await wait(holdMs);
+      if(isCancelled(isCancelledFn)) return;
+    }
+
     await Promise.all([
-      fadeOutCanvasWraps(wraps, duration),
-      fadeOutPanel(duration)
+      fadeOutCanvasWraps(wraps, fadeMs),
+      fadeOutPanel(fadeMs)
     ]);
 
     if(isCancelled(isCancelledFn)) return;
 
     if(!wraps.length){
-      await fadeOutCanvasFallback(canvas, duration);
-      if(isCancelled(isCancelledFn)) return;
+      await fadeOutCanvasFallback(canvas, fadeMs);
     }
-
-    var rest = gapMs - duration;
-    if(rest > 0) await wait(rest);
   }
 
   return {
     gapMs: gapMs,
+    holdMs: holdMs,
     fadeMs: fadeMs,
     runBetweenScenes: runBetweenScenes
   };
