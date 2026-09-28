@@ -23,9 +23,9 @@ var Scene05Config = {
       '추천포인트는 회원 1인당 매월 1Point'
     ],
     flashes: [
-      { atMain: 7100, index: 0 },
-      { atMain: 21100, index: 1 },
-      { atMain: 28100, index: 2 }
+      { atMain: 2000, index: 0 },
+      { atMain: 12000, index: 1 },
+      { atMain: 27000, index: 2 }
     ]
   },
 

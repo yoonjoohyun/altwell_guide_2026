@@ -774,7 +774,7 @@
   opacity:1;
 }
 
-/* Scene 01 · 02 · 03 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
+/* Scene 01 · 02 · 03 · 04 · 05 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
 #lo-panel.scene01-panel .scene-title,
 #lo-panel.scene01-panel .bullet-item .bullet-text,
 #lo-panel.scene01-panel .bullet-item .bullet-dot,
@@ -787,7 +787,10 @@
 #lo-panel.scene03-panel .bullet-item .bullet-dot,
 #lo-panel.scene04-panel .scene-title,
 #lo-panel.scene04-panel .bullet-item .bullet-text,
-#lo-panel.scene04-panel .bullet-item .bullet-dot{
+#lo-panel.scene04-panel .bullet-item .bullet-dot,
+#lo-panel.scene05-panel .scene-title,
+#lo-panel.scene05-panel .bullet-item .bullet-text,
+#lo-panel.scene05-panel .bullet-item .bullet-dot{
   transition:
     color 420ms ease-in-out,
     opacity 420ms ease-in-out,
@@ -802,28 +805,33 @@
 #lo-panel.scene03-panel .scene-title.motion-slide-up,
 #lo-panel.scene03-panel .bullet-item.motion-slide-up,
 #lo-panel.scene04-panel .scene-title.motion-slide-up,
-#lo-panel.scene04-panel .bullet-item.motion-slide-up{
+#lo-panel.scene04-panel .bullet-item.motion-slide-up,
+#lo-panel.scene05-panel .scene-title.motion-slide-up,
+#lo-panel.scene05-panel .bullet-item.motion-slide-up{
   animation-timing-function:ease-in-out !important;
 }
 
 #lo-panel.scene01-panel .bullet-item.is-dim .bullet-dot,
 #lo-panel.scene02-panel .bullet-item.is-dim .bullet-dot,
 #lo-panel.scene03-panel .bullet-item.is-dim .bullet-dot,
-#lo-panel.scene04-panel .bullet-item.is-dim .bullet-dot{
+#lo-panel.scene04-panel .bullet-item.is-dim .bullet-dot,
+#lo-panel.scene05-panel .bullet-item.is-dim .bullet-dot{
   background-color:#B8BDC5;
 }
 
 #lo-panel.scene01-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.scene02-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.scene03-panel .bullet-item.is-emphasis .bullet-dot,
-#lo-panel.scene04-panel .bullet-item.is-emphasis .bullet-dot{
+#lo-panel.scene04-panel .bullet-item.is-emphasis .bullet-dot,
+#lo-panel.scene05-panel .bullet-item.is-emphasis .bullet-dot{
   background-color:#222222;
 }
 
 #lo-panel.scene01-panel .bullet-item.g01-flash .bullet-dot,
 #lo-panel.scene02-panel .bullet-item.g01-flash .bullet-dot,
 #lo-panel.scene03-panel .bullet-item.g01-flash .bullet-dot,
-#lo-panel.scene04-panel .bullet-item.g01-flash .bullet-dot{
+#lo-panel.scene04-panel .bullet-item.g01-flash .bullet-dot,
+#lo-panel.scene05-panel .bullet-item.g01-flash .bullet-dot{
   animation:g01-bullet-dot-flash .6s ease-in-out;
 }
 
@@ -1651,41 +1659,7 @@
   50%{opacity:.65}
 }
 
-/* ── Scene 05 — E.P·추천포인트 발생 ── */
-#lo-panel.scene05-panel .scene-title,
-#lo-panel.scene05-panel .bullet-item .bullet-text,
-#lo-panel.scene05-panel .bullet-item .bullet-dot{
-  color:#0f172a;
-}
-
-#lo-panel.scene05-panel .scene-title.motion-slide-up,
-#lo-panel.scene05-panel .bullet-item.motion-slide-up{
-  animation:scene05-panel-slide-up 520ms cubic-bezier(.22,1,.36,1) both;
-}
-
-#lo-panel.scene05-panel .bullet-item.is-dim .bullet-dot{
-  background:#cbd5e1;
-}
-
-#lo-panel.scene05-panel .bullet-item.is-emphasis .bullet-dot{
-  background:#0d9488;
-  box-shadow:0 0 0 3px rgba(13,148,136,.22);
-}
-
-#lo-panel.scene05-panel .bullet-item.g01-flash .bullet-dot{
-  animation:scene05-bullet-flash 680ms ease-in-out;
-}
-
-@keyframes scene05-panel-slide-up{
-  from{opacity:0;transform:translateY(12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-
-@keyframes scene05-bullet-flash{
-  0%,100%{transform:scale(1)}
-  50%{transform:scale(1.35)}
-}
-
+/* ── Scene 05 — E.P·추천포인트 발생 (모션) ── */
 .guide01-canvas.scene05-canvas .scene05-stack-group{
   z-index:2;
 }
