@@ -221,15 +221,28 @@ async function scene05EnterIntro(assets){
     if(intro.paymentFloat) intro.paymentFloat.classList.add('g01-idle-float');
   }
 
-  if(intro.epStack){
-    showElement(intro.epStack);
-    for(i = 0; i < intro.epCoins.length; i++){
-      showElement(intro.epCoins[i]);
-    }
-    intro.epStack.classList.add('s05-ep-stack-idle');
-  }
-
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
+}
+
+function scene05StartEpStackFloat(intro){
+  if(!intro || !intro.epStack || intro.epStack.classList.contains('s05-ep-stack-idle')) return;
+  intro.epStack.classList.add('s05-ep-stack-idle');
+}
+
+async function scene05StartEpStackFloatAfterPayment(intro){
+  var delay = (Scene05Config.motion.epStack && Scene05Config.motion.epStack.floatAfterPayment) || 1000;
+  var i;
+
+  if(!intro || !intro.epStack) return;
+  await wait(delay);
+
+  showElement(intro.epStack);
+  for(i = 0; i < intro.epCoins.length; i++){
+    showElement(intro.epCoins[i]);
+  }
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
+
+  scene05StartEpStackFloat(intro);
 }
 
 async function scene05DenyEpStack(assets){
@@ -377,27 +390,6 @@ async function scene05RevealCashbacks(assets){
     await scene05PopEl(wrap, { duration: stagger });
     wrap.querySelector('.g01-float-inner').classList.add('g01-idle-float');
     await wait(stagger);
-  }
-
-  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
-}
-
-async function scene05ShowMemberSide(assets){
-  var cal = assets.calendar;
-  var pointBadge;
-
-  if(!cal) return;
-
-  cal.phase.classList.add('has-member-side');
-  showElement(cal.memberSide);
-  showElement(cal.member);
-  await Guide01.showMemberWrap(cal.member);
-  scene05StartMemberIdle(cal.member);
-
-  pointBadge = Scene05Layout.createPointBadge();
-  if(pointBadge && cal.pointBadgeHost){
-    await scene05EnterBadgeEl(cal.pointBadgeHost, pointBadge);
-    cal.pointBadgeHost.classList.add('s05-soft-idle-float');
   }
 
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
@@ -573,6 +565,8 @@ async function runScene05MotionCore(tl, assets, canvas, ctx){
   await tl.wait(at(T.main.paymentTap));
   if(scene05Cancelled(ctx)) return;
   await scene05PaymentTap(assets.intro && assets.intro.payment, assets.intro && assets.intro.paymentFloat);
+  if(scene05Cancelled(ctx)) return;
+  await scene05StartEpStackFloatAfterPayment(assets.intro);
 
   await tl.wait(at(T.main.denyEp));
   if(scene05Cancelled(ctx)) return;
@@ -593,10 +587,6 @@ async function runScene05MotionCore(tl, assets, canvas, ctx){
   await tl.wait(at(T.main.cashback));
   if(scene05Cancelled(ctx)) return;
   await scene05RevealCashbacks(assets);
-
-  await tl.wait(at(T.main.memberSide));
-  if(scene05Cancelled(ctx)) return;
-  await scene05ShowMemberSide(assets);
 
   await tl.wait(at(T.main.memberProducts));
   if(scene05Cancelled(ctx)) return;

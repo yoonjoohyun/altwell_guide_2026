@@ -1785,13 +1785,6 @@
   width:100%;
 }
 
-.guide01-canvas.scene05-canvas .s05-calendar-phase.has-member-side .s05-calendar-body{
-  flex-direction:row;
-  align-items:center;
-  justify-content:center;
-  gap:18px;
-}
-
 .guide01-canvas.scene05-canvas .s05-calendar-main{
   display:flex;
   flex-direction:column;
@@ -1865,14 +1858,6 @@
   width:100%;
 }
 
-.guide01-canvas.scene05-canvas .s05-member-side{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:10px;
-}
-
-.guide01-canvas.scene05-canvas .s05-side-member .g01-member-stack,
 .guide01-canvas.scene05-canvas .s05-main-member .g01-member-stack,
 .guide01-canvas.scene05-canvas .s05-dual-member .g01-member-stack{
   transform:scale(1.05);
@@ -1882,7 +1867,7 @@
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:var(--s05-member-product-gap, 32px);
 }
 
 .guide01-canvas.scene05-canvas .s05-main-member-host{
@@ -1891,21 +1876,32 @@
   align-items:center;
   gap:8px;
   position:relative;
+  flex-shrink:0;
+}
+
+.guide01-canvas.scene05-canvas .s05-main-member .g01-member-stack{
+  transform:scale(1.05);
+  transform-origin:center bottom;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-row{
   display:flex;
   align-items:flex-end;
   justify-content:center;
-  gap:10px;
+  gap:var(--s05-product-gap, 10px);
+  flex-shrink:0;
+  margin-top:2px;
+  padding-top:6px;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-wrap{
   display:flex;
   flex-direction:column;
   align-items:center;
+  justify-content:flex-end;
   gap:6px;
   position:relative;
+  padding-top:10px;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-wrap.is-grayscale .s05-product-box{
@@ -1915,9 +1911,10 @@
 
 .guide01-canvas.scene05-canvas .s05-product-point-host{
   position:absolute;
-  top:-18px;
+  top:0;
   left:50%;
   transform:translateX(-50%);
+  pointer-events:none;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-point-host.s05-point-attempt{
@@ -2053,10 +2050,6 @@
 }
 
 @media (max-width:900px){
-  .guide01-canvas.scene05-canvas .s05-calendar-phase.has-member-side .s05-calendar-body{
-    flex-direction:column;
-    gap:12px;
-  }
   .guide01-canvas.scene05-canvas .s05-dual-phase .s05-dual-row{
     flex-direction:column;
     gap:16px;

@@ -40,7 +40,6 @@ var Scene05Config = {
       epDistribute: 8100,
       monthBadge: 12100,
       cashback: 14100,
-      memberSide: 18100,
       memberProducts: 22100,
       productDeny: 25100,
       dualCompare: 29100,
@@ -58,7 +57,7 @@ var Scene05Config = {
       calendarRow: 14,
       calendarTight: 8,
       stackGap: 12,
-      memberProduct: 10,
+      memberProduct: 32,
       dualGroup: 24,
       productGap: 10
     },
@@ -86,7 +85,8 @@ var Scene05Config = {
     epStack: {
       overlap: 10,
       riseDuration: 680,
-      riseOffset: -28
+      riseOffset: -28,
+      floatAfterPayment: 1000
     },
     epFly: { duration: 620, stagger: 280 },
     calendarTight: { duration: 520 },

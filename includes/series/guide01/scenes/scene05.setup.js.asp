@@ -178,7 +178,7 @@ var Scene05Layout = (function(){
     var i;
     var coin;
 
-    epStack.className = 's05-ep-stack';
+    epStack.className = 's05-ep-stack is-hidden';
     epStack.id = 's05-ep-stack';
 
     denyHost.id = 's05-deny-host';
@@ -261,9 +261,6 @@ var Scene05Layout = (function(){
     var paymentPack = mountPaymentBatchBox('s05-payment-mini', (Scene05Config.layout.scales && Scene05Config.layout.scales.paymentMini) || 0.72);
     var row = document.createElement('div');
     var monthBadgeHost = document.createElement('div');
-    var memberSide = document.createElement('div');
-    var member = Guide01.mountMemberAtZone(canvas, 's05-cal-member', Scene05Config.layout.anchorZone);
-    var pointBadgeHost = document.createElement('div');
     var months = Scene05Config.layout.calendarMonths || ['1개월 차', '2개월 차', '3개월 차'];
     var slots = [];
     var i;
@@ -294,24 +291,6 @@ var Scene05Layout = (function(){
     monthBadgeHost.className = 's05-month-badge-host is-hidden';
     calendarMain.appendChild(monthBadgeHost);
     calendarBody.appendChild(calendarMain);
-
-    memberSide.id = 's05-member-side';
-    memberSide.className = 's05-member-side is-hidden';
-    if(member){
-      member.classList.remove('lo-zone-place', 'is-hidden');
-      member.removeAttribute('data-zone');
-      member.style.removeProperty('--zone-row');
-      member.style.removeProperty('--zone-col');
-      member.style.left = '';
-      member.style.top = '';
-      member.style.transform = '';
-      member.classList.add('s05-side-member');
-      memberSide.appendChild(member);
-    }
-    pointBadgeHost.id = 's05-side-point-host';
-    pointBadgeHost.className = 's05-side-point-host is-hidden';
-    memberSide.appendChild(pointBadgeHost);
-    calendarBody.appendChild(memberSide);
     phase.appendChild(calendarBody);
 
     inner.appendChild(phase);
@@ -323,10 +302,7 @@ var Scene05Layout = (function(){
       calendarBody: calendarBody,
       calendarRow: row,
       slots: slots,
-      monthBadgeHost: monthBadgeHost,
-      memberSide: memberSide,
-      member: member,
-      pointBadgeHost: pointBadgeHost
+      monthBadgeHost: monthBadgeHost
     };
   }
 
@@ -346,6 +322,14 @@ var Scene05Layout = (function(){
 
     phase.id = 's05-member-product-phase';
     phase.className = 's05-member-product-phase scene05-group-child s05-layout-instant is-hidden';
+    phase.style.setProperty(
+      '--s05-member-product-gap',
+      ((Scene05Config.layout.gaps && Scene05Config.layout.gaps.memberProduct) || 32) + 'px'
+    );
+    phase.style.setProperty(
+      '--s05-product-gap',
+      ((Scene05Config.layout.gaps && Scene05Config.layout.gaps.productGap) || 10) + 'px'
+    );
 
     memberHost.className = 's05-main-member-host';
     if(member){
