@@ -699,12 +699,7 @@
 }
 
 #lo-panel .bullet-item.g01-flash .bullet-text{
-  animation:g01-bullet-flash .6s ease-in-out;
-}
-
-@keyframes g01-bullet-flash{
-  0%,100%{opacity:1}
-  40%{opacity:.35}
+  animation:g01-panel-bullet-text-flash 680ms ease-in-out;
 }
 
 /* Scene 02 — d4 세로 스택 */
@@ -777,25 +772,31 @@
 /* Scene 01 · 02 · 03 · 04 · 05 — 패널 타이틀·불릿 ease-in-out + 마커(bullet-dot) 색 동기화 */
 #lo-panel.scene01-panel .scene-title,
 #lo-panel.scene01-panel .bullet-item .bullet-text,
-#lo-panel.scene01-panel .bullet-item .bullet-dot,
 #lo-panel.scene02-panel .scene-title,
 #lo-panel.scene02-panel .bullet-item .bullet-text,
 #lo-panel.scene02-panel .bullet-item .bullet-sub,
-#lo-panel.scene02-panel .bullet-item .bullet-dot,
 #lo-panel.scene03-panel .scene-title,
 #lo-panel.scene03-panel .bullet-item .bullet-text,
-#lo-panel.scene03-panel .bullet-item .bullet-dot,
 #lo-panel.scene04-panel .scene-title,
 #lo-panel.scene04-panel .bullet-item .bullet-text,
-#lo-panel.scene04-panel .bullet-item .bullet-dot,
 #lo-panel.scene05-panel .scene-title,
-#lo-panel.scene05-panel .bullet-item .bullet-text,
-#lo-panel.scene05-panel .bullet-item .bullet-dot{
+#lo-panel.scene05-panel .bullet-item .bullet-text{
   transition:
     color 420ms ease-in-out,
     opacity 420ms ease-in-out,
     transform 420ms ease-in-out,
     background-color 420ms ease-in-out;
+}
+
+#lo-panel.scene01-panel .bullet-item .bullet-dot,
+#lo-panel.scene02-panel .bullet-item .bullet-dot,
+#lo-panel.scene03-panel .bullet-item .bullet-dot,
+#lo-panel.scene04-panel .bullet-item .bullet-dot,
+#lo-panel.scene05-panel .bullet-item .bullet-dot{
+  transition:
+    background-color 420ms ease-in-out,
+    opacity 420ms ease-in-out,
+    box-shadow 420ms ease-in-out;
 }
 
 #lo-panel.scene01-panel .scene-title.motion-slide-up,
@@ -824,7 +825,8 @@
 #lo-panel.scene03-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.scene04-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.scene05-panel .bullet-item.is-emphasis .bullet-dot{
-  background-color:#222222;
+  background-color:#0d9488;
+  box-shadow:0 0 0 3px rgba(13,148,136,.22);
 }
 
 #lo-panel.scene01-panel .bullet-item.g01-flash .bullet-dot,
@@ -832,7 +834,37 @@
 #lo-panel.scene03-panel .bullet-item.g01-flash .bullet-dot,
 #lo-panel.scene04-panel .bullet-item.g01-flash .bullet-dot,
 #lo-panel.scene05-panel .bullet-item.g01-flash .bullet-dot{
-  animation:g01-bullet-dot-flash .6s ease-in-out;
+  animation:g01-panel-bullet-dot-flash 680ms ease-in-out;
+}
+
+#lo-panel.scene01-panel .bullet-item.g01-flash .bullet-text,
+#lo-panel.scene03-panel .bullet-item.g01-flash .bullet-text,
+#lo-panel.scene04-panel .bullet-item.g01-flash .bullet-text,
+#lo-panel.scene05-panel .bullet-item.g01-flash .bullet-text{
+  animation:g01-panel-bullet-text-flash 680ms ease-in-out;
+}
+
+/* Scene 02 — 1·2번은 직계 .bullet-text, 3번(text+sub)은 .bullet-body 1회 flash */
+#lo-panel.scene02-panel .bullet-item.g01-flash > .bullet-text{
+  animation:g01-panel-bullet-text-flash 680ms ease-in-out;
+}
+
+#lo-panel.scene02-panel .bullet-item.g01-flash .bullet-body{
+  animation:g01-panel-bullet-text-flash 680ms ease-in-out;
+}
+
+#lo-panel.scene02-panel .bullet-item.g01-flash .bullet-body .bullet-text{
+  animation:none;
+}
+
+@keyframes g01-panel-bullet-dot-flash{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.35)}
+}
+
+@keyframes g01-panel-bullet-text-flash{
+  0%,100%{opacity:1;color:inherit}
+  50%{opacity:.85;color:#0f766e}
 }
 
 #lo-panel.scene02-panel .bullet-body{
@@ -861,15 +893,6 @@
 #lo-panel.scene02-panel .bullet-item.g01-flash .bullet-sub{
   color:#1e293b;
   opacity:1;
-}
-
-#lo-panel.scene02-panel .bullet-item.g01-flash .bullet-sub{
-  animation:g01-bullet-flash .6s ease-in-out;
-}
-
-@keyframes g01-bullet-dot-flash{
-  0%,100%{opacity:1}
-  40%{opacity:.35}
 }
 
 /* Scene 03 — 멤버 + 상품 1열 */

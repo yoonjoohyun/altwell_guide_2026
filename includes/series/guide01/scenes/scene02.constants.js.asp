@@ -27,8 +27,8 @@ var Scene02Config = {
     ],
     flashes: [
       { atMain: 4000, index: 0 },
-      { atMain: 15000, index: 1 },
-      { atMain: 21000, index: 2 }
+      { atMain: 16000, index: 1 },
+      { atMain: 26000, index: 2 }
     ]
   },
 

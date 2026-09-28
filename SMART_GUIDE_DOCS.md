@@ -2,7 +2,7 @@
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
 > **미리보기:** `asset_design.asp` · **guide01:** `series/season01/guide01_smartguide.asp`  
-> **Last updated:** 2026-09-23 (§5-8 씬1~4 제작 프로세스 · Scene 03/04 반영)
+> **Last updated:** 2026-09-28 (§7-9-1 텍스트박스 bullet flash 공통 법칙 · Scene 05 반영)
 
 ---
 
@@ -1196,7 +1196,89 @@ Guide01.panelBulletTimeline(
 );
 ```
 
-패널 DOM: [§2-3](#2-3-패널-dom-id) · bullet 강조 CSS: `_css/guide01.css` (`.is-emphasis`, `.g01-flash`).
+패널 DOM: [§2-3](#2-3-패널-dom-id) · bullet 강조 CSS: [§7-9-1](#7-9-1-텍스트박스-bullet-flash-공통-법칙-guide01).
+
+### 7-9-1. 텍스트박스 bullet flash 공통 법칙 (guide01)
+
+> **적용 범위:** guide01 씬1~5 (`#lo-panel.sceneNN-panel`)  
+> **CSS:** `_css/guide01.css` — `#lo-panel.scene01-panel` ~ `.scene05-panel` 공통 블록  
+> **JS:** `Guide01.panelBulletTimeline` · `panelFlashBullet` (`guide01_common.js.asp`)
+
+#### 원칙
+
+1. **타이밍은 constants만** — flash 시점은 `SceneNNConfig.panel.flashes`의 `atMain`(main mp4 기준 ms)만 수정한다. CSS·JS에 하드코딩하지 않는다.
+2. **씬 play 시 패널 클래스** — `play` 시작 시 `#lo-panel`에 `sceneNN-panel` 추가, `reset`에서 제거.
+3. **모션·패널 타임라인 병렬** — `Promise.all([ runSceneNNMotion, Guide01.panelBulletTimeline(...) ])`로 음성·모션과 패널 flash를 동기화한다.
+4. **title + main 2단 음성** — flash 절대 시각 = `sceneNNTitleMs(ctx) + atMain`. `sceneNNPanelFlashes(ctx)` 헬퍼 사용.
+
+#### DOM · 상태 클래스
+
+| 요소 | ID / 클래스 | 역할 |
+|------|-------------|------|
+| 패널 루트 | `#lo-panel.sceneNN-panel` | 씬별 패널 스타일 스코프 |
+| 씬 제목 | `#scene-title-main` | `panelBulletTimeline` 시작 시 `setSceneTitle` |
+| bullet 리스트 | `#scene-bullets` | `panelInitBullets`로 `<li.bullet-item>` 생성 |
+| 비활성 줄 | `.bullet-item.is-dim` | 강조되지 않은 bullet — 마커 `#B8BDC5`, 텍스트 `#B8BDC5` |
+| 강조 줄 | `.bullet-item.is-emphasis` | flash 직후 유지 — 마커 `#0d9488` + ring |
+| flash 순간 | `.bullet-item.g01-flash` | `panelFlashBullet(index)` 호출 시 해당 index에 1회 부여 |
+
+#### flash 타이밍 (constants)
+
+```javascript
+panel: {
+  title: '씬 제목',
+  bullets: ['bullet 0', 'bullet 1', 'bullet 2'],
+  flashes: [
+    { atMain: 2000, index: 0 },   // main 시작 + 2s → bullet 0 강조
+    { atMain: 12000, index: 1 },
+    { atMain: 27000, index: 2 }
+  ]
+}
+```
+
+- `atMain` — **main** mp4 시작 기준(ms). title 구간만 있는 flash는 `at: 0` ~ `titleMs` 형태로 별도 설계.
+- `index` — `bullets` 배열 0-based. 시나리오 `(~N초~)`를 `@main+N*1000`으로 옮긴 값과 1:1 대응.
+
+#### 애니메이션 (CSS 공통)
+
+| 트리거 | 대상 | 효과 | duration |
+|--------|------|------|----------|
+| `.is-dim` / `.is-emphasis` 전환 | `.bullet-dot`, `.bullet-text` | `transition` 420ms ease-in-out | — |
+| `.is-emphasis` | `.bullet-dot` | 배경 `#0d9488`, `box-shadow` ring | — |
+| `.is-emphasis` | `.bullet-text` | `#222222`, `font-weight: 700` (전역 `#lo-panel` 규칙) | — |
+| `.g01-flash` | `.bullet-dot` | `g01-panel-bullet-dot-flash` — scale 1 → 1.35 → 1 | **680ms** |
+| `.g01-flash` | `.bullet-text` | `g01-panel-bullet-text-flash` — opacity·teal tint 펄스 | **680ms** |
+| `.g01-flash` | `.bullet-sub` (씬2) | `.bullet-text`와 동일 keyframe | **680ms** |
+
+> flash 클래스는 **매 flash마다** `panelFlashBullet`이 재적용한다. 이전 bullet의 `g01-flash`는 제거되고 `is-emphasis`/`is-dim`만 유지된다.
+
+#### JS 흐름 (`panelBulletTimeline`)
+
+```
+tl.wait(0)
+  → setSceneTitle · show #scene-title-main
+  → panelInitBullets (전 bullet is-dim)
+  → loop flashes:
+       tl.wait(flashes[i].at)   /* 절대 ms */
+       panelFlashBullet(index)  /* is-emphasis + g01-flash 1회 */
+```
+
+#### 신규 씬 체크리스트
+
+- [ ] `SceneNNConfig.panel.flashes` — 시나리오 `(~N초~)` 반영, **음성 mp4 기준**으로만 조정
+- [ ] `play`에서 `panel.classList.add('sceneNN-panel')`
+- [ ] `sceneNNPanelFlashes(ctx)` + `Guide01.panelBulletTimeline` 연결
+- [ ] 씬 전용 패널 CSS **추가 금지** — 공통 `#lo-panel.sceneNN-panel` 블록에 selector만 추가 (`.scene06-panel` 등)
+- [ ] flash 타이밍 변경 시 **모션 `T.main`과 혼동하지 않기** — 패널·모션 타이밍은 별도 상수
+
+#### 금지 · Anti-patterns
+
+| ❌ | ✅ |
+|----|-----|
+| 씬마다 다른 bullet flash keyframe | `g01-panel-bullet-dot-flash` · `g01-panel-bullet-text-flash` 공통 사용 |
+| CSS `@keyframes`에 flash delay 하드코딩 | `panel.flashes` + `panelBulletTimeline` |
+| `motion-slide-up`으로 bullet 등장 (panelBulletTimeline 미사용) | bullet flash 패턴 통일 |
+| title 구간 `(~N초~)`를 `atMain`에 그대로 입력 | title 구간은 `at: titleMs + …` 또는 title 전용 타임라인 |
 
 ### 7-10. Guide01 API 빠른 참조 (씬 제작)
 
