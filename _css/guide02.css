@@ -659,3 +659,161 @@
   opacity:1;
   transform:scale(1) rotate(0deg);
 }
+
+#lo-panel.g02-scene05-panel .scene-title,
+#lo-panel.g02-scene05-panel .bullet-item .bullet-text{
+  transition:color 420ms ease-in-out, opacity 420ms ease-in-out;
+}
+#lo-panel.g02-scene05-panel .bullet-item .bullet-dot{
+  transition:background-color 420ms ease-in-out, box-shadow 420ms ease-in-out;
+}
+#lo-panel.g02-scene05-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.g02-scene05-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+#lo-panel.g02-scene05-panel .bullet-item.is-emphasis .bullet-dot{
+  background-color:#0d9488;
+  box-shadow:0 0 0 3px rgba(13,148,136,.22);
+}
+#lo-panel.g02-scene05-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
+#lo-panel.g02-scene05-panel .bullet-item.g02-flash .bullet-dot{animation:g02-dot-flash 680ms ease-in-out}
+#lo-panel.g02-scene05-panel .bullet-item.g02-flash .bullet-text{animation:g02-text-flash 680ms ease-in-out}
+
+.g02-canvas .g02-s05{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.g02-scene05-canvas .g02-enter{animation:g02-s05-enter 920ms cubic-bezier(.16,1,.3,1) both}
+.g02-scene05-canvas .g02-s05-member-stack{
+  position:relative;
+  display:inline-block;
+  line-height:0;
+  transform:scale(1.15);
+  transform-origin:center center;
+  margin-top:-40px;
+}
+.g02-scene05-canvas .g02-s05-member-stack .member_icon{
+  --size:140px;
+  display:block;
+}
+.g02-scene05-canvas .g02-s05-member-slots{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  z-index:2;
+}
+.g02-scene05-canvas .g02-s05-rank{
+  position:absolute;
+  left:68%;
+  top:42%;
+  transform:translate(-50%, calc(-50% + 30px));
+  z-index:4;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.g02-scene05-canvas .g02-s05-rank .lev_sp,
+.g02-scene05-canvas .g02-s05-rank .lev_d{
+  --size:40px;
+}
+.g02-s05-sp{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.g02_ref_points_slot{min-height:44px;display:flex;align-items:center;justify-content:center}
+.g02_ref_points{
+  padding:8px 16px;
+  border-radius:999px;
+  background:#fff;
+  border:2px solid #C7A417;
+  color:#665308;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-size:18px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.g02_ref_points_num{font-size:24px;font-weight:900}
+.g02-s05-lines{
+  width:278px;
+  height:52px;
+  display:block;
+  animation:g02-s05-enter 920ms cubic-bezier(.16,1,.3,1) both;
+}
+.g02-s05-lines path{
+  fill:none;
+  stroke:#7f97b8;
+  stroke-width:2.5;
+  vector-effect:non-scaling-stroke;
+}
+.g02-s05-row{display:flex;align-items:flex-start;gap:48px}
+.g02-s05-branch{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:230px;
+}
+.g02-s05-packs{
+  display:flex;
+  align-items:flex-start;
+  justify-content:flex-start;
+  gap:10px;
+  width:100%;
+  margin-top:10px;
+  min-height:128px;
+  padding-left:55px;
+  box-sizing:border-box;
+  transition:transform 960ms cubic-bezier(.16,1,.3,1);
+}
+.g02-s05-packs.is-centered{transform:translateX(-65px)}
+.g02-s05-packcol{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+}
+.g02-scene05-canvas .g02_pack_card{
+  width:120px;
+  padding:5px 4px 6px;
+  gap:6px;
+}
+.g02-scene05-canvas .g02_pack_visual{width:56px;height:56px}
+.g02-scene05-canvas .g02_pack_name{font-size:15px}
+.g02_point_tag{
+  padding:6px 10px;
+  border-radius:10px;
+  background:#C62828;
+  color:#fff;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-size:15px;
+  font-weight:800;
+  white-space:nowrap;
+}
+.g02_point_tag.is-zero{background:#3A3A3A}
+.g02_ref_coin{
+  position:absolute;
+  z-index:6;
+  width:52px;
+  height:52px;
+  margin:0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg, #ffd738, #ffeca0 45%, #e6c92a);
+  box-shadow:inset 0 0 0 2px #c7a417;
+  color:#665308;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-size:22px;
+  font-weight:900;
+  pointer-events:none;
+}
+.g02-scene05-canvas .g02-s05-drop{animation:g02-s05-drop 960ms cubic-bezier(.16,1,.3,1) both}
+@keyframes g02-s05-enter{
+  from{opacity:0;transform:translateY(18px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes g02-s05-drop{
+  from{opacity:0;transform:translateY(-32px)}
+  to{opacity:1;transform:translateY(0)}
+}
