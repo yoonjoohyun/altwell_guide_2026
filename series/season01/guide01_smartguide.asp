@@ -46,6 +46,7 @@
 
 
 
+<!-- FROZEN guide01 scenes 01-06. Do not edit motion, panel animation, assets, or timings in those files. Scene 07+ is new files plus include/register only. Guide02 lives under includes/series/guide02. -->
 <!-- 씬 추가 시: scenes/sceneNN.js.asp include 후 guide01.asp에서 registerScene -->
 <!--#include virtual="/includes/series/guide01/scenes/scene01.constants.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene01.setup.js.asp"-->
@@ -65,6 +66,9 @@
 <!--#include virtual="/includes/series/guide01/scenes/scene06.constants.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene06.setup.js.asp"-->
 <!--#include virtual="/includes/series/guide01/scenes/scene06.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene07.constants.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene07.setup.js.asp"-->
+<!--#include virtual="/includes/series/guide01/scenes/scene07.js.asp"-->
 
 <!--#include virtual="/includes/series/guide01/guide01.asp"-->
 

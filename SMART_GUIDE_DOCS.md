@@ -2,12 +2,13 @@
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
 > **미리보기:** `asset_design.asp` · **guide01:** `series/season01/guide01_smartguide.asp`  
-> **Last updated:** 2026-09-29 (§5-A 중앙정렬·간격·패널 flash 통합 · Scene 05 반영)
+> **Last updated:** 2026-09-29 (§0 Guide01 동결 · Guide02 작업 경계)
 
 ---
 
 ## 목차
 
+0. [Guide01 동결 · Guide02 작업 경계](#0-guide01-동결--guide02-작업-경계)
 1. [아키텍처](#1-아키텍처)
 2. [프로젝트 규칙](#2-프로젝트-규칙)
 3. [에셋 디자인 시스템](#3-에셋-디자인-시스템)
@@ -16,6 +17,52 @@
 6. [시나리오 작성 (부록 A)](#6-시나리오-작성-부록-a)
 7. [guide01 씬 추가 가이드](#7-guide01-씬-추가-가이드)
 8. [씬1~5 제작 프로세스 요약](#8-씬15-제작-프로세스-요약)
+
+---
+
+## 0. Guide01 동결 · Guide02 작업 경계
+
+Guide01 씬 01~06은 완성본이다. Guide02는 **새 파일만** 추가한다. Guide01을 공통화·리네임·파일 이동하는 정리는 하지 않는다. 그 작업은 모션, 패널 애니메이션, 에셋 디자인, 타이밍을 바꿀 수 있다.
+
+### 0-1. 수정 금지 (Guide01 완성본)
+
+| 영역 | 경로 |
+|------|------|
+| 페이지·등록 | `series/season01/guide01_smartguide.asp`, `includes/series/guide01/guide01.asp` |
+| 씬 01~06 | `includes/series/guide01/scenes/scene01`~`scene06` `.constants` · `.setup` · `.js` |
+| 가이드 런타임 | `includes/series/guide01/guide01_common.js.asp` (`Guide01.*`) |
+| 모션 | `includes/motions/g01/` |
+| 화면 스타일 | `_css/guide01.css` |
+| 템플릿 | `includes/components/guide01_templates.asp` 및 거기에 등록된 `includes/components/*.asp` |
+| 에셋 치수·색 | `_css/icon_style.css` 중 Guide01이 쓰는 규칙 |
+| 음성 | `voice/guide_season01/guide01/` |
+
+금지 범위는 클래스 이름, `T.main`, `panel.flashes`, `layout.gaps`, fold/idle/스택 배치, 패널 flash 클래스다. Scene 07을 Guide01에 넣을 때도 위 파일을 고치지 않고 **씬 07 파일만 추가**한 뒤 include·`registerScene`만 연결한다.
+
+### 0-2. 공용 런타임 (include만, 동작 변경 금지)
+
+Guide02 페이지가 그대로 include할 수 있다. 여기를 고치면 Guide01 재생도 바뀐다.
+
+`includes/video_runtime.asp`, `sceneRunner.js.asp`, `sceneMedia.js.asp`, `sceneTransition.js.asp`, `scenes/defineScene.js.asp`, `player/video_layout.asp`, `player/video_controller_*.asp`, `_css/main.css`, `_css/video_controller.css`
+
+`SceneMedia.setSeriesId`는 페이지마다 자기 id를 넘긴다. Guide01은 `'guide01'` 고정이다.
+
+### 0-3. Guide02가 새로 만들 경로
+
+Guide01 파일 안에 씬이나 CSS 선택자를 추가하지 않는다.
+
+| 역할 | 경로 |
+|------|------|
+| 페이지 | `series/season01/guide02_smartguide.asp` |
+| 등록·공통 | `includes/series/guide02/guide02.asp`, `guide02_common.js.asp` |
+| 씬 | `includes/series/guide02/scenes/sceneNN.constants.js.asp` · `.setup` · `.js` |
+| 스타일 | `_css/guide02.css` (`guide01.css`를 링크하지 않음) |
+| 템플릿 | `includes/components/guide02_templates.asp` |
+| 음성 | `voice/guide_season01/guide02/` (mp4는 이미 있음) |
+
+네이밍은 Guide01과 겹치지 않게 `Guide02`, `guide02-scene-NN`, `g02-sceneNN-canvas`, `g02-sceneNN-panel`, `#s02g-…` 를 쓴다. `scene01-panel` · `Scene01Config` · `Guide01Scene01` 을 재사용하지 않는다. 두 가이드는 서로 include하지 않는다.
+
+Guide02의 레이아웃 헬퍼는 `guide02_common`에만 둔다. `Scene02Layout`~`Scene06Layout` 을 추출하거나 `Guide01`을 공용 이름으로 바꾸지 않는다.
 
 ---
 

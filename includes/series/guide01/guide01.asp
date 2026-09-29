@@ -1,5 +1,7 @@
 <script>
-/* Series: guide01 — 오토십 알아보기 (씬 순차 제작) */
+/* Series: guide01 — 오토십 알아보기
+   FROZEN scenes 01-06: do not change motion, panel animation, asset design, or timings.
+   Scene 07 is additive. Guide02 must not register here. */
 var SeriesGuide01 = {
   meta: {
     id: 'guide01',
@@ -14,7 +16,8 @@ var SeriesGuide01 = {
       { config: typeof Scene03Config !== 'undefined' ? Scene03Config : null },
       { config: typeof Scene04Config !== 'undefined' ? Scene04Config : null },
       { config: typeof Scene05Config !== 'undefined' ? Scene05Config : null },
-      { config: typeof Scene06Config !== 'undefined' ? Scene06Config : null }
+      { config: typeof Scene06Config !== 'undefined' ? Scene06Config : null },
+      { config: typeof Scene07Config !== 'undefined' ? Scene07Config : null }
     ];
   },
 
@@ -27,6 +30,7 @@ var SeriesGuide01 = {
     SceneRunner.registerScene(Guide01Scene04);
     SceneRunner.registerScene(Guide01Scene05);
     SceneRunner.registerScene(Guide01Scene06);
+    SceneRunner.registerScene(Guide01Scene07);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
