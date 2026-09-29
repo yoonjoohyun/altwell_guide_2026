@@ -1,0 +1,202 @@
+/* guide02 — 스타트팩 알아보기. guide01.css 와 분리 */
+
+.g02-canvas{position:relative}
+
+.g02-canvas .lo-zone-place{
+  left:calc(10px + (var(--zone-col) - 0.5) / 7 * (100% - 20px));
+  top:calc(10px + (var(--zone-row) - 0.5) / 7 * (100% - 20px));
+  transform:translate(-50%, -50%);
+}
+@media (max-width:900px){
+  .g02-canvas .lo-zone-place{
+    left:calc(5px + (var(--zone-col) - 0.5) / 7 * (100% - 10px));
+    top:calc(5px + (var(--zone-row) - 0.5) / 7 * (100% - 10px));
+  }
+}
+
+.g02-canvas .g02-stack{
+  position:absolute;
+  z-index:12;
+  pointer-events:none;
+}
+.g02-canvas .g02-stack-inner{
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
+}
+.g02-canvas .g02-cluster{
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:18px;
+}
+.g02-canvas .g02-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+.g02-canvas .g02-col.is-hidden,
+.g02-canvas .g02-slot.is-hidden,
+.g02-canvas .g02_startpack_sub.is-hidden{display:none !important}
+
+.g02-canvas .g02-member{--size:132px}
+.g02-canvas .g02-enter{animation:g02-enter 420ms cubic-bezier(.22,1,.36,1) both}
+.g02-canvas .g02-idle{animation:g02-idle 3.2s ease-in-out infinite}
+
+@keyframes g02-enter{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes g02-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+
+/* 스타트팩 뱃지 — 와인 버건디. 파랑(오토십)·초록(베이스)·골드(추천보너스)와 구분 */
+.g02_startpack_badge{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  width:max-content;
+  padding:8px 12px 10px;
+  border-radius:14px;
+  background:linear-gradient(120deg, #8E3D4C, #6E2434, #4E1826);
+  box-shadow:inset 0 0 0 2px #3A1018, 0 6px 16px rgba(78,24,38,.32);
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  color:#F8F1E7;
+}
+.g02_startpack_row{display:flex;align-items:center;gap:8px}
+.g02_startpack_mark{
+  display:grid;
+  place-items:center;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  background:#F3E6D4;
+  color:#6E2434;
+  font-size:15px;
+  font-weight:900;
+}
+.g02_startpack_name{font-size:18px;font-weight:800;line-height:1;color:#F8F1E7}
+.g02_startpack_sub{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:-.02em;
+  color:#F3E6D4;
+}
+
+/* 패키지 카드 */
+.g02_pack_card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  width:132px;
+  padding:12px 10px 14px;
+  border-radius:16px;
+  background:#fff;
+  border:1.5px solid #dbe4f0;
+  box-shadow:0 6px 16px rgba(16,52,172,.12);
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  box-sizing:border-box;
+}
+.g02_pack_visual{
+  width:54px;
+  height:64px;
+  border-radius:8px 8px 12px 12px;
+  background:linear-gradient(180deg, #9eb6ff, #2c51ca);
+  box-shadow:inset 0 0 0 2px rgba(11,42,145,.25);
+  position:relative;
+}
+.g02_pack_visual::before{
+  content:"";
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:10px;
+  height:8px;
+  border-radius:4px;
+  background:rgba(255,255,255,.85);
+}
+.g02_pack_signature .g02_pack_visual{
+  background:linear-gradient(180deg, #c4b5fd, #462db3);
+}
+.g02_pack_name{
+  color:#0B2A91;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+  text-align:center;
+}
+
+/* 약 50% 할인 — 기존 오렌지 정보 뱃지 톤 */
+.g02_discount_badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  height:36px;
+  padding:0 12px 0 6px;
+  border-radius:10px;
+  background:linear-gradient(120deg, #e65100, #f57c00, #ef6c00);
+  box-shadow:inset 0 0 0 2px #b23c00, 0 4px 12px rgba(226,81,0,.25);
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+}
+.g02_discount_mark{
+  display:grid;
+  place-items:center;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#ffd180;
+  color:#b23c00;
+  font-size:13px;
+  font-weight:900;
+}
+.g02_discount_text{color:#fff;font-size:15px;font-weight:800;white-space:nowrap}
+
+.g02_point_chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:120px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#fff;
+  border:1.5px solid #2c51ca;
+  color:#1034AC;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
+  box-shadow:0 4px 10px rgba(16,52,172,.1);
+}
+.g02_point_chip_launch{border-color:#462db3;color:#462db3}
+
+#lo-panel.g02-scene01-panel .scene-title,
+#lo-panel.g02-scene01-panel .bullet-item .bullet-text{
+  transition:color 420ms ease-in-out, opacity 420ms ease-in-out;
+}
+#lo-panel.g02-scene01-panel .bullet-item .bullet-dot{
+  transition:background-color 420ms ease-in-out, box-shadow 420ms ease-in-out;
+}
+#lo-panel.g02-scene01-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.g02-scene01-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+#lo-panel.g02-scene01-panel .bullet-item.is-emphasis .bullet-dot{
+  background-color:#0d9488;
+  box-shadow:0 0 0 3px rgba(13,148,136,.22);
+}
+#lo-panel.g02-scene01-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
+#lo-panel.g02-scene01-panel .bullet-item.g02-flash .bullet-dot{animation:g02-dot-flash 680ms ease-in-out}
+#lo-panel.g02-scene01-panel .bullet-item.g02-flash .bullet-text{animation:g02-text-flash 680ms ease-in-out}
+
+@keyframes g02-dot-flash{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.35)}
+  100%{transform:scale(1)}
+}
+@keyframes g02-text-flash{
+  0%{color:#222}
+  40%{color:#0d9488}
+  100%{color:#222}
+}

@@ -25,7 +25,7 @@ If Not RegExpTest("^[0-9]{2}$", sceneNum) Then
   Response.End
 End If
 
-allowedSeries = Array("guide01", "03_sep_growth")
+allowedSeries = Array("guide01", "guide02", "03_sep_growth")
 ok = False
 For i = 0 To UBound(allowedSeries)
   If LCase(seriesId) = LCase(allowedSeries(i)) Then
@@ -42,6 +42,8 @@ Set fso = Server.CreateObject("Scripting.FileSystemObject")
 
 If LCase(seriesId) = "guide01" Then
   filePath = FindGuide01Voice(fso, sceneNum, partId)
+ElseIf LCase(seriesId) = "guide02" Then
+  filePath = FindGuide02Voice(fso, sceneNum, partId)
 Else
   filePath = FindVoiceFile(fso, Server.MapPath("voice/" & seriesId & "/scene" & sceneNum))
 End If
@@ -93,6 +95,29 @@ Function FindVoiceFile(fso, baseNoExt)
       FindVoiceFile = candidate
       Exit Function
     End If
+  Next
+End Function
+
+Function FindGuide02Voice(fso, sceneNum, partId)
+  Dim roots, names, r, n, basePath, found
+  roots = Array("voice/guide_season01/guide02/")
+
+  If partId = "title" Then
+    names = Array("guide02_scene_" & sceneNum & "_title")
+  Else
+    names = Array("guide02_scene_" & sceneNum)
+  End If
+
+  FindGuide02Voice = ""
+  For r = 0 To UBound(roots)
+    For n = 0 To UBound(names)
+      basePath = Server.MapPath(roots(r) & names(n))
+      found = FindVoiceFile(fso, basePath)
+      If found <> "" Then
+        FindGuide02Voice = found
+        Exit Function
+      End If
+    Next
   Next
 End Function
 

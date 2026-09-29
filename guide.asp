@@ -39,6 +39,18 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
         </div>
       </div>
+      <div class="vcard" onclick="location.href='/series/season01/guide02_smartguide.asp?from=guide'">
+        <div class="vc-thumb"><div class="vc-thumb-inner g1">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">GUIDE 02</span><span class="vc-new">제작 중</span></div>
+          <div class="vc-title">스타트팩 알아보기</div>
+          <div class="vc-desc">신규 회원 전용 패키지로 제품 경험과 사업의 출발점</div>
+          <div class="vc-meta">? —</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
       <div class="vcard" onclick="location.href='/series/season01/guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>?</span><div class="vc-play">▶</div>
