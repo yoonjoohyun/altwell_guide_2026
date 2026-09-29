@@ -6,6 +6,7 @@
   <div data-template="base_business_icon_c"><!--#include file="base_business_icon_c.asp"--></div>
   <div data-template="recommend_bonus_icon"><!--#include file="recommend_bonus_icon.asp"--></div>
   <div data-template="recommend_bonus_icon_c"><!--#include file="recommend_bonus_icon_c.asp"--></div>
+  <div data-template="recommend_bonus_icon_ex"><!--#include file="recommend_bonus_icon_ex.asp"--></div>
   <div data-template="discount_benefit_icon"><!--#include file="discount_benefit_icon.asp"--></div>
   <div data-template="discount_benefit_icon_c"><!--#include file="discount_benefit_icon_c.asp"--></div>
   <div data-template="discount_benefit_badge"><!--#include file="discount_benefit_badge.asp"--></div>

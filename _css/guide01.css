@@ -1720,6 +1720,49 @@
   gap:16px;
 }
 
+.guide01-canvas.scene05-canvas .s05-intro-pay-stack{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:var(--s05-intro-autoship-payment-gap, 12px);
+}
+
+.guide01-canvas.scene05-canvas .s05-intro-pay-stack .g01-float-inner > .guide01-asset{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  transform:none;
+}
+
+.guide01-canvas.scene05-canvas .s05-intro-pay-stack .s05-autoship-wrap.g01-zone-wrap{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  pointer-events:none;
+}
+
+.guide01-canvas.scene05-canvas .s05-payment-host{
+  display:flex;
+  justify-content:center;
+}
+
+/* 오토십 — 씬2 scene02EnterBadge + startIdleFloat 와 동일 */
+.guide01-canvas.scene05-canvas .s05-autoship-wrap .g01-float-inner{
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene05-canvas .s05-autoship-wrap .g01-float-inner.g01-idle-float{
+  animation:g01-idle-float 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+.guide01-canvas.scene05-canvas .s05-payment-host .g01-float-inner.g01-idle-float{
+  animation:s04-soft-idle-float 4s ease-in-out infinite;
+  will-change:transform;
+}
+
 .guide01-canvas.scene05-canvas .s05-ep-stack{
   display:flex;
   flex-direction:row;
@@ -1727,6 +1770,13 @@
   justify-content:center;
   position:relative;
   min-width:calc(52px * var(--g01-base-scale,1));
+}
+
+.guide01-canvas.scene05-canvas .s05-ep-stack-inner{
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:center;
 }
 
 .guide01-canvas.scene05-canvas .s05-ep-coin-wrap{
@@ -1743,16 +1793,40 @@
 .guide01-canvas.scene05-canvas .s05-ep-coin-wrap:nth-child(3){z-index:3}
 
 .guide01-canvas.scene05-canvas .s05-ep-stack.s05-ep-stack-idle{
-  animation:s05-soft-idle-float 3s ease-in-out infinite;
+  animation:s05-ep-idle-float 4.2s cubic-bezier(0.45,0,0.55,1) infinite;
+  will-change:transform;
 }
 
-.guide01-canvas.scene05-canvas .s05-ep-stack.s05-ep-stack-rise{
-  animation:s05-ep-stack-rise 680ms cubic-bezier(.22,1,.36,1) forwards;
+.guide01-canvas.scene05-canvas .s05-ep-stack.is-entering .s05-ep-coin-wrap{
+  animation:s05-ep-coin-enter 520ms cubic-bezier(0.22,1,0.36,1) both;
+}
+
+.guide01-canvas.scene05-canvas .s05-ep-stack.is-entering .s05-ep-coin-wrap:nth-child(2){
+  animation-delay:90ms;
+}
+
+.guide01-canvas.scene05-canvas .s05-ep-stack.is-entering .s05-ep-coin-wrap:nth-child(3){
+  animation-delay:180ms;
+}
+
+.guide01-canvas.scene05-canvas .s05-ep-stack-inner.s05-ep-stack-rise{
+  animation:s05-ep-stack-rise 820ms cubic-bezier(0.25,0.85,0.35,1) forwards;
+  will-change:transform;
+}
+
+.guide01-canvas.scene05-canvas .s05-ep-stack-inner.is-raised{
+  transform:translate3d(0,-12px,0);
 }
 
 .guide01-canvas.scene05-canvas .s05-ep-stack.is-denied .s05-ep-coin{
   filter:grayscale(1);
   opacity:.55;
+  transition:filter 520ms ease, opacity 520ms ease;
+}
+
+.guide01-canvas.scene05-canvas .s05-cal-ep-host .g01-float-inner.s05-ep-slot-idle{
+  animation:s05-ep-idle-float 4.2s cubic-bezier(0.45,0,0.55,1) infinite;
+  will-change:transform;
 }
 
 .guide01-canvas.scene05-canvas .s05-deny-host{
@@ -1765,16 +1839,6 @@
   flex-direction:column;
   align-items:center;
   gap:12px;
-}
-
-.guide01-canvas.scene05-canvas .s05-payment-host{
-  display:flex;
-  justify-content:center;
-}
-
-.guide01-canvas.scene05-canvas .s05-payment-host .g01-float-inner.g01-idle-float{
-  animation:s04-soft-idle-float 4s ease-in-out infinite;
-  will-change:transform;
 }
 
 .guide01-canvas.scene05-canvas .s05-calendar-body{
@@ -1808,7 +1872,7 @@
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:6px;
+  gap:8px;
   position:relative;
 }
 
@@ -1847,9 +1911,84 @@
   transform:scaleY(1);
 }
 
-.guide01-canvas.scene05-canvas .s05-cal-cashback-host{
+.guide01-canvas.scene05-canvas .s05-cal-cashback-host,
+.guide01-canvas.scene05-canvas .s05-cal-recommend-host{
   display:flex;
   justify-content:center;
+}
+
+.guide01-canvas.scene05-canvas .s05-benefit-float-host{
+  display:flex;
+  justify-content:center;
+}
+
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner > .guide01-asset,
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner > .recommend_bonus_icon_ex,
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner > .s05-cal-recommend-badge,
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner > .cashback_icon_o{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  transform:none;
+}
+
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner{
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene05-canvas .s05-benefit-float-host .g01-float-inner.g01-idle-float{
+  animation:g01-idle-float 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+/* 캘린더 — 캐시백 아래 추천포인트 (2줄: 추천포인트 / 매월 1Point) */
+.guide01-canvas.scene05-canvas .recommend_bonus_icon_ex.s05-cal-recommend-badge{
+  --size:34px;
+  position:relative;
+  left:auto;
+  top:auto;
+  transform:none;
+  align-items:center;
+}
+
+.guide01-canvas.scene05-canvas .recommend_bonus_icon_ex.s05-cal-recommend-badge .s05-cal-recommend-text,
+.guide01-canvas.scene05-canvas .recommend_bonus_icon_ex.s05-cal-recommend-badge .recommend_bonus_ex_text{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  line-height:1.15;
+  text-align:center;
+}
+
+.guide01-canvas.scene05-canvas .recommend_bonus_icon_ex.s05-cal-recommend-badge .recommend_bonus_text_1{
+  display:block;
+  font-size:max(13px, calc(var(--size) * 14 / 36));
+  font-weight:600;
+  line-height:1.15;
+  color:#776313;
+  white-space:nowrap;
+  margin:0;
+}
+
+.guide01-canvas.scene05-canvas .recommend_bonus_icon_ex.s05-cal-recommend-badge .recommend_bonus_text_2{
+  display:block;
+  font-size:max(13px, calc(var(--size) * 15 / 36));
+  font-weight:700;
+  line-height:1.15;
+  color:#665308;
+  white-space:nowrap;
+  margin:0;
+}
+
+.guide01-canvas.scene05-canvas .s05-dual-point-host .s05-point-badge{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  transform:none;
 }
 
 .guide01-canvas.scene05-canvas .s05-month-badge-host{
@@ -2028,7 +2167,8 @@
 }
 
 .guide01-canvas.scene05-canvas .s05-ep-fly-in{
-  animation:s05-ep-fly-in 620ms cubic-bezier(.22,1,.36,1) both;
+  animation:s05-ep-fly-in 720ms cubic-bezier(0.22,1,0.36,1) both;
+  will-change:transform,opacity;
 }
 
 .guide01-canvas.scene05-canvas .s05-foot-pop{
@@ -2040,15 +2180,57 @@
   50%{transform:translateY(-4px)}
 }
 
+@keyframes s05-ep-idle-float{
+  0%,100%{transform:translate3d(0,0,0) scale(var(--g01-base-scale,1))}
+  50%{transform:translate3d(0,-3px,0) scale(var(--g01-base-scale,1))}
+}
+
+@keyframes s05-ep-coin-enter{
+  0%{
+    opacity:0;
+    transform:translate3d(0,10px,0) scale(0.86);
+  }
+  62%{
+    opacity:1;
+    transform:translate3d(0,-2px,0) scale(1.03);
+  }
+  100%{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+  }
+}
+
 @keyframes s05-ep-stack-rise{
-  0%{transform:translateY(0)}
-  55%{transform:translateY(-28px)}
-  100%{transform:translateY(-12px)}
+  0%{
+    transform:translate3d(0,0,0);
+  }
+  42%{
+    transform:translate3d(0,-26px,0);
+  }
+  68%{
+    transform:translate3d(0,-9px,0);
+  }
+  84%{
+    transform:translate3d(0,-13px,0);
+  }
+  100%{
+    transform:translate3d(0,-12px,0);
+  }
 }
 
 @keyframes s05-ep-fly-in{
-  from{opacity:0;transform:translateY(-16px) scale(.82)}
-  to{opacity:1;transform:translateY(0) scale(1)}
+  0%{
+    opacity:0;
+    transform:translate3d(0,-12px,0) scale(0.88);
+  }
+  58%{
+    opacity:1;
+    transform:translate3d(0,2px,0) scale(1.02);
+  }
+  100%{
+    opacity:1;
+    transform:translate3d(0,0,0) scale(1);
+  }
 }
 
 @keyframes s05-fade-in{

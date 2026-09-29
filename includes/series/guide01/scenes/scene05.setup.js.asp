@@ -126,6 +126,37 @@ var Scene05Layout = (function(){
     return tapPaymentHost;
   }
 
+  function mountAutoshipBadge(canvas, payStack){
+    var scale = (Scene05Config.layout.scales && Scene05Config.layout.scales.autoship) || 0.88;
+    var wrap = Guide01.addZonedBadge(
+      canvas,
+      'autoship_icon',
+      's05-autoship',
+      Scene05Config.layout.anchorZone,
+      { scale: scale }
+    );
+    var floatInner;
+    var badge;
+
+    if(!wrap) return { wrap: null, badge: null, floatInner: null };
+
+    if(wrap.parentNode) wrap.parentNode.removeChild(wrap);
+    wrap.classList.remove('lo-zone-place');
+    wrap.removeAttribute('data-zone');
+    wrap.style.removeProperty('--zone-row');
+    wrap.style.removeProperty('--zone-col');
+    wrap.style.left = '';
+    wrap.style.top = '';
+    wrap.style.transform = '';
+    wrap.classList.add('s05-autoship-wrap');
+
+    floatInner = wrap._float || wrap.querySelector('.g01-float-inner');
+    badge = Guide01.resolveZonedBadge(wrap);
+    if(payStack) payStack.appendChild(wrap);
+
+    return { wrap: wrap, badge: badge, floatInner: floatInner };
+  }
+
   function mountPaymentBatchBox(elId, scale){
     var wrap = document.createElement('div');
     var floatInner = document.createElement('div');
@@ -134,7 +165,7 @@ var Scene05Layout = (function(){
     var s = scale != null ? scale : 1;
 
     wrap.id = elId + '-host';
-    wrap.className = 's05-payment-host g01-float-host';
+    wrap.className = 's05-payment-host g01-float-host is-hidden';
 
     floatInner.className = 'g01-float-inner';
     floatInner.style.setProperty('--g01-base-scale', String(s));
@@ -149,6 +180,30 @@ var Scene05Layout = (function(){
 
     wrap.appendChild(floatInner);
     return { wrap: wrap, payment: payment, floatInner: floatInner, tapHost: tapHost };
+  }
+
+  function createCalendarRecommendBadge(){
+    var badge = cloneFromTemplate('recommend_bonus_icon_ex');
+    var textWrap;
+    var line1;
+    var line2;
+
+    if(!badge) return null;
+
+    textWrap = badge.querySelector('.recommend_bonus_ex_text');
+    line1 = badge.querySelector('.recommend_bonus_text_1');
+    line2 = badge.querySelector('.recommend_bonus_text_2');
+
+    if(line1) line1.textContent = '추천포인트';
+    if(line2) line2.textContent = '매월 1Point';
+    if(textWrap){
+      textWrap.classList.add('s05-cal-recommend-text');
+    }
+
+    badge.classList.add('guide01-asset', 's05-cal-recommend-badge');
+    badge.style.setProperty('--size', '34px');
+    badge.setAttribute('aria-label', '추천포인트 매월 1Point');
+    return badge;
   }
 
   function createPointBadge(){
@@ -166,33 +221,49 @@ var Scene05Layout = (function(){
     return badge;
   }
 
-  function mountIntroPhase(inner){
+  function mountIntroPhase(canvas, inner){
     var phase = document.createElement('div');
     phase.id = 's05-intro-phase';
     phase.className = 's05-intro-phase scene05-group-child s05-layout-instant is-hidden';
 
+    var payStack = document.createElement('div');
+    payStack.className = 's05-intro-pay-stack';
+
+    var autoshipPack = mountAutoshipBadge(canvas, payStack);
     var paymentPack = mountPaymentBatchBox('s05-payment-box', (Scene05Config.layout.scales && Scene05Config.layout.scales.payment) || 1);
     var epStack = document.createElement('div');
     var epCoins = [];
     var denyHost = document.createElement('div');
+    var gaps = Scene05Config.layout.gaps || {};
     var i;
     var coin;
 
+    phase.style.setProperty(
+      '--s05-intro-autoship-payment-gap',
+      (gaps.introAutoshipPayment != null ? gaps.introAutoshipPayment : 12) + 'px'
+    );
+
+    var epStackInner = document.createElement('div');
+
     epStack.className = 's05-ep-stack is-hidden';
     epStack.id = 's05-ep-stack';
+    epStackInner.className = 's05-ep-stack-inner';
 
     denyHost.id = 's05-deny-host';
     denyHost.className = 's05-deny-host is-hidden';
 
-    if(paymentPack.wrap) phase.appendChild(paymentPack.wrap);
+    if(paymentPack.wrap) payStack.appendChild(paymentPack.wrap);
+    phase.appendChild(payStack);
 
     for(i = 0; i < 3; i++){
       coin = createEpCoin((Scene05Config.layout.scales && Scene05Config.layout.scales.epCoin) || 0.88);
       if(!coin) continue;
       coin.setAttribute('data-ep-index', String(i));
-      epStack.appendChild(coin);
+      epStackInner.appendChild(coin);
       epCoins.push(coin);
     }
+
+    epStack.appendChild(epStackInner);
 
     phase.appendChild(epStack);
     phase.appendChild(denyHost);
@@ -200,11 +271,15 @@ var Scene05Layout = (function(){
     inner.appendChild(phase);
     return {
       phase: phase,
+      autoshipHost: autoshipPack.wrap,
+      autoship: autoshipPack.badge,
+      autoshipFloat: autoshipPack.floatInner,
       paymentHost: paymentPack.wrap,
       payment: paymentPack.payment,
       paymentFloat: paymentPack.floatInner,
       tapHost: paymentPack.tapHost,
       epStack: epStack,
+      epStackInner: epStackInner,
       epCoins: epCoins,
       denyHost: denyHost
     };
@@ -218,6 +293,7 @@ var Scene05Layout = (function(){
     var epLabel = document.createElement('span');
     var check = cloneFromTemplate('status_check_icon');
     var cashbackHost = document.createElement('div');
+    var recommendHost = document.createElement('div');
     var connector = document.createElement('div');
 
     slot.className = 's05-cal-slot';
@@ -243,8 +319,10 @@ var Scene05Layout = (function(){
 
     connector.className = 's05-cal-connector is-hidden';
     cashbackHost.className = 's05-cal-cashback-host is-hidden';
+    recommendHost.className = 's05-cal-recommend-host is-hidden';
     slot.appendChild(connector);
     slot.appendChild(cashbackHost);
+    slot.appendChild(recommendHost);
 
     return {
       slot: slot,
@@ -252,7 +330,8 @@ var Scene05Layout = (function(){
       calendar: cal,
       foot: foot,
       connector: connector,
-      cashbackHost: cashbackHost
+      cashbackHost: cashbackHost,
+      recommendHost: recommendHost
     };
   }
 
@@ -675,6 +754,7 @@ var Scene05Layout = (function(){
     cloneFromTemplate: cloneFromTemplate,
     createEpCoin: createEpCoin,
     createInfoBadge: createInfoBadge,
+    createCalendarRecommendBadge: createCalendarRecommendBadge,
     createPointBadge: createPointBadge,
     mountIntroPhase: mountIntroPhase,
     mountCalendarPhase: mountCalendarPhase,
@@ -701,7 +781,7 @@ function setupScene05Assets(canvas){
   var group = Scene05Layout.createGroup(canvas, Scene05Config.layout.anchorZone);
   var inner = group._scene05Inner;
 
-  var intro = Scene05Layout.mountIntroPhase(inner);
+  var intro = Scene05Layout.mountIntroPhase(canvas, inner);
   var calendar = Scene05Layout.mountCalendarPhase(canvas, inner);
   var memberProduct = Scene05Layout.mountMemberProductPhase(canvas, inner);
   var dual = Scene05Layout.mountDualPhase(canvas, inner);

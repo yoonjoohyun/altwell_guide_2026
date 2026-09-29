@@ -131,11 +131,13 @@ async function scene05ExitIntroCluster(assets){
 
   if(!intro) return;
 
-  if(intro.paymentFloat) intro.paymentFloat.classList.remove('g01-idle-float');
+  if(intro.autoshipHost) Guide01.stopIdleFloat(intro.autoshipHost);
+  if(intro.paymentHost) Guide01.stopIdleFloat(intro.paymentHost);
   if(intro.denyHost) intro.denyHost.classList.remove('s05-soft-idle-float');
   if(intro.epStack) intro.epStack.classList.remove('s05-ep-stack-idle');
 
   targets = [];
+  if(intro.autoshipHost && !intro.autoshipHost.classList.contains('is-hidden')) targets.push(intro.autoshipHost);
   if(intro.paymentHost && !intro.paymentHost.classList.contains('is-hidden')) targets.push(intro.paymentHost);
   if(intro.denyHost && !intro.denyHost.classList.contains('is-hidden')) targets.push(intro.denyHost);
   if(intro.epStack && !intro.epStack.classList.contains('is-hidden')) targets.push(intro.epStack);
@@ -199,7 +201,7 @@ function scene05WaitAnimEnd(el, animName, fallbackMs){
   });
 }
 
-async function scene05PaymentTap(paymentBox, paymentFloat){
+async function scene05PaymentTap(paymentBox, paymentHost){
   var tap = Scene05Config.motion.cardTap || {};
   var coinMotion = Scene05Config.motion.paymentCoin || {};
   var dur = tap.duration != null ? tap.duration : 680;
@@ -211,7 +213,7 @@ async function scene05PaymentTap(paymentBox, paymentFloat){
 
   if(!paymentBox) return;
 
-  if(paymentFloat) paymentFloat.classList.remove('g01-idle-float');
+  if(paymentHost) Guide01.stopIdleFloat(paymentHost);
 
   host = paymentBox.querySelector('.s04-tap-payment-host');
   paymentBox.classList.add('s04-payment-tap-active');
@@ -240,20 +242,49 @@ async function scene05PaymentTap(paymentBox, paymentFloat){
   ]);
 
   paymentBox.classList.remove('s04-payment-tap-active');
-  if(paymentFloat) paymentFloat.classList.add('g01-idle-float');
+  if(paymentHost) Guide01.startIdleFloat(paymentHost);
 }
 
 async function scene05EnterIntro(assets){
   var intro = assets.intro;
-  var FADE = scene05Motion('FADE');
-  var i;
+
+  if(intro){
+    if(intro.autoshipHost) hideElement(intro.autoshipHost);
+    if(intro.paymentHost) hideElement(intro.paymentHost);
+  }
 
   await scene05PrepPhase(assets, 'intro');
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
+}
 
-  if(intro.paymentHost){
-    await scene05FadeEl(intro.paymentHost, FADE);
-    if(intro.paymentFloat) intro.paymentFloat.classList.add('g01-idle-float');
-  }
+async function scene05EnterTitleFloatAsset(host){
+  var FADE = scene05Motion('FADE');
+  var dur = FADE.duration || 420;
+
+  if(!host) return;
+
+  showElement(host);
+  host.classList.add('s05-fade-in');
+  Guide01.startIdleFloat(host);
+  await wait(dur);
+  host.classList.remove('s05-fade-in');
+}
+
+async function scene05EnterTitleAutoship(assets){
+  var intro = assets.intro;
+  if(!intro || !intro.autoshipHost) return;
+
+  await Guide01.enterZonedBadge(intro.autoshipHost, scene05BadgeEnter());
+  Guide01.startIdleFloat(intro.autoshipHost);
+
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
+}
+
+async function scene05EnterTitlePayment(assets){
+  var intro = assets.intro;
+  if(!intro) return;
+
+  await scene05EnterTitleFloatAsset(intro.paymentHost);
 
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
@@ -264,34 +295,50 @@ function scene05StartEpStackFloat(intro){
 }
 
 async function scene05StartEpStackFloatAfterPayment(intro){
-  var delay = (Scene05Config.motion.epStack && Scene05Config.motion.epStack.floatAfterPayment) || 1000;
+  var motion = Scene05Config.motion.epStack || {};
+  var delay = motion.floatAfterPayment != null ? motion.floatAfterPayment : 1000;
+  var enterDur = motion.enterDuration != null ? motion.enterDuration : 520;
+  var enterStagger = motion.enterStagger != null ? motion.enterStagger : 90;
+  var enterTotal = enterDur + enterStagger * Math.max(0, (intro.epCoins.length - 1));
   var i;
 
   if(!intro || !intro.epStack) return;
   await wait(delay);
 
   showElement(intro.epStack);
+  intro.epStack.classList.add('s05-ep-stack-entering');
   for(i = 0; i < intro.epCoins.length; i++){
     showElement(intro.epCoins[i]);
   }
+  scene05StartEpStackFloat(intro);
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 
-  scene05StartEpStackFloat(intro);
+  await wait(enterTotal);
+  intro.epStack.classList.remove('s05-ep-stack-entering');
+}
+
+async function scene05RiseEpStack(assets){
+  var intro = assets.intro;
+  var motion = Scene05Config.motion.epStack || {};
+  var riseDur = motion.riseDuration != null ? motion.riseDuration : 680;
+  var inner = intro && intro.epStackInner;
+
+  if(!intro || !intro.epStack || !inner) return;
+
+  inner.classList.add('s05-ep-stack-rise');
+  await scene05WaitAnimEnd(inner, 's05-ep-stack-rise', riseDur + 80);
+  inner.classList.remove('s05-ep-stack-rise');
+  inner.classList.add('is-raised');
+  intro.epStack.classList.add('is-denied');
+
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
 
 async function scene05DenyEpStack(assets){
   var intro = assets.intro;
-  var motion = Scene05Config.motion.epStack || {};
-  var riseDur = motion.riseDuration != null ? motion.riseDuration : 680;
   var denyBadge;
 
-  if(!intro || !intro.epStack) return;
-
-  intro.epStack.classList.remove('s05-ep-stack-idle');
-  intro.epStack.classList.add('s05-ep-stack-rise');
-  await wait(riseDur);
-  intro.epStack.classList.remove('s05-ep-stack-rise');
-  intro.epStack.classList.add('is-denied');
+  if(!intro) return;
 
   denyBadge = Scene05Layout.createInfoBadge('한 번에 발생하지 않음', 'is_red');
   if(denyBadge && intro.denyHost){
@@ -340,10 +387,10 @@ async function scene05DistributeEpCoins(assets){
     slot.epHost.appendChild(epCoin);
     showElement(slot.epHost);
     epCoin.classList.add('s05-ep-fly-in');
-    await wait(flyDur);
+    await scene05WaitAnimEnd(epCoin, 's05-ep-fly-in', flyDur + 80);
     epCoin.classList.remove('s05-ep-fly-in');
     floatInner = epCoin.querySelector('.g01-float-inner');
-    if(floatInner) floatInner.classList.add('g01-idle-float');
+    if(floatInner) floatInner.classList.add('s05-ep-slot-idle');
 
     showElement(slot.foot);
     slot.foot.classList.add('s05-foot-pop');
@@ -380,15 +427,56 @@ async function scene05ShowMonthBadge(assets){
   }
 }
 
+function scene05MountBenefitFloatWrap(badge, scale){
+  var wrap = document.createElement('div');
+  var floatInner = document.createElement('div');
+  var s = scale != null ? scale : 1;
+
+  wrap.className = 's05-benefit-float-host g01-float-host is-hidden';
+  floatInner.className = 'g01-float-inner';
+  floatInner.style.setProperty('--g01-base-scale', String(s));
+  floatInner.style.transform = 'scale(' + s + ')';
+
+  if(badge){
+    badge.classList.add('guide01-asset');
+    if(
+      typeof Guide01.badgeToOpen === 'function' &&
+      !badge.classList.contains('recommend_bonus_icon_ex') &&
+      !badge.classList.contains('s05-cal-recommend-badge')
+    ){
+      Guide01.badgeToOpen(badge);
+    }
+    floatInner.appendChild(badge);
+  }
+
+  wrap.appendChild(floatInner);
+  return { wrap: wrap, floatInner: floatInner, badge: badge };
+}
+
+async function scene05EnterBenefitFloat(host){
+  var motion = Scene05Config.motion.benefitReveal || {};
+  var dur = motion.fadeDuration != null ? motion.fadeDuration : 480;
+
+  if(!host) return;
+
+  showElement(host);
+  host.classList.add('s05-fade-in');
+  Guide01.startIdleFloat(host);
+  await wait(dur);
+  host.classList.remove('s05-fade-in');
+}
+
 async function scene05RevealCashbacks(assets){
   var slots = assets.calendar && assets.calendar.slots;
-  var motion = Scene05Config.motion.cashback || {};
-  var stagger = motion.stagger != null ? motion.stagger : 380;
+  var motion = Scene05Config.motion.benefitReveal || {};
+  var stagger = motion.stagger != null ? motion.stagger : 420;
+  var cashbackScale = (Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.936;
+  var pointScale = (Scene05Config.layout.scales && Scene05Config.layout.scales.pointBadge) || 0.85;
   var i;
   var slot;
   var badge;
-  var wrap;
-  var floatInner;
+  var pointBadge;
+  var pack;
 
   if(!slots) return;
 
@@ -398,25 +486,27 @@ async function scene05RevealCashbacks(assets){
 
     showElement(slot.connector);
     slot.connector.classList.add('is-visible');
+    await wait((Scene05Config.motion.cashback && Scene05Config.motion.cashback.connectorDuration) || 480);
 
-    badge = Scene05Layout.cloneFromTemplate('cashback_icon_c');
-    if(!badge) continue;
+    badge = Scene05Layout.cloneFromTemplate('cashback_icon');
+    if(badge){
+      pack = scene05MountBenefitFloatWrap(badge, cashbackScale);
+      slot.cashbackHost.textContent = '';
+      slot.cashbackHost.appendChild(pack.wrap);
+      showElement(slot.cashbackHost);
+      await scene05EnterBenefitFloat(pack.wrap);
+    }
+    await wait(stagger);
 
-    wrap = document.createElement('div');
-    wrap.className = 's05-cashback-wrap';
-    floatInner = document.createElement('div');
-    floatInner.className = 'g01-float-inner';
-    floatInner.style.setProperty('--g01-base-scale', String((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.936));
-    floatInner.style.transform = 'scale(' + ((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.936) + ')';
-    badge.classList.add('guide01-asset');
-    floatInner.appendChild(badge);
-    wrap.appendChild(floatInner);
-
-    slot.cashbackHost.textContent = '';
-    slot.cashbackHost.appendChild(wrap);
-    showElement(slot.cashbackHost);
-    await scene05PopEl(wrap, { duration: stagger });
-    wrap.querySelector('.g01-float-inner').classList.add('g01-idle-float');
+    pointBadge = Scene05Layout.createCalendarRecommendBadge();
+    if(pointBadge){
+      pack = scene05MountBenefitFloatWrap(pointBadge, pointScale);
+      if(pack.wrap) pack.wrap.classList.add('s05-cal-recommend-float');
+      slot.recommendHost.textContent = '';
+      slot.recommendHost.appendChild(pack.wrap);
+      showElement(slot.recommendHost);
+      await scene05EnterBenefitFloat(pack.wrap);
+    }
     await wait(stagger);
   }
 
@@ -587,15 +677,25 @@ async function runScene05MotionCore(tl, assets, canvas, ctx){
   var T = Scene05Config.T;
   var at = function(mainMs){ return scene05AtMain(mainMs, ctx); };
 
-  await tl.wait(T.title.intro || 0);
-  if(scene05Cancelled(ctx)) return;
   await scene05EnterIntro(assets);
+
+  await tl.wait(T.title.autoship != null ? T.title.autoship : 0);
+  if(scene05Cancelled(ctx)) return;
+  await scene05EnterTitleAutoship(assets);
+
+  await wait(T.title.paymentAfterAutoship != null ? T.title.paymentAfterAutoship : 0);
+  if(scene05Cancelled(ctx)) return;
+  await scene05EnterTitlePayment(assets);
 
   await tl.wait(at(T.main.paymentTap));
   if(scene05Cancelled(ctx)) return;
-  await scene05PaymentTap(assets.intro && assets.intro.payment, assets.intro && assets.intro.paymentFloat);
+  await scene05PaymentTap(assets.intro && assets.intro.payment, assets.intro && assets.intro.paymentHost);
   if(scene05Cancelled(ctx)) return;
   await scene05StartEpStackFloatAfterPayment(assets.intro);
+
+  await tl.wait(at(T.main.epStackRise));
+  if(scene05Cancelled(ctx)) return;
+  await scene05RiseEpStack(assets);
 
   await tl.wait(at(T.main.denyEp));
   if(scene05Cancelled(ctx)) return;
