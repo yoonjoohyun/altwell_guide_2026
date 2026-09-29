@@ -14,4 +14,8 @@
   <div data-template="startpack_nouvel_kind"><!--#include file="startpack_nouvel_kind.asp"--></div>
   <div data-template="startpack_signature_kind"><!--#include file="startpack_signature_kind.asp"--></div>
   <div data-template="startpack_once_badge"><!--#include file="startpack_once_badge.asp"--></div>
+  <div data-template="startpack_price_summary"><!--#include file="startpack_price_summary.asp"--></div>
+  <div data-template="startpack_bundle_benefit"><!--#include file="startpack_bundle_benefit.asp"--></div>
+  <div data-template="startpack_ep_emphasis"><!--#include file="startpack_ep_emphasis.asp"--></div>
+  <div data-template="startpack_ep_coins"><!--#include file="startpack_ep_coins.asp"--></div>
 </div>
