@@ -2,7 +2,7 @@
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
 > **미리보기:** `asset_design.asp` · **guide01:** `series/season01/guide01_smartguide.asp`  
-> **Last updated:** 2026-09-28 (§7-9-1 텍스트박스 bullet flash 공통 법칙 · Scene 05 반영)
+> **Last updated:** 2026-09-29 (§5-A 중앙정렬·간격·패널 flash 통합 · Scene 05 반영)
 
 ---
 
@@ -12,10 +12,10 @@
 2. [프로젝트 규칙](#2-프로젝트-규칙)
 3. [에셋 디자인 시스템](#3-에셋-디자인-시스템)
 4. [7×7 모션 그리드](#4-77-모션-그리드)
-5. [존 애니메이션 규칙](#5-존-애니메이션-규칙)
+5. [존 애니메이션 규칙](#5-존-애니메이션-규칙) — [5-A 핵심 패턴](#5-a-핵심-구현-패턴-중앙정렬--간격--패널-flash)
 6. [시나리오 작성 (부록 A)](#6-시나리오-작성-부록-a)
 7. [guide01 씬 추가 가이드](#7-guide01-씬-추가-가이드)
-8. [씬1~4 제작 프로세스 요약](#8-씬14-제작-프로세스-요약)
+8. [씬1~5 제작 프로세스 요약](#8-씬15-제작-프로세스-요약)
 
 ---
 
@@ -89,8 +89,7 @@ guide_page/
 ├── voice_stream.asp              # mp4 스트리밍
 ├── SMART_GUIDE_DOCS.md           # 본 문서
 ├── series/season01/
-│   ├── guide01_smartguide.asp
-│   └── 0909test.asp
+│   └── guide01_smartguide.asp
 ├── _css/
 │   ├── main.css, icon_style.css, guide01.css, video_controller.css
 │   └── index.css, guide.css, sim.css
@@ -104,10 +103,7 @@ guide_page/
     └── series/guide01/
         ├── guide01.asp, guide01_common.js.asp
         └── scenes/
-            ├── scene01.constants.js.asp · setup · js
-            ├── scene02.constants.js.asp · setup · js
-            ├── scene03.constants.js.asp · setup · js
-            └── scene04.constants.js.asp · setup · js
+            └── scene01~05.constants.js.asp · setup · js (씬별 3파일)
 ```
 
 ### 1-6. guide01 Include 체인
@@ -118,7 +114,7 @@ guide01_smartguide.asp
 ├── virtual /includes/components/guide01_templates.asp
 ├── virtual /includes/video_runtime.asp
 ├── virtual /includes/series/guide01/guide01_common.js.asp
-├── scene01~04.constants · setup · js (씬별)
+├── scene01~05.constants · setup · js (씬별)
 ├── virtual /includes/sceneTransition.js.asp
 ├── virtual /includes/series/guide01/guide01.asp
 └── SeriesGuide01.init()
@@ -277,11 +273,14 @@ SceneRunner.registerScene(MyScene);
 | `business_flow_card` | 제품→추천→비즈니스 |
 | `subscription_system_frame` | 정기 구독 시스템 프레임 |
 | `cursor_click_icon` | 클릭 커서 |
-| `payment_batch_box` | 3개월분 일괄 결제 박스 (씬4) |
+| `payment_batch_box` | 3개월분 일괄 결제 박스 (씬4·5) |
 | `delivery_batch_box` | 3개월분 일괄 배송 박스 (씬4) |
 | `installment_mini_badge` | 카드사 할부 가능 뱃지 (씬4) |
-| `product_swap_box` | 상품 A~E 슬롯 (씬3) |
-| `unavailable_stamp` | 변경 불가 스탬프 (씬3) |
+| `product_swap_box` | 상품 A~E 슬롯 (씬3·5) |
+| `unavailable_stamp` | 변경 불가 스탬프 (씬3·5) |
+| `reward_plan_basis_box` | 보상 플랜 기준 + 혜택 뱃지 row (씬2 collapse) |
+| `quarter_renew_summary` | 3개월 단위 자동 갱신 요약 (시안) |
+| `subscription_renew_payment_box` | 3개월분 자동 결제 (시안) |
 
 ### 3-8. guide01 clone (`guide01_templates.asp`)
 
@@ -419,14 +418,145 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 - 펼침: track 확장 → 텍스트 fade-in (15% overlap)
 - 등장: `Guide01.enterZonedBadge` — `_c` → zone 등장 → unfold
 
-### 5-5. guide01 Scene 01 ~ 04 (현행)
+### 5-A. 핵심 구현 패턴 (중앙정렬 · 간격 · 패널 flash)
+
+> guide01 씬1~5 공통. 상세 씬별 변형은 [§8](#8-씬15-제작-프로세스-요약) 참고.
+
+#### 5-A-1. 모션 중앙 정렬
+
+**DOM 계층 (스택 씬 기본 — Scene 02~05)**
+
+```
+#g01-zone-wrap.sceneNN-stack-group     ← 앵커 존 1곳 (보통 d4)
+  └── .sceneNN-group-inner             ← width/height:0, transform-origin:center
+        └── .sceneNN-group-child × N   ← left:50%; top:50%; --offset-x/y
+              └── .g01-float-inner     ← scale(--g01-base-scale), idle float
+```
+
+| 패턴 | 적용 씬 | 방식 |
+|------|---------|------|
+| **B — 세로 스택 중앙 정렬** | 02~05 (기본) | visible 자식 높이 합산 → 세로 중심을 inner (0,0)에 맞춤 |
+| **B-1 — 복합 상대 배치** | 01 전용 | 멤버 앵커 기준 수동 `--offset-x/y` + `fitGroupScale` + `alignMemberHeadToZoneTop` |
+| **A — 존 직접** | 단독 1~2개 | `addZonedAsset` / `addZonedBadge` — `@zone` 1개당 1 wrap |
+
+**중앙 정렬 알고리즘 (`layoutVerticalChain` — Scene 02~05 공통)**
+
+```javascript
+// 1) visible 항목만 measureStackItem → chain[]
+// 2) totalH = Σ(height) + Σ(gapAfterKey)
+// 3) cursor = -totalH / 2
+// 4) 각 wrap: setOffset(wrap, 0, cursor + h/2); cursor += h + gap
+```
+
+- 앵커 존 `placeAtZone(group, 'd4')` + inner 0×0 → **그룹 기준점 = 캔버스 작업 영역 정중앙**
+- child는 `translate(calc(-50% + var(--offset-x)), calc(-50% + var(--offset-y)))` — **자체 중심**이 offset 위치에 옴
+- 캔버스 넘침 시 `fitGroupScale` → `--group-scale` (Scene 01·04·05). Scene 04는 `syncStackContentWidth`로 pay-del row 폭 → 캘린더 폭 동기화
+
+**에셋 등장 시 레이아웃 순서 (`sceneNNPrepStackSlot`)**
+
+```javascript
+wrap.style.opacity = '0';
+showElement(wrap);                              // is-hidden 해제 → 측정 대상 포함
+SceneNNLayout.scheduleLayout(!hasVisibleSibling); // 첫 자식: immediate, 이후: rAF
+if(hasVisibleSibling) await wait(layoutTransition); // 480ms — offset 이동 대기
+wrap.style.removeProperty('opacity');
+// → enter 애니 → startIdleFloat → scheduleLayout(false)
+```
+
+#### 5-A-2. 에셋 간격 유지
+
+**원칙:** 간격은 **constants `layout.gaps`** 에만 정의. JS·CSS에 px 하드코딩하지 않는다.
+
+| 메커니즘 | 역할 |
+|---------|------|
+| `gapAfterKey(prevKey, gaps)` | 직전·다음 항목 사이 간격. 키별 override 가능 |
+| `layout.gaps.stackGap` | 기본 세로 간격 (10~12px) |
+| `scheduleLayout(immediate?)` | rAF coalesce — 연속 호출 1회로 합침 |
+| `beginMeasurePass(group)` | 측정 중 group opacity:0 — 깜빡임 없이 실측 |
+| `motion.layoutTransition` | CSS `transform` transition과 동기 (480ms) |
+| `.sNN-layout-instant` | 첫 `applyLayout` 직후 transition 없음 — rAF에서 제거 |
+
+**씬별 gap 키 (대표)**
+
+| 씬 | 키 | 용도 |
+|----|-----|------|
+| 02 | `autoshipSummaryGap`, `autoshipSummaryOverlap`, `stackGap` | 오토십↔할인가 (overlap으로 겹침), 혜택 뱃지 간격 |
+| 02 | `tightenAutoshipSummaryGap(px)` | fold 후 할인가와 오토십 간격 미세 조정 (runtime) |
+| 03 | `memberProduct`, `memberProductAutoship` | 멤버↔상품열 (오토십 부착 시 gap 확대) |
+| 04 | `stackGap`, pay-del cluster 내부 gap | 결제·배송·캘린더 스택 |
+| 05 | `introPayEp`, `calendarRow`, `calendarTight`, `dualGroup`, `productGap` | EP·캘린더·듀얼 비교·상품열 |
+
+**간격 재계산 트리거 (필수 호출 시점)**
+
+- 에셋 `showElement` / `is-hidden` 해제 직후 (`prepStackSlot`)
+- 뱃지 fold·unfold, 할인가 행 reveal, 박스 확장, 스탬프 등 **크기 변화**
+- 하위 슬롯 prep (`scene03PrepProductSlot`, `scene04RevealDeliveryBox` 등) 후
+- `window.resize` (`bindResize`)
+- **금지:** 순차 연출 루프 **매 스텝**마다 `scheduleLayout` (크기 변화 시점만)
+
+**측정 특수 케이스**
+
+- 뱃지: `measureBadgeWrap` — fold(open/closed) 상태별 높이
+- 할인가 카드: `measureSummaryWrap` — visible row만 or 전 row 일시 표시 후 복원
+- Scene 02 혜택 collapse: `collapseBenefitsIntoBox` — 개별 뱃지를 `reward_plan_basis_box` row로 reparent (offset 레이아웃 → in-box flex)
+
+#### 5-A-3. 패널 bullet flash (텍스트박스 점멸)
+
+> guide01 씬1~5 **전부** `Guide01.panelBulletTimeline` 사용. `motion-slide-up` · `panelTitle`/`panelDesc` 순차 등장은 **guide01 미사용**.
+
+**3단계 상태 클래스**
+
+| 클래스 | 의미 | 시각 |
+|--------|------|------|
+| `.is-dim` | 비강조 bullet | 마커·텍스트 `#B8BDC5` |
+| `.is-emphasis` | 현재 강조 bullet (flash 후 유지) | 마커 `#0d9488` + ring, 텍스트 `#222` bold |
+| `.g01-flash` | flash **순간** 1회 (680ms) | dot scale pulse + text teal tint |
+
+**타이밍 (constants만)**
+
+```javascript
+panel: {
+  bullets: ['…', '…', '…'],
+  flashes: [
+    { atMain: 2000, index: 0 },   // main mp4 시작 + 2s
+    { atMain: 12000, index: 1 }
+  ]
+}
+// title+main 2단: sceneNNPanelFlashes(ctx) → at = titleMs + atMain
+```
+
+**JS 흐름**
+
+```
+panelBulletTimeline:
+  tl.wait(0) → setSceneTitle → panelInitBullets (전부 is-dim)
+  loop: tl.wait(f.at) → panelFlashBullet(index)
+    → index만 is-emphasis, 나머지 is-dim, g01-flash 1회 부여
+```
+
+**CSS:** `#lo-panel.scene01-panel` ~ `.scene05-panel` 공통 블록 (`guide01.css`). 씬별 keyframe **추가 금지**.
+
+**Scene 02 예외:** 3번째 bullet은 `.bullet-body`(text+sub)에 flash 1회 — subline 중복 애니 방지.
+
+**금지 · Anti-patterns**
+
+| ❌ | ✅ |
+|----|-----|
+| 씬별 bullet flash keyframe | `g01-panel-bullet-dot-flash` · `g01-panel-bullet-text-flash` 공통 |
+| CSS `@keyframes`에 flash delay | `panel.flashes` + `panelBulletTimeline` |
+| `motion-slide-up` bullet 등장 | `panelFlashBullet` + `g01-flash` |
+| title `(~N초~)`를 `atMain`에 그대로 | `sceneNNPanelFlashes(ctx)` — titleMs offset |
+| 씬 전용 패널 CSS 블록 신규 작성 | `#lo-panel.sceneNN-panel` 공통 selector에 `.scene06-panel`만 추가 |
+
+### 5-5. guide01 Scene 01 ~ 05 (현행)
 
 | 씬 | 레이아웃 패턴 | 핵심 에셋·연출 |
 |----|-------------|--------------|
-| **01** | B-1 그룹 상대 배치 | 멤버 2인 + 오토십·베이스·캐시백·추천 존 배치, `Scene01Layout` grid scale |
-| **02** | B 중앙 정렬 스택 | 오토십 fold → 할인가 4행 → BASE·캐시백·추천, `Scene02Layout` |
-| **03** | B + 하위 슬롯 | 멤버 승격 + 상품 A~E 1열 + 변경불가 스탬프, `Scene03Layout` |
+| **01** | B-1 그룹 상대 배치 | 멤버 2인 + 오토십·베이스·캐시백·추천, `Scene01Layout` |
+| **02** | B 세로 스택 | 오토십 fold → 할인가 4행 → 혜택 뱃지(→ `reward_plan_basis_box` collapse), `Scene02Layout` |
+| **03** | B + 하위 슬롯 | 멤버 + 상품 A~E 1열 + 변경불가 스탬프, `Scene03Layout` |
 | **04** | B + 가로 클러스터 | 결제·배송 박스 + 캘린더 4개월 + 할부·자동결제, `Scene04Layout` |
+| **05** | B 다단계 phase | 결제탭→EP분할→캘린더→멤버·상품→듀얼비교→요약, `Scene05Layout` |
 
 **공통 3파일**
 
@@ -460,7 +590,7 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 | main+18s | 3→4 자동 연장 |
 | main+23s | 전체 idle float 홀드 |
 
-> 씬1~4에서 쌓인 **에셋 조합·플로팅·중앙정렬·레이아웃 안정화** 절차는 [§8 씬1~4 제작 프로세스 요약](#8-씬14-제작-프로세스-요약) 참고.
+> 중앙정렬·간격·패널 flash 상세: [§5-A](#5-a-핵심-구현-패턴-중앙정렬--간격--패널-flash). 씬별 변형: [§8](#8-씬15-제작-프로세스-요약).
 
 ### 5-6. Anti-patterns
 
@@ -470,8 +600,9 @@ Guide01.addZonedBadge(canvas, templateId, elId, zone, { scale: 0.88 });
 | keyframe `scale(1)` 고정 | `scale(var(--g01-base-scale))` |
 | `--zone-row/col` rAF 보간 | `moveZoned` |
 | idle `motion-idle-float` on inner | `g01-idle-float` |
-| pop 직후 `setTimeout`으로 idle 시작 | `animationend` 후 soft idle 연결 ([§8-3](#8-3-부드러운-플로팅-애니메이션)) |
-| 코인·배지 `display:none` 토글 | `visibility`/`opacity`로 공간 예약 ([§8-4](#8-4-레이아웃-안정화)) |
+| `motion-slide-up`으로 bullet 등장 | `panelBulletTimeline` + `g01-flash` ([§5-A-3](#5-a-3-패널-bullet-flash-텍스트박스-점멸)) |
+| pop 직후 `setTimeout`으로 idle 시작 | `animationend` 후 soft idle 연결 ([§8-4](#8-4-부드러운-플로팅-애니메이션)) |
+| 코인·배지 `display:none` 토글 | `visibility`/`opacity`로 공간 예약 ([§8-5](#8-5-레이아웃-안정화)) |
 | 캘린더 스텝마다 `scheduleLayout` | 연출 루프 밖·크기 변화 1회만 호출 |
 | 존재하지 않는 keyframe 이름 | `@keyframes` 정의 후 class에 연결 (`s04-installment-pop` 등) |
 
@@ -696,7 +827,7 @@ panel: title visible, bullet 2 emphasized
 2. 작성 순서: **script → motion → panel → assets-new → end**
 3. mp4 확정 후 `@main+*` · `@END-*` · flash를 constants `T.main` · `panel.flashes`에 반영 ([§7-6](#7-6-constants-설계))
 4. 기획문과 제작용 시나리오 **둘 다 보관** — 기획문은 의도, 제작용은 구현 계약
-5. 패널 UX: bullet flash(씬1) vs title+desc+순차 reveal — [§7-9](#7-9-패널-패턴-선택) 에서 씬별 1개 선택
+5. 패널 UX: guide01은 **bullet flash** (`panelBulletTimeline`) — [§5-A-3](#5-a-3-패널-bullet-flash-텍스트박스-점멸)
 
 ### A-8. 간단 양식 (단일 mp4 · 존 1~2개)
 
@@ -755,7 +886,7 @@ panel: title hidden
 **기획**
 
 - [ ] §6 형식 시나리오 초안 (script → motion → panel → end)
-- [ ] 사용 에셋·존·패널 UX 패턴 결정 ([§7-8](#7-8-패널-패턴-선택))
+- [ ] 사용 에셋·존·패널 flash 시점 ([§5-A-3](#5-a-3-패널-bullet-flash-텍스트박스-점멸))
 
 **파일**
 
@@ -768,7 +899,7 @@ panel: title hidden
 
 - [ ] `guide01_smartguide.asp` — sceneNN 3파일 `#include`
 - [ ] `guide01.asp` — `SceneRunner.registerScene(Guide01SceneNN)` (재생 순서대로)
-- [ ] title 구간이 있으면 `guide01.asp` init에 title 길이 프로브 추가 ([§7-5](#7-5-음성-mp4))
+- [ ] title 구간: `media.sequence`에 `{ part: 'title', … }` 추가 (`probeAllTitleMs` 자동, [§7-5](#7-5-음성-mp4))
 
 **음성**
 
@@ -916,27 +1047,12 @@ function scene02AtMain(mainMs, ctx){
 }
 ```
 
-**guide01.asp — title 프로브 (title 구간 씬마다)**
+**guide01.asp — title 프로브 (자동)**
 
-씬1 init은 index `0` 전용이다. 씬2+에 title 구간이 있으면 **해당 index**에 대해 동일 프로브를 추가한다.
+`guide01.asp` init의 `probeAllTitleMs`가 등록된 **모든 씬**을 순회하며 `media.sequence[0].part === 'title'` 이면 mp4 길이를 프로브한다. 씬별 수동 추가 **불필요**.
 
-```javascript
-function probeTitleMs(sceneIndex, config, sceneObj, done){
-  if(!SceneMedia.probeDurationPath) return done();
-  SceneMedia.probeDurationPath(
-    SceneMedia.getMediaPath(sceneIndex, 'title'),
-    config.media.fallbackMs[0]
-  ).then(function(ms){
-    if(ms > 0){
-      config.media.titleMs = ms;
-      if(sceneObj) sceneObj.mediaTitleMs = ms;
-    }
-    done();
-  });
-}
-```
-
-title 파일이 없으면 `SceneMedia.filterSequence`가 title 파트를 제외하고 main만 재생한다.
+- title 파일 없음 → `SceneMedia.filterSequence`가 title 제외, main만 재생
+- flash·모션 절대 시각 = `sceneNNTitleMs(ctx) + T.main.*` / `sceneNNPanelFlashes(ctx)`
 
 ### 7-6. constants 설계
 
@@ -997,87 +1113,25 @@ function setupScene02Assets(canvas){
 }
 ```
 
-#### 패턴 B — 그룹 중앙 정렬 스택 (Scene 02/03+ **기본**)
+#### 패턴 B — 그룹 중앙 정렬 스택 (Scene 02~05 **기본**)
 
-**한 앵커 존(d4 등)에 세로로 쌓이는 에셋**이 2개 이상일 때는 이 패턴을 **기본**으로 사용한다.  
-에셋이 하나씩 등장할 때마다 **현재 보이는 전체 스택의 세로 중심이 inner (0,0)에 맞춰지도록** `--offset-y`를 재계산한다 (씬2와 동일).
+2개 이상 세로 스택 → [§5-A-1](#5-a-1-모션-중앙-정렬) · [§5-A-2](#5-a-2-에셋-간격-유지) 알고리즘 적용.
 
 | 참조 | 파일 |
 |------|------|
-| Scene 02 | `scene02.setup.js.asp` · `Scene02Layout` · `scene02PrepStackSlot` |
-| Scene 03 | `scene03.setup.js.asp` · `Scene03Layout` · `scene03PrepStackSlot` · `scene03PrepProductSlot` |
-| Scene 04 | `scene04.setup.js.asp` · `Scene04Layout` · `scene04PrepStackSlot` · `syncStackContentWidth` |
+| Scene 02 | `Scene02Layout` · `scene02PrepStackSlot` · `collapseBenefitsIntoBox` |
+| Scene 03 | `Scene03Layout` · `scene03PrepStackSlot` · `scene03PrepProductSlot` |
+| Scene 04 | `Scene04Layout` · `syncStackContentWidth` · `mountPayDelCluster` |
+| Scene 05 | `Scene05Layout` · phase별 mount (intro / calendar / memberProduct / dual / summary) |
 
-**setup (`SceneNNLayout` IIFE) 필수 요소**
+**setup 필수:** `createGroup` → `reparentAsChild` → `applyLayout` → `bindResize` → rAF에서 `.sNN-layout-instant` 제거.
 
-1. `createGroup(canvas, anchorZone)` — `#sNN-stack-group` + `.sceneNN-group-inner` (width/height 0)
-2. `reparentAsChild(wrap, inner)` — 존 절대좌표 제거 → `.sceneNN-group-child` + `--offset-x/y`
-3. `applyLayout` — visible 항목만 측정 → `totalH` → `cursor = -totalH / 2` → 각 wrap에 `setOffset(0, cursor + h/2)`
-4. `scheduleLayout(immediate)` — rAF coalesce; `bindResize` → `window.resize`
-5. setup 마지막: `applyLayout` 1회 + rAF에서 `.sNN-layout-instant` 제거 (첫 배치는 transition 없음)
+**js 필수:** `sceneNNPrepStackSlot` (enter **전** layout settle) — [§5-A-1](#5-a-1-모션-중앙-정렬) 코드 참고.
 
-**js — 에셋 등장 시 (필수)**
+#### 패턴 B-1 — 복합 상대 배치 (Scene 01 전용)
 
-```javascript
-async function sceneNNPrepStackSlot(wrap){
-  wrap.style.opacity = '0';
-  showElement(wrap);                              // is-hidden 해제 → 측정 대상 포함
-  SceneNNLayout.scheduleLayout(!hasVisibleSibling); // 첫 자식: immediate, 이후: rAF
-  if(hasVisibleSibling) await wait(sceneNNLayoutSettleMs()); // motion.layoutTransition
-  wrap.style.removeProperty('opacity');
-}
-
-async function sceneNNEnterAsset(wrap, opts){
-  await sceneNNPrepStackSlot(wrap);   // ★ enter 애니 **전** 레이아웃
-  await Guide01.fadeZoned(wrap, true, opts);
-  Guide01.startIdleFloat(wrap);
-  SceneNNLayout.scheduleLayout(false); // enter **후** 한 번 더
-}
-```
-
-**크기가 바뀌는 경우** (뱃지 부착·fold·행 추가·스탬프·체크 등)에도 `scheduleLayout(false)` 호출.
-
-**스택 자식 안의 하위 에셋** (예: Scene 03 제품 A~E)은 그룹 child가 아니라 **부모 wrap 크기만 키운다**.  
-→ 하위 슬롯 prep(`scene03PrepProductSlot` 등) 후 **동일하게** `SceneNNLayout.scheduleLayout` 호출.
-
-**CSS (`guide01.css`)**
-
-```css
-.guide01-canvas.sceneNN-canvas .sceneNN-group-child{
-  position:absolute; left:50%; top:50%;
-  transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px)));
-  transition:transform 480ms cubic-bezier(.22,1,.36,1); /* motion.layoutTransition 과 동기 */
-}
-.sceneNN-group-child.sNN-layout-instant { transition:none; }
-```
-
-**constants**
-
-```javascript
-layout: { anchorZone: 'd4', gaps: { stackGap: 10, /* 키별 gap */ } },
-motion: { layoutTransition: 480 }
-```
-
-#### 패턴 B-1 — 그룹 상대 배치 (씬1 전용급)
-
-멤버·추천인 **2인 배치** + canvas fit-scale 등 **비대칭·복합** 레이아웃.
-
-- 참조: `scene01.setup.js.asp` · `Scene01Layout`
-- `reparentZonedWrap` + `--offset-x/y` + `gridProportionalScale` + `mobileGaps`
-- **단순 스택 씬에는 패턴 B(중앙 정렬) 사용** — 씬1급 복잡도일 때만 B-1
-
-#### 패턴 C — 멤버·추천 (레거시)
-
-`MemberUnit` 기반. `styles.asp`의 `.scene02-canvas` 등과 연동.
-
-| API | 용도 |
-|-----|------|
-| `Guide01.mountMemberAtZone(canvas, id, zone)` | 존 멤버 + attach 슬롯 |
-| `Guide01.prepareMemberAttach` / `runMemberAttachSequence` | 뱃지 부착 연출 |
-| `Guide01.mountReferral` / `showReferralPair` | 나·추천인 2인 |
-| `MotionMemberPromoteHero` | 메인 멤버 위치 이동 |
-
-신규 씬은 **패턴 A(zoned template)** 를 우선하고, C는 기존 MemberUnit CSS가 꼭 필요할 때만.
+멤버·추천 2인 + 혜택 row + 캘린더 lateral offset. `Scene01Layout` — `fitGroupScale` + `alignMemberHeadToZoneTop`.  
+단순 스택 씬에는 **패턴 B**만 사용.
 
 #### setup 공통
 
@@ -1168,16 +1222,11 @@ async function runSceneNNMotion(tl, assets, ctx){
 | hold | `Guide01.finishSceneHold(tl, duration)` | 음성 끝까지 유지 (씬1·일반) |
 | fade out | `Guide01.endScene(ctx, canvas, tl)` | 패널·캔버스 페이드 후 종료 |
 
-### 7-9. 패널 패턴 선택
+### 7-9. 패널 — bullet flash (guide01 표준)
 
-| 패턴 | API | 적합한 씬 |
-|------|-----|-----------|
-| **Bullet flash** | `Guide01.panelBulletTimeline(tl, title, bullets, flashes)` | bullet 3~5개, 음성 구간마다 **한 줄 강조** (씬1) |
-| **Title + Desc + Bullets** | `panelTitle` → `panelDesc` → `panelBullets` | 제목·부연·리스트 순차 등장 |
-| **Desc 교체** | `panelSwapDesc` | 같은 씬에서 설명 문단 전환 |
-| **Bullet 추가** | `panelAddBullet` | 점진적으로 항목 늘리기 |
+guide01 씬1~5는 **전부** `Guide01.panelBulletTimeline` 사용. 상세: [§5-A-3](#5-a-3-패널-bullet-flash-텍스트박스-점멸).
 
-**Bullet flash flashes 배열**
+**flashes 배열**
 
 ```javascript
 function sceneNNPanelFlashes(ctx){
@@ -1196,89 +1245,7 @@ Guide01.panelBulletTimeline(
 );
 ```
 
-패널 DOM: [§2-3](#2-3-패널-dom-id) · bullet 강조 CSS: [§7-9-1](#7-9-1-텍스트박스-bullet-flash-공통-법칙-guide01).
-
-### 7-9-1. 텍스트박스 bullet flash 공통 법칙 (guide01)
-
-> **적용 범위:** guide01 씬1~5 (`#lo-panel.sceneNN-panel`)  
-> **CSS:** `_css/guide01.css` — `#lo-panel.scene01-panel` ~ `.scene05-panel` 공통 블록  
-> **JS:** `Guide01.panelBulletTimeline` · `panelFlashBullet` (`guide01_common.js.asp`)
-
-#### 원칙
-
-1. **타이밍은 constants만** — flash 시점은 `SceneNNConfig.panel.flashes`의 `atMain`(main mp4 기준 ms)만 수정한다. CSS·JS에 하드코딩하지 않는다.
-2. **씬 play 시 패널 클래스** — `play` 시작 시 `#lo-panel`에 `sceneNN-panel` 추가, `reset`에서 제거.
-3. **모션·패널 타임라인 병렬** — `Promise.all([ runSceneNNMotion, Guide01.panelBulletTimeline(...) ])`로 음성·모션과 패널 flash를 동기화한다.
-4. **title + main 2단 음성** — flash 절대 시각 = `sceneNNTitleMs(ctx) + atMain`. `sceneNNPanelFlashes(ctx)` 헬퍼 사용.
-
-#### DOM · 상태 클래스
-
-| 요소 | ID / 클래스 | 역할 |
-|------|-------------|------|
-| 패널 루트 | `#lo-panel.sceneNN-panel` | 씬별 패널 스타일 스코프 |
-| 씬 제목 | `#scene-title-main` | `panelBulletTimeline` 시작 시 `setSceneTitle` |
-| bullet 리스트 | `#scene-bullets` | `panelInitBullets`로 `<li.bullet-item>` 생성 |
-| 비활성 줄 | `.bullet-item.is-dim` | 강조되지 않은 bullet — 마커 `#B8BDC5`, 텍스트 `#B8BDC5` |
-| 강조 줄 | `.bullet-item.is-emphasis` | flash 직후 유지 — 마커 `#0d9488` + ring |
-| flash 순간 | `.bullet-item.g01-flash` | `panelFlashBullet(index)` 호출 시 해당 index에 1회 부여 |
-
-#### flash 타이밍 (constants)
-
-```javascript
-panel: {
-  title: '씬 제목',
-  bullets: ['bullet 0', 'bullet 1', 'bullet 2'],
-  flashes: [
-    { atMain: 2000, index: 0 },   // main 시작 + 2s → bullet 0 강조
-    { atMain: 12000, index: 1 },
-    { atMain: 27000, index: 2 }
-  ]
-}
-```
-
-- `atMain` — **main** mp4 시작 기준(ms). title 구간만 있는 flash는 `at: 0` ~ `titleMs` 형태로 별도 설계.
-- `index` — `bullets` 배열 0-based. 시나리오 `(~N초~)`를 `@main+N*1000`으로 옮긴 값과 1:1 대응.
-
-#### 애니메이션 (CSS 공통)
-
-| 트리거 | 대상 | 효과 | duration |
-|--------|------|------|----------|
-| `.is-dim` / `.is-emphasis` 전환 | `.bullet-dot`, `.bullet-text` | `transition` 420ms ease-in-out | — |
-| `.is-emphasis` | `.bullet-dot` | 배경 `#0d9488`, `box-shadow` ring | — |
-| `.is-emphasis` | `.bullet-text` | `#222222`, `font-weight: 700` (전역 `#lo-panel` 규칙) | — |
-| `.g01-flash` | `.bullet-dot` | `g01-panel-bullet-dot-flash` — scale 1 → 1.35 → 1 | **680ms** |
-| `.g01-flash` | `.bullet-text` | `g01-panel-bullet-text-flash` — opacity·teal tint 펄스 | **680ms** |
-| `.g01-flash` | `.bullet-sub` (씬2) | `.bullet-text`와 동일 keyframe | **680ms** |
-
-> flash 클래스는 **매 flash마다** `panelFlashBullet`이 재적용한다. 이전 bullet의 `g01-flash`는 제거되고 `is-emphasis`/`is-dim`만 유지된다.
-
-#### JS 흐름 (`panelBulletTimeline`)
-
-```
-tl.wait(0)
-  → setSceneTitle · show #scene-title-main
-  → panelInitBullets (전 bullet is-dim)
-  → loop flashes:
-       tl.wait(flashes[i].at)   /* 절대 ms */
-       panelFlashBullet(index)  /* is-emphasis + g01-flash 1회 */
-```
-
-#### 신규 씬 체크리스트
-
-- [ ] `SceneNNConfig.panel.flashes` — 시나리오 `(~N초~)` 반영, **음성 mp4 기준**으로만 조정
-- [ ] `play`에서 `panel.classList.add('sceneNN-panel')`
-- [ ] `sceneNNPanelFlashes(ctx)` + `Guide01.panelBulletTimeline` 연결
-- [ ] 씬 전용 패널 CSS **추가 금지** — 공통 `#lo-panel.sceneNN-panel` 블록에 selector만 추가 (`.scene06-panel` 등)
-- [ ] flash 타이밍 변경 시 **모션 `T.main`과 혼동하지 않기** — 패널·모션 타이밍은 별도 상수
-
-#### 금지 · Anti-patterns
-
-| ❌ | ✅ |
-|----|-----|
-| 씬마다 다른 bullet flash keyframe | `g01-panel-bullet-dot-flash` · `g01-panel-bullet-text-flash` 공통 사용 |
-| CSS `@keyframes`에 flash delay 하드코딩 | `panel.flashes` + `panelBulletTimeline` |
-| `motion-slide-up`으로 bullet 등장 (panelBulletTimeline 미사용) | bullet flash 패턴 통일 |
-| title 구간 `(~N초~)`를 `atMain`에 그대로 입력 | title 구간은 `at: titleMs + …` 또는 title 전용 타임라인 |
+패널 DOM: [§2-3](#2-3-패널-dom-id) · CSS·Anti-patterns: [§5-A-3](#5-a-3-패널-bullet-flash-텍스트박스-점멸).
 
 ### 7-10. Guide01 API 빠른 참조 (씬 제작)
 
@@ -1293,7 +1260,7 @@ tl.wait(0)
 | `fadeZoned` / `popScaleZoned` | 등장·퇴장 |
 | `moveZoned(wrap, toZone, opts)` | 존 이동 |
 | `startIdleFloat` / `stopIdleFloat` | idle float (`g01-idle-float` on inner) |
-| `sceneNNWaitAnimEnd(el, name, fallbackMs)` | pop → soft idle 연결 (씬4 패턴, [§8-4](#8-4-부드러운-플로팅-애니메이션)) |
+| `sceneNNWaitAnimEnd(el, name, fallbackMs)` | pop → soft idle 연결 (씬4·5, [§8-4](#8-4-부드러운-플로팅-애니메이션)) |
 
 **연결·부가**
 
@@ -1333,7 +1300,7 @@ Guide01.mountStage(canvas, 'sceneNN-canvas');
 1. §6 시나리오 초안
 2. script 녹음 → mp4 (title/main 분리 여부 결정)
 3. sceneNN.constants — panel, T.main, media
-4. sceneNN.setup — setupSceneNNAssets (패턴 A부터)
+4. sceneNN.setup — setupSceneNNAssets (스택 씬: 패턴 B, [§5-A](#5-a-핵심-구현-패턴-중앙정렬--간격--패널-flash))
 5. sceneNN.js — defineScene + runSceneNNMotion
 6. guide01_smartguide.asp include + guide01.asp registerScene
 7. 브라우저: 재생·모바일·시크·타이밍 미세 조정
@@ -1346,17 +1313,17 @@ Guide01.mountStage(canvas, 'sceneNN-canvas');
 |------|----------|------------------|
 | 레이아웃 | 그룹 상대 배치 (패턴 B-1) | 단일 존: 패턴 A · **앵커 스택: 패턴 B (중앙 정렬)** |
 | 음성 | title → main 순차 | 단일 mp4 또는 동일 패턴 |
-| 패널 | bullet flash 4줄 | 씬 주제에 맞게 §7-9 선택 |
+| 패널 | bullet flash | 동일 — `panelBulletTimeline` |
 | 베이스 뱃지 | `BASE 사업자 기준` 예외 | 컴포넌트 기본 `베이스 사업자` |
-| init | title 프로브 index 0 | title 씬마다 index 맞춰 추가 |
+| title 프로브 | `probeAllTitleMs` 자동 (§7-5) | 동일 |
 
-씬1~4 상세·공통 프로세스: [§5-5](#5-5-guide01-scene-01--04-현행) · [§8](#8-씬14-제작-프로세스-요약).
+씬별 상세: [§5-5](#5-5-guide01-scene-01--05-현행) · 공통 프로세스: [§8](#8-씬15-제작-프로세스-요약).
 
 ---
 
-## 8. 씬1~4 제작 프로세스 요약
+## 8. 씬1~5 제작 프로세스 요약
 
-> Scene 01~04 작업에서 정리된 **실전 패턴**. 신규 씬(Scene 05+)은 §7 절차 + 본 §8 체크리스트를 함께 따른다.
+> Scene 01~05 작업에서 정리된 **실전 패턴**. 신규 씬은 §7 절차 + [§5-A](#5-a-핵심-구현-패턴-중앙정렬--간격--패널-flash) + 본 §8 체크리스트.
 
 ### 8-1. 3파일 역할 분담
 
@@ -1397,47 +1364,16 @@ var delivery = Scene04Layout.cloneFromTemplate('delivery_batch_box');
 
 **신규 박스형 에셋 추가 순서:** `components/*.asp` → `icon_style.css` → `guide01_templates.asp` `data-template` → setup에서 clone.
 
-### 8-3. 그룹 중앙 정렬 스택 (패턴 B — 씬2~4 기본)
+### 8-3. 그룹 중앙 정렬 · 간격 (패턴 B)
 
-```
-#g01-zone-wrap.sceneNN-stack-group          ← 앵커 존(d4) 1곳
-  └── .sceneNN-group-inner                  ← width/height:0, transform-origin:center
-        └── .sceneNN-group-child × N        ← position:absolute; left:50%; top:50%
-              └── .g01-float-inner          ← scale(--g01-base-scale), idle float 대상
-                    └── .guide01-asset
-```
+[§5-A-1](#5-a-1-모션-중앙-정렬) · [§5-A-2](#5-a-2-에셋-간격-유지)가 **단일 기준**. 씬별 추가:
 
-**레이아웃 알고리즘 (`applyLayout`)**
-
-1. visible `.sceneNN-group-child`만 측정 (height 합산)
-2. `cursor = -totalH / 2` 에서 시작 → 각 wrap 중심에 `--offset-y` 부여
-3. (씬4) `fitGroupScale` + `syncStackContentWidth` — 캔버스 넘침 시 `--group-scale`, 캘린더 폭 동기화
-4. `scheduleLayout(false)` — rAF coalesce (연속 호출 1회로 합침)
-
-**에셋 등장 필수 순서 (`sceneNNPrepStackSlot`)**
-
-```javascript
-wrap.style.opacity = '0';
-showElement(wrap);                                    // is-hidden 해제 → 측정 포함
-SceneNNLayout.scheduleLayout(!hasVisibleSibling);     // 첫 자식: immediate
-if(hasVisibleSibling) await wait(layoutTransition); // 480ms — offset 이동 대기
-wrap.style.removeProperty('opacity');
-await Guide01.fadeZoned(wrap, true, opts);            // 또는 enterZonedBadge
-Guide01.startIdleFloat(wrap);
-SceneNNLayout.scheduleLayout(false);
-```
-
-**CSS 동기화**
-
-```css
-.sceneNN-group-child {
-  transform: translate(calc(-50% + var(--offset-x)), calc(-50% + var(--offset-y)));
-  transition: transform 480ms cubic-bezier(.22,1,.36,1);  /* motion.layoutTransition */
-}
-.sceneNN-group-child.sNN-layout-instant { transition: none; }  /* 첫 applyLayout 직후 제거 */
-```
-
-**씬1 예외 (패턴 B-1):** 2인 비대칭 배치 + `gridProportionalScale` — 단순 세로 스택에는 B만 사용.
+| 씬 | 추가 로직 |
+|----|-----------|
+| 01 | `alignMemberHeadToZoneTop`, lateral calendar offset, `gridProportionalScale` |
+| 02 | `measureBadgeWrap`(fold), `measureSummaryWrap`, `collapseBenefitsIntoBox`, `tightenAutoshipSummaryGap` |
+| 04 | `syncStackContentWidth`, `mountPayDelCluster`, delivery `s04-delivery-pending` |
+| 05 | phase별 `stackOrder` 전환, EP coin·info badge DOM 생성, `setScale(--s05-slot-scale)` |
 
 ### 8-4. 부드러운 플로팅 애니메이션
 
@@ -1535,6 +1471,12 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 - 1·4개월 코인: `결제` / `자동 결제` (`s04-flow-payment-coin-auto` 캡슐형)
 - 배송 제품 `deliveryLoop.totalCycles: 2` — fade in → idle float → slide out ×2
 - 캘린더 스텝: WAAPI jump + `scene04RevealPaymentCoin` (pop → soft idle)
+
+**Scene 05**
+- phase mount: intro(결제탭·EP) → calendar(3개월) → memberProduct → dual(EP vs Point) → summary
+- `createEpCoin` — `point_token_icon` clone + EP 라벨
+- EP fly·stack rise — WAAPI/transform 연출, layout settle 후 idle
+- `quarter_renew_summary` · `subscription_renew_payment_box` — template 등록(시안), 씬5는 `payment_batch_box` 재사용
 
 ### 8-9. 신규 씬 적용 체크리스트
 

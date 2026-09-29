@@ -1858,16 +1858,36 @@
   width:100%;
 }
 
+.guide01-canvas.scene05-canvas .s05-main-member.g01-zone-wrap,
+.guide01-canvas.scene05-canvas .s05-dual-member.g01-zone-wrap{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+}
+
 .guide01-canvas.scene05-canvas .s05-main-member .g01-member-stack,
 .guide01-canvas.scene05-canvas .s05-dual-member .g01-member-stack{
   transform:scale(1.05);
+  transform-origin:center bottom;
+}
+
+.guide01-canvas.scene05-canvas .s05-main-member .g01-member-stack.g01-idle-float .member_icon,
+.guide01-canvas.scene05-canvas .s05-dual-member .g01-member-stack.g01-idle-float .member_icon{
+  animation:s05-member-body-idle 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+@keyframes s05-member-body-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
 }
 
 .guide01-canvas.scene05-canvas .s05-member-product-phase{
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:var(--s05-member-product-gap, 32px);
+  gap:var(--s05-member-product-gap, 44px);
 }
 
 .guide01-canvas.scene05-canvas .s05-main-member-host{
@@ -1877,11 +1897,10 @@
   gap:8px;
   position:relative;
   flex-shrink:0;
-}
-
-.guide01-canvas.scene05-canvas .s05-main-member .g01-member-stack{
-  transform:scale(1.05);
-  transform-origin:center bottom;
+  width:100%;
+  min-height:calc(140px * 1.05 + 20px);
+  padding-bottom:10px;
+  box-sizing:content-box;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-row{
@@ -1890,8 +1909,8 @@
   justify-content:center;
   gap:var(--s05-product-gap, 10px);
   flex-shrink:0;
-  margin-top:2px;
-  padding-top:6px;
+  margin-top:0;
+  padding-top:14px;
 }
 
 .guide01-canvas.scene05-canvas .s05-product-wrap{
@@ -1937,7 +1956,12 @@
   display:flex;
   flex-direction:column;
   align-items:center;
-  gap:10px;
+  gap:14px;
+}
+
+.guide01-canvas.scene05-canvas .s05-dual-member{
+  flex-shrink:0;
+  min-height:calc(140px * 1.05 + 12px);
 }
 
 .guide01-canvas.scene05-canvas .s05-dual-product-row{
@@ -1984,6 +2008,10 @@
   animation:s05-fade-in 420ms ease both;
 }
 
+.guide01-canvas.scene05-canvas .s05-fade-out{
+  animation:s05-fade-out 420ms ease both;
+}
+
 .guide01-canvas.scene05-canvas .s05-pop-in{
   animation:s05-pop-in 520ms cubic-bezier(.22,1,.36,1) both;
 }
@@ -2026,6 +2054,11 @@
 @keyframes s05-fade-in{
   from{opacity:0}
   to{opacity:1}
+}
+
+@keyframes s05-fade-out{
+  from{opacity:1}
+  to{opacity:0}
 }
 
 @keyframes s05-pop-in{

@@ -115,6 +115,40 @@ async function scene05FadeEl(el, opts){
   el.classList.remove('s05-fade-in');
 }
 
+async function scene05FadeOutEl(el, opts){
+  if(!el || el.classList.contains('is-hidden')) return;
+  el.classList.add('s05-fade-out');
+  await wait((opts && opts.duration) || scene05Motion('FADE').duration || 420);
+  el.classList.remove('s05-fade-out');
+  hideElement(el);
+}
+
+async function scene05ExitIntroCluster(assets){
+  var intro = assets.intro;
+  var FADE = scene05Motion('FADE');
+  var targets;
+  var i;
+
+  if(!intro) return;
+
+  if(intro.paymentFloat) intro.paymentFloat.classList.remove('g01-idle-float');
+  if(intro.denyHost) intro.denyHost.classList.remove('s05-soft-idle-float');
+  if(intro.epStack) intro.epStack.classList.remove('s05-ep-stack-idle');
+
+  targets = [];
+  if(intro.paymentHost && !intro.paymentHost.classList.contains('is-hidden')) targets.push(intro.paymentHost);
+  if(intro.denyHost && !intro.denyHost.classList.contains('is-hidden')) targets.push(intro.denyHost);
+  if(intro.epStack && !intro.epStack.classList.contains('is-hidden')) targets.push(intro.epStack);
+
+  if(!targets.length) return;
+
+  await Promise.all(targets.map(function(el){
+    return scene05FadeOutEl(el, FADE);
+  }));
+
+  hideElement(intro.phase);
+}
+
 async function scene05PopEl(el, opts){
   if(!el) return;
   showElement(el);
@@ -274,12 +308,9 @@ async function scene05DenyEpStack(assets){
 async function scene05EnterCalendarPhase(assets){
   var cal = assets.calendar;
 
+  await scene05ExitIntroCluster(assets);
   await scene05SwitchPhase(assets, ['intro'], 'calendar');
 
-  if(cal && cal.paymentHost){
-    showElement(cal.paymentHost);
-    if(cal.paymentMiniFloat) cal.paymentMiniFloat.classList.add('g01-idle-float');
-  }
   if(cal && cal.calendarBody) showElement(cal.calendarBody);
   if(cal && cal.calendarRow) showElement(cal.calendarRow);
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
@@ -288,22 +319,19 @@ async function scene05EnterCalendarPhase(assets){
 async function scene05DistributeEpCoins(assets){
   var cal = assets.calendar;
   var slots = cal && cal.slots;
-  var introCoins = assets.intro && assets.intro.epCoins;
   var motion = Scene05Config.motion.epFly || {};
   var flyDur = motion.duration != null ? motion.duration : 620;
   var stagger = motion.stagger != null ? motion.stagger : 280;
   var i;
   var slot;
-  var coin;
   var epCoin;
   var floatInner;
 
-  if(!slots || !introCoins) return;
+  if(!slots || !slots.length) return;
 
   for(i = 0; i < slots.length; i++){
     slot = slots[i];
-    coin = introCoins[i];
-    if(!slot || !coin) continue;
+    if(!slot) continue;
 
     epCoin = Scene05Layout.createEpCoin((Scene05Config.layout.scales && Scene05Config.layout.scales.epCoin) || 0.88);
     if(!epCoin) continue;
@@ -378,8 +406,8 @@ async function scene05RevealCashbacks(assets){
     wrap.className = 's05-cashback-wrap';
     floatInner = document.createElement('div');
     floatInner.className = 'g01-float-inner';
-    floatInner.style.setProperty('--g01-base-scale', String((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.78));
-    floatInner.style.transform = 'scale(' + ((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.78) + ')';
+    floatInner.style.setProperty('--g01-base-scale', String((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.936));
+    floatInner.style.transform = 'scale(' + ((Scene05Config.layout.scales && Scene05Config.layout.scales.cashback) || 0.936) + ')';
     badge.classList.add('guide01-asset');
     floatInner.appendChild(badge);
     wrap.appendChild(floatInner);
@@ -407,6 +435,7 @@ async function scene05EnterMemberProducts(assets){
     showElement(mp.member);
     await Guide01.showMemberWrap(mp.member);
     scene05StartMemberIdle(mp.member);
+    if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
   }
 
   showElement(mp.productRow);

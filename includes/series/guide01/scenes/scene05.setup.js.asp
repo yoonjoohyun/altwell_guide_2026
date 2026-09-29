@@ -258,7 +258,6 @@ var Scene05Layout = (function(){
 
   function mountCalendarPhase(canvas, inner){
     var phase = document.createElement('div');
-    var paymentPack = mountPaymentBatchBox('s05-payment-mini', (Scene05Config.layout.scales && Scene05Config.layout.scales.paymentMini) || 0.72);
     var row = document.createElement('div');
     var monthBadgeHost = document.createElement('div');
     var months = Scene05Config.layout.calendarMonths || ['1개월 차', '2개월 차', '3개월 차'];
@@ -268,8 +267,6 @@ var Scene05Layout = (function(){
 
     phase.id = 's05-calendar-phase';
     phase.className = 's05-calendar-phase scene05-group-child s05-layout-instant is-hidden';
-
-    if(paymentPack.wrap) phase.appendChild(paymentPack.wrap);
 
     var calendarBody = document.createElement('div');
     var calendarMain = document.createElement('div');
@@ -296,9 +293,6 @@ var Scene05Layout = (function(){
     inner.appendChild(phase);
     return {
       phase: phase,
-      paymentHost: paymentPack.wrap,
-      paymentMini: paymentPack.payment,
-      paymentMiniFloat: paymentPack.floatInner,
       calendarBody: calendarBody,
       calendarRow: row,
       slots: slots,

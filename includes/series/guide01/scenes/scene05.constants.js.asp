@@ -57,16 +57,15 @@ var Scene05Config = {
       calendarRow: 14,
       calendarTight: 8,
       stackGap: 12,
-      memberProduct: 32,
+      memberProduct: 44,
       dualGroup: 24,
       productGap: 10
     },
     scales: {
       payment: 1,
-      paymentMini: 0.72,
       epCoin: 0.88,
       calendar: 0.82,
-      cashback: 0.78,
+      cashback: 0.936,
       member: 1.05,
       product: 0.82,
       pointBadge: 0.85,
