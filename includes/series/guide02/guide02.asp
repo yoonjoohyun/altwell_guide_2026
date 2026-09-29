@@ -10,44 +10,60 @@ var SeriesGuide02 = {
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
     SceneRunner.registerScene(Guide02Scene01);
+    SceneRunner.registerScene(Guide02Scene02);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
       var scenes = SceneRunner.getScenes();
-      var config = typeof Guide02Scene01Config !== 'undefined' ? Guide02Scene01Config : null;
+      var configs = [];
+      if(typeof Guide02Scene01Config !== 'undefined') configs.push(Guide02Scene01Config);
+      if(typeof Guide02Scene02Config !== 'undefined') configs.push(Guide02Scene02Config);
 
-      function probeTitle(done){
-        var seq = config && config.media && config.media.sequence;
-        if(!seq || !seq.length || seq[0].part !== 'title' || !SceneMedia.probeDurationPath){
-          return done();
+      function probeTitles(done){
+        var index = 0;
+        function next(){
+          if(index >= scenes.length) return done();
+          var sceneIndex = index;
+          var config = configs[sceneIndex];
+          var seq = config && config.media && config.media.sequence;
+          index += 1;
+          if(!seq || !seq.length || seq[0].part !== 'title' || !SceneMedia.probeDurationPath) return next();
+          SceneMedia.probeDurationPath(
+            SceneMedia.getMediaPath(sceneIndex, 'title'),
+            config.media.fallbackMs[0]
+          ).then(function(ms){
+            if(ms > 0){
+              config.media.titleMs = ms;
+              if(scenes[sceneIndex]) scenes[sceneIndex].mediaTitleMs = ms;
+            }
+            next();
+          });
         }
-        SceneMedia.probeDurationPath(
-          SceneMedia.getMediaPath(0, 'title'),
-          config.media.fallbackMs[0]
-        ).then(function(ms){
-          if(ms > 0){
-            config.media.titleMs = ms;
-            if(scenes[0]) scenes[0].mediaTitleMs = ms;
-          }
-          done();
-        });
+        next();
       }
 
-      function prepare(done){
-        var scene = scenes[0];
-        if(!scene || !scene.mediaSequence || !SceneMedia.filterSequence) return done();
-        SceneMedia.filterSequence(0, scene.mediaSequence).then(function(filtered){
-          var fallback = config && config.media ? config.media.sequence : scene.mediaSequence;
-          scene.mediaSequence = filtered.length >= 2 ? filtered : fallback;
-          if(SceneMedia.prepareSequence) SceneMedia.prepareSequence(0, scene.mediaSequence);
-          done();
+      function prepareAll(done){
+        var chain = Promise.resolve();
+        scenes.forEach(function(scene, sceneIndex){
+          chain = chain.then(function(){
+            if(!scene || !scene.mediaSequence || !SceneMedia.filterSequence) return;
+            return SceneMedia.filterSequence(sceneIndex, scene.mediaSequence).then(function(filtered){
+              var config = configs[sceneIndex];
+              var fallback = config && config.media ? config.media.sequence : scene.mediaSequence;
+              scene.mediaSequence = filtered.length >= 2 ? filtered : fallback;
+              if(SceneMedia.prepareSequence) SceneMedia.prepareSequence(sceneIndex, scene.mediaSequence);
+            });
+          });
         });
+        chain.then(done);
       }
 
-      prepare(function(){
-        probeTitle(function(){
+      prepareAll(function(){
+        probeTitles(function(){
           SceneMedia.applyDurations(scenes, function(){
-            if(scenes[0] && scenes[0].duration && config) config.duration = scenes[0].duration;
+            scenes.forEach(function(scene, sceneIndex){
+              if(scene && scene.duration && configs[sceneIndex]) configs[sceneIndex].duration = scene.duration;
+            });
             SceneRunner.renderTimelineMarkers();
             SceneRunner.updatePlayerUI();
           });

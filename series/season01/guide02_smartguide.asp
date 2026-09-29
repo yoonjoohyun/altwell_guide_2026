@@ -22,6 +22,9 @@
 <!--#include virtual="/includes/series/guide02/scenes/scene01.constants.js.asp"-->
 <!--#include virtual="/includes/series/guide02/scenes/scene01.setup.js.asp"-->
 <!--#include virtual="/includes/series/guide02/scenes/scene01.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene02.constants.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene02.setup.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene02.js.asp"-->
 <!--#include virtual="/includes/series/guide02/guide02.asp"-->
 <script>SeriesGuide02.init();</script>
 </body>
