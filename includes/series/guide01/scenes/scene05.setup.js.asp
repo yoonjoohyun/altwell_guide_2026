@@ -208,17 +208,62 @@ var Scene05Layout = (function(){
 
   function createPointBadge(){
     var badge = cloneFromTemplate('recommend_bonus_icon_ex');
-    var text1;
-    var text2;
+    var textWrap;
 
     if(!badge) return null;
-    text1 = badge.querySelector('.recommend_bonus_text_1');
-    text2 = badge.querySelector('.recommend_bonus_text_2');
-    if(text1) text1.textContent = '추천포인트';
-    if(text2) text2.textContent = '매월 1Point';
+    textWrap = badge.querySelector('.recommend_bonus_ex_text');
+    if(textWrap){
+      textWrap.innerHTML = '<span class="recommend_bonus_text_1">추천포인트</span><br class="s05-rec-point-br"><span class="recommend_bonus_text_2">매월 1Point</span>';
+      textWrap.classList.add('s05-rec-point-text');
+    }
     badge.classList.add('guide01-asset', 's05-point-badge');
-    badge.setAttribute('aria-label', '매월 1Point 추천포인트');
+    badge.setAttribute('aria-label', '추천포인트 매월 1Point');
     return badge;
+  }
+
+  function createRecommendNoticeBadge(){
+    var badge = cloneFromTemplate('guide_info_badge');
+    var labelEl;
+    var textEl;
+
+    if(!badge) return null;
+    labelEl = badge.querySelector('.guide_info_badge_label');
+    textEl = badge.querySelector('.guide_info_badge_text');
+    if(labelEl) labelEl.textContent = '!';
+    if(textEl){
+      textEl.innerHTML = '오토십 구독자 1인 당<br class="s05-notice-br">매월 1Point 발생';
+    }
+    badge.classList.add('guide01-asset', 's05-recommend-notice-badge');
+    badge.setAttribute('aria-label', '오토십 구독자 1인 당 매월 1Point 발생');
+    return badge;
+  }
+
+  function mountRecommendProductWrap(id, letter){
+    var node = cloneFromTemplate('product_swap_box');
+    var wrap = document.createElement('div');
+    var floatInner = document.createElement('div');
+    var scale = (Scene05Config.layout.scales && Scene05Config.layout.scales.product) || 0.82;
+
+    if(!node) return null;
+
+    wrap.id = id;
+    wrap.className = 's05-recommend-product-wrap is-hidden';
+    wrap.setAttribute('data-letter', letter);
+
+    floatInner.className = 'g01-float-inner';
+    floatInner.style.setProperty('--g01-base-scale', String(scale));
+    floatInner.style.transform = 'scale(' + scale + ')';
+
+    scene05ConfigureProductBox(node, letter);
+    floatInner.appendChild(node);
+    wrap.appendChild(floatInner);
+    return wrap;
+  }
+
+  function mountRecommendPointHost(cls){
+    var host = document.createElement('div');
+    host.className = cls + ' is-hidden';
+    return host;
   }
 
   function mountIntroPhase(canvas, inner){
@@ -379,197 +424,93 @@ var Scene05Layout = (function(){
     };
   }
 
-  function mountMemberProductPhase(canvas, inner){
+  function prepMemberNode(member, extraCls){
+    if(!member) return;
+    member.classList.remove('lo-zone-place', 'is-hidden');
+    member.removeAttribute('data-zone');
+    member.style.removeProperty('--zone-row');
+    member.style.removeProperty('--zone-col');
+    member.style.left = '';
+    member.style.top = '';
+    member.style.transform = '';
+    if(extraCls) member.classList.add(extraCls);
+  }
+
+  function mountRecommendStoryPhase(canvas, inner){
     var phase = document.createElement('div');
-    var memberHost = document.createElement('div');
-    var member = Guide01.mountMemberAtZone(canvas, 's05-main-member', Scene05Config.layout.anchorZone);
-    var personBadgeHost = document.createElement('div');
-    var productRow = document.createElement('div');
+    var noticeHost = document.createElement('div');
+    var body = document.createElement('div');
+    var leftCol = document.createElement('div');
+    var rightCol = document.createElement('div');
+    var member1 = Guide01.mountMemberAtZone(canvas, 's05-rec-member-1', Scene05Config.layout.anchorZone);
+    var member2 = Guide01.mountMemberAtZone(canvas, 's05-rec-member-2', Scene05Config.layout.anchorZone);
+    var leftStack = document.createElement('div');
+    var rightStack = document.createElement('div');
+    var leftProductRow = document.createElement('div');
+    var leftPointHost = mountRecommendPointHost('s05-recommend-point-host s05-recommend-point-left');
+    var rightProductWrap = mountRecommendProductWrap('s05-rec-product-a-right', 'A');
+    var rightPointHost = mountRecommendPointHost('s05-recommend-point-host s05-recommend-point-right');
     var products = {};
     var letters = ['A', 'B', 'C'];
     var i;
-    var node;
     var wrap;
-    var floatInner;
-    var pointHost;
 
-    phase.id = 's05-member-product-phase';
-    phase.className = 's05-member-product-phase scene05-group-child s05-layout-instant is-hidden';
-    phase.style.setProperty(
-      '--s05-member-product-gap',
-      ((Scene05Config.layout.gaps && Scene05Config.layout.gaps.memberProduct) || 32) + 'px'
-    );
-    phase.style.setProperty(
-      '--s05-product-gap',
-      ((Scene05Config.layout.gaps && Scene05Config.layout.gaps.productGap) || 10) + 'px'
-    );
+    phase.id = 's05-recommend-phase';
+    phase.className = 's05-recommend-phase scene05-group-child s05-layout-instant is-hidden';
 
-    memberHost.className = 's05-main-member-host';
-    if(member){
-      member.classList.remove('lo-zone-place', 'is-hidden');
-      member.removeAttribute('data-zone');
-      member.style.removeProperty('--zone-row');
-      member.style.removeProperty('--zone-col');
-      member.style.left = '';
-      member.style.top = '';
-      member.style.transform = '';
-      member.classList.add('s05-main-member');
-      memberHost.appendChild(member);
-    }
+    noticeHost.id = 's05-recommend-notice-host';
+    noticeHost.className = 's05-recommend-notice-host g01-zone-wrap is-hidden';
+    Guide01.placeAtZone(noticeHost, 'c4');
+    canvas.appendChild(noticeHost);
 
-    personBadgeHost.id = 's05-person-badge-host';
-    personBadgeHost.className = 's05-person-badge-host is-hidden';
-    memberHost.appendChild(personBadgeHost);
+    body.className = 's05-recommend-body';
 
-    productRow.id = 's05-product-row';
-    productRow.className = 's05-product-row';
+    leftCol.className = 's05-recommend-col s05-recommend-col-left';
+    rightCol.className = 's05-recommend-col s05-recommend-col-right is-hidden';
+
+    prepMemberNode(member1, 's05-recommend-member');
+    prepMemberNode(member2, 's05-recommend-member');
+
+    leftStack.className = 's05-recommend-product-stack';
+    leftProductRow.id = 's05-rec-product-row-left';
+    leftProductRow.className = 's05-recommend-product-row';
     for(i = 0; i < letters.length; i++){
-      node = cloneFromTemplate('product_swap_box');
-      if(!node) continue;
-      wrap = document.createElement('div');
-      wrap.id = 's05-product-' + letters[i].toLowerCase();
-      wrap.className = 's05-product-wrap is-hidden';
-      wrap.setAttribute('data-letter', letters[i]);
-
-      floatInner = document.createElement('div');
-      floatInner.className = 'g01-float-inner';
-      floatInner.style.setProperty('--g01-base-scale', String((Scene05Config.layout.scales && Scene05Config.layout.scales.product) || 0.82));
-      floatInner.style.transform = 'scale(' + ((Scene05Config.layout.scales && Scene05Config.layout.scales.product) || 0.82) + ')';
-
-      scene05ConfigureProductBox(node, letters[i]);
-      floatInner.appendChild(node);
-      wrap.appendChild(floatInner);
-
-      pointHost = document.createElement('div');
-      pointHost.className = 's05-product-point-host is-hidden';
-      wrap.appendChild(pointHost);
-
-      productRow.appendChild(wrap);
+      wrap = mountRecommendProductWrap('s05-rec-product-' + letters[i].toLowerCase() + '-left', letters[i]);
+      if(!wrap) continue;
+      leftProductRow.appendChild(wrap);
       products[letters[i]] = wrap;
     }
 
-    phase.appendChild(memberHost);
-    phase.appendChild(productRow);
+    leftStack.appendChild(leftProductRow);
+    leftStack.appendChild(leftPointHost);
+    leftCol.appendChild(member1);
+    leftCol.appendChild(leftStack);
+
+    rightStack.className = 's05-recommend-product-stack';
+    if(rightProductWrap) rightStack.appendChild(rightProductWrap);
+    rightStack.appendChild(rightPointHost);
+    rightCol.appendChild(member2);
+    rightCol.appendChild(rightStack);
+
+    body.appendChild(leftCol);
+    body.appendChild(rightCol);
+    phase.appendChild(body);
     inner.appendChild(phase);
 
     return {
       phase: phase,
-      member: member,
-      personBadgeHost: personBadgeHost,
-      productRow: productRow,
+      noticeHost: noticeHost,
+      body: body,
+      leftCol: leftCol,
+      rightCol: rightCol,
+      member1: member1,
+      member2: member2,
+      leftProductRow: leftProductRow,
+      leftPointHost: leftPointHost,
+      rightProductWrap: rightProductWrap,
+      rightPointHost: rightPointHost,
       products: products
     };
-  }
-
-  function mountDualGroup(canvas, side){
-    var group = document.createElement('div');
-    var member = Guide01.mountMemberAtZone(canvas, 's05-dual-member-' + side, Scene05Config.layout.anchorZone);
-    var productRow = document.createElement('div');
-    var pointHost = document.createElement('div');
-    var bracketHost = document.createElement('div');
-    var count = side === 'left' ? 1 : 3;
-    var letters = side === 'left' ? ['A'] : ['A', 'B', 'C'];
-    var products = {};
-    var i;
-    var node;
-    var wrap;
-    var floatInner;
-
-    group.className = 's05-dual-group s05-dual-group-' + side;
-    group.id = 's05-dual-group-' + side;
-
-    if(member){
-      member.classList.remove('lo-zone-place', 'is-hidden');
-      member.removeAttribute('data-zone');
-      member.style.removeProperty('--zone-row');
-      member.style.removeProperty('--zone-col');
-      member.style.left = '';
-      member.style.top = '';
-      member.style.transform = '';
-      member.classList.add('s05-dual-member');
-      group.appendChild(member);
-    }
-
-    productRow.className = 's05-dual-product-row';
-    productRow.style.setProperty('--s05-dual-product-count', String(count));
-    for(i = 0; i < letters.length; i++){
-      node = cloneFromTemplate('product_swap_box');
-      if(!node) continue;
-      wrap = document.createElement('div');
-      wrap.className = 's05-dual-product-wrap';
-      wrap.setAttribute('data-letter', letters[i]);
-
-      floatInner = document.createElement('div');
-      floatInner.className = 'g01-float-inner';
-      floatInner.style.setProperty('--g01-base-scale', String((Scene05Config.layout.scales && Scene05Config.layout.scales.product) || 0.82));
-      floatInner.style.transform = 'scale(' + ((Scene05Config.layout.scales && Scene05Config.layout.scales.product) || 0.82) + ')';
-
-      scene05ConfigureProductBox(node, letters[i]);
-      floatInner.appendChild(node);
-      wrap.appendChild(floatInner);
-      productRow.appendChild(wrap);
-      products[letters[i]] = wrap;
-    }
-    if(side === 'right'){
-      bracketHost.id = 's05-bracket-host';
-      bracketHost.className = 's05-bracket-host is-hidden';
-      productRow.appendChild(bracketHost);
-    }
-
-    group.appendChild(productRow);
-
-    pointHost.id = 's05-dual-point-' + side;
-    pointHost.className = 's05-dual-point-host is-hidden';
-    group.appendChild(pointHost);
-
-    return {
-      group: group,
-      member: member,
-      productRow: productRow,
-      products: products,
-      bracketHost: bracketHost,
-      pointHost: pointHost
-    };
-  }
-
-  function mountDualPhase(canvas, inner){
-    var phase = document.createElement('div');
-    var row = document.createElement('div');
-    var left = mountDualGroup(canvas, 'left');
-    var right = mountDualGroup(canvas, 'right');
-
-    phase.id = 's05-dual-phase';
-    phase.className = 's05-dual-phase scene05-group-child s05-layout-instant is-hidden';
-
-    row.className = 's05-dual-row';
-    row.appendChild(left.group);
-    row.appendChild(right.group);
-    phase.appendChild(row);
-    inner.appendChild(phase);
-
-    return {
-      phase: phase,
-      row: row,
-      left: left,
-      right: right
-    };
-  }
-
-  function mountSummaryPhase(inner){
-    var phase = document.createElement('div');
-    var card = cloneFromTemplate('member_basis_card');
-
-    phase.id = 's05-summary-phase';
-    phase.className = 's05-summary-phase scene05-group-child s05-layout-instant is-hidden';
-
-    if(card){
-      card.id = 's05-summary-card';
-      card.classList.add('guide01-asset', 's05-summary-card');
-      phase.appendChild(card);
-    }
-
-    inner.appendChild(phase);
-    return { phase: phase, card: card };
   }
 
   function localSizeFromRect(rect, inner){
@@ -608,15 +549,13 @@ var Scene05Layout = (function(){
   }
 
   function stackOrder(){
-    return ['intro', 'calendar', 'memberProduct', 'dual', 'summary'];
+    return ['intro', 'calendar', 'recommendStory'];
   }
 
   function resolvePhaseWrap(assets, key){
     if(key === 'intro') return assets.intro && assets.intro.phase;
     if(key === 'calendar') return assets.calendar && assets.calendar.phase;
-    if(key === 'memberProduct') return assets.memberProduct && assets.memberProduct.phase;
-    if(key === 'dual') return assets.dual && assets.dual.phase;
-    if(key === 'summary') return assets.summary && assets.summary.phase;
+    if(key === 'recommendStory') return assets.recommendStory && assets.recommendStory.phase;
     return null;
   }
 
@@ -756,11 +695,10 @@ var Scene05Layout = (function(){
     createInfoBadge: createInfoBadge,
     createCalendarRecommendBadge: createCalendarRecommendBadge,
     createPointBadge: createPointBadge,
+    createRecommendNoticeBadge: createRecommendNoticeBadge,
     mountIntroPhase: mountIntroPhase,
     mountCalendarPhase: mountCalendarPhase,
-    mountMemberProductPhase: mountMemberProductPhase,
-    mountDualPhase: mountDualPhase,
-    mountSummaryPhase: mountSummaryPhase,
+    mountRecommendStoryPhase: mountRecommendStoryPhase,
     applyLayout: applyLayout,
     scheduleLayout: scheduleLayout,
     bindResize: bindResize,
@@ -783,17 +721,13 @@ function setupScene05Assets(canvas){
 
   var intro = Scene05Layout.mountIntroPhase(canvas, inner);
   var calendar = Scene05Layout.mountCalendarPhase(canvas, inner);
-  var memberProduct = Scene05Layout.mountMemberProductPhase(canvas, inner);
-  var dual = Scene05Layout.mountDualPhase(canvas, inner);
-  var summary = Scene05Layout.mountSummaryPhase(inner);
+  var recommendStory = Scene05Layout.mountRecommendStoryPhase(canvas, inner);
 
   var assets = {
     group: group,
     intro: intro,
     calendar: calendar,
-    memberProduct: memberProduct,
-    dual: dual,
-    summary: summary
+    recommendStory: recommendStory
   };
 
   Scene05Layout.applyLayout(canvas, group, assets);

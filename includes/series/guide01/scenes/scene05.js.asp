@@ -61,9 +61,7 @@ async function scene05PrepPhase(assets, phaseKey){
 
   if(phaseKey === 'intro') wrap = assets.intro && assets.intro.phase;
   else if(phaseKey === 'calendar') wrap = assets.calendar && assets.calendar.phase;
-  else if(phaseKey === 'memberProduct') wrap = assets.memberProduct && assets.memberProduct.phase;
-  else if(phaseKey === 'dual') wrap = assets.dual && assets.dual.phase;
-  else if(phaseKey === 'summary') wrap = assets.summary && assets.summary.phase;
+  else if(phaseKey === 'recommendStory') wrap = assets.recommendStory && assets.recommendStory.phase;
 
   if(!wrap) return;
 
@@ -97,9 +95,7 @@ async function scene05SwitchPhase(assets, hideKeys, showKey){
     key = hideKeys[i];
     if(key === 'intro') wrap = assets.intro && assets.intro.phase;
     else if(key === 'calendar') wrap = assets.calendar && assets.calendar.phase;
-    else if(key === 'memberProduct') wrap = assets.memberProduct && assets.memberProduct.phase;
-    else if(key === 'dual') wrap = assets.dual && assets.dual.phase;
-    else if(key === 'summary') wrap = assets.summary && assets.summary.phase;
+    else if(key === 'recommendStory') wrap = assets.recommendStory && assets.recommendStory.phase;
     if(wrap) hideElement(wrap);
   }
 
@@ -513,164 +509,156 @@ async function scene05RevealCashbacks(assets){
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
 
-async function scene05EnterMemberProducts(assets){
-  var mp = assets.memberProduct;
+async function scene05FadeOutCalendarPhase(assets){
+  var cal = assets.calendar;
+  var FADE = scene05Motion('FADE');
+
+  if(!cal || !cal.phase || cal.phase.classList.contains('is-hidden')) return;
+
+  await scene05FadeOutEl(cal.phase, FADE);
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
+}
+
+async function scene05EnterRecommendPoint(host){
+  var pointBadge;
+  var scale = (Scene05Config.layout.scales && Scene05Config.layout.scales.pointBadge) || 0.85;
+  var floatInner;
+  var motion = Scene05Config.motion.recommendStory || {};
+  var delay = motion.pointDelay != null ? motion.pointDelay : 200;
+
+  if(!host) return;
+
+  await wait(delay);
+
+  pointBadge = Scene05Layout.createPointBadge();
+  if(!pointBadge) return;
+
+  floatInner = document.createElement('div');
+  floatInner.className = 'g01-float-inner';
+  floatInner.style.setProperty('--g01-base-scale', String(scale));
+  floatInner.style.transform = 'scale(' + scale + ')';
+  floatInner.appendChild(pointBadge);
+
+  host.textContent = '';
+  host.appendChild(floatInner);
+  showElement(host);
+  floatInner.classList.add('s05-pop-in');
+  await wait(scene05Motion('POP').duration || 520);
+  floatInner.classList.remove('s05-pop-in');
+  floatInner.classList.add('g01-idle-float');
+}
+
+async function scene05RecommendScene1(assets){
+  var rec = assets.recommendStory;
+  var motion = Scene05Config.motion.recommendStory || {};
+  var stagger = motion.productStagger != null ? motion.productStagger : 280;
   var letters = ['A', 'B', 'C'];
   var i;
   var wrap;
+  var inner;
 
-  await scene05SwitchPhase(assets, ['calendar'], 'memberProduct');
+  if(!rec) return;
 
-  if(mp.member){
-    showElement(mp.member);
-    await Guide01.showMemberWrap(mp.member);
-    scene05StartMemberIdle(mp.member);
+  await scene05SwitchPhase(assets, ['calendar'], 'recommendStory');
+
+  if(rec.member1){
+    showElement(rec.member1);
+    await Guide01.showMemberWrap(rec.member1);
+    scene05StartMemberIdle(rec.member1);
     if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
   }
 
-  showElement(mp.productRow);
+  showElement(rec.leftProductRow);
   for(i = 0; i < letters.length; i++){
-    wrap = mp.products[letters[i]];
+    wrap = rec.products[letters[i]];
     if(!wrap) continue;
     showElement(wrap);
     await scene05PopEl(wrap, scene05Motion('POP'));
-    var inner = wrap.querySelector('.g01-float-inner');
+    inner = wrap.querySelector('.g01-float-inner');
     if(inner) inner.classList.add('g01-idle-float');
-  }
-
-  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
-}
-
-async function scene05ProductPointDeny(assets){
-  var mp = assets.memberProduct;
-  var motion = Scene05Config.motion.pointAttempt || {};
-  var dur = motion.duration != null ? motion.duration : 420;
-  var stagger = motion.stagger != null ? motion.stagger : 160;
-  var letters = ['A', 'B', 'C'];
-  var personBadge;
-  var i;
-  var wrap;
-  var pointHost;
-  var token;
-
-  if(!mp) return;
-
-  for(i = 0; i < letters.length; i++){
-    wrap = mp.products[letters[i]];
-    if(!wrap) continue;
-    pointHost = wrap.querySelector('.s05-product-point-host');
-    if(!pointHost) continue;
-
-    token = Scene05Layout.cloneFromTemplate('point_token_icon');
-    if(token){
-      token.classList.add('guide01-asset', 's05-product-point-token');
-      pointHost.appendChild(token);
-      showElement(pointHost);
-      pointHost.classList.add('s05-point-attempt');
-      await wait(dur);
-      pointHost.classList.remove('s05-point-attempt');
-      pointHost.classList.add('is-denied');
-      wrap.classList.add('is-grayscale');
-    }
     await wait(stagger);
   }
 
-  personBadge = Scene05Layout.createInfoBadge('1인', 'is_green');
-  if(personBadge && mp.personBadgeHost){
-    mp.personBadgeHost.textContent = '';
-    mp.personBadgeHost.appendChild(personBadge);
-    showElement(mp.personBadgeHost);
-    personBadge.classList.add('s05-person-badge-pop');
-    await wait(scene05Motion('POP').duration || 520);
-    mp.personBadgeHost.classList.add('s05-soft-idle-float');
-  }
+  await scene05EnterRecommendPoint(rec.leftPointHost);
 
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
 
-async function scene05EnterDualCompare(assets){
-  var dual = assets.dual;
-  var sides = [dual.left, dual.right];
-  var i;
-  var side;
-  var pointBadge;
+async function scene05RecommendScene2(assets){
+  var rec = assets.recommendStory;
+  var wrap;
+  var inner;
 
-  await scene05SwitchPhase(assets, ['memberProduct'], 'dual');
+  if(!rec) return;
 
-  for(i = 0; i < sides.length; i++){
-    side = sides[i];
-    if(!side) continue;
+  showElement(rec.rightCol);
+  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 
-    showElement(side.group);
-    showElement(side.member);
-    await Guide01.showMemberWrap(side.member);
-    scene05StartMemberIdle(side.member);
-
-    showElement(side.productRow);
-    var keys = Object.keys(side.products);
-    var j;
-    for(j = 0; j < keys.length; j++){
-      showElement(side.products[keys[j]]);
-    }
-
-    pointBadge = Scene05Layout.createPointBadge();
-    if(pointBadge && side.pointHost){
-      await scene05EnterBadgeEl(side.pointHost, pointBadge);
-    }
+  if(rec.member2){
+    showElement(rec.member2);
+    await Guide01.showMemberWrap(rec.member2);
+    scene05StartMemberIdle(rec.member2);
+    if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
   }
+
+  wrap = rec.rightProductWrap;
+  if(wrap){
+    showElement(wrap);
+    await scene05PopEl(wrap, scene05Motion('POP'));
+    inner = wrap.querySelector('.g01-float-inner');
+    if(inner) inner.classList.add('g01-idle-float');
+  }
+
+  await scene05EnterRecommendPoint(rec.rightPointHost);
 
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
 
-async function scene05ShowMultiProductBracket(assets){
-  var right = assets.dual && assets.dual.right;
-  var bracket;
+async function scene05RecommendNotice(assets){
+  var rec = assets.recommendStory;
+  var notice;
+  var motion = Scene05Config.motion.noticeEmphasis || {};
+  var flashDur = motion.flashDuration != null ? motion.flashDuration : 960;
 
-  if(!right || !right.bracketHost) return;
+  if(!rec || !rec.noticeHost) return;
 
-  bracket = Scene05Layout.cloneFromTemplate('group_bracket');
-  if(!bracket) return;
+  notice = Scene05Layout.createRecommendNoticeBadge();
+  if(!notice) return;
 
-  bracket.classList.add('guide01-asset');
-  right.bracketHost.textContent = '';
-  right.bracketHost.appendChild(bracket);
-  showElement(right.bracketHost);
-  bracket.classList.add('s05-bracket-pop');
+  rec.noticeHost.textContent = '';
+  rec.noticeHost.appendChild(notice);
+  showElement(rec.noticeHost);
+  notice.classList.add('s05-recommend-notice-pop');
   await wait(scene05Motion('POP').duration || 520);
-
-  if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
-}
-
-async function scene05EnterSummary(assets){
-  var summary = assets.summary;
-  var card;
-  var pointEl;
-  var motion = Scene05Config.motion.summaryEmphasis || {};
-
-  await scene05SwitchPhase(assets, ['dual'], 'summary');
-
-  if(summary.card){
-    await scene05FadeEl(summary.card, scene05Motion('FADE'));
-    summary.card.classList.add('s05-soft-idle-float');
-
-    pointEl = summary.card.querySelector('.member_basis_point');
-    if(pointEl){
-      pointEl.classList.add('s05-point-emphasis');
-      await wait(motion.duration != null ? motion.duration : 680);
-      pointEl.classList.remove('s05-point-emphasis');
-    }
-  }
+  notice.classList.remove('s05-recommend-notice-pop');
+  notice.classList.add('s05-recommend-notice-flash');
+  await wait(flashDur);
+  notice.classList.remove('s05-recommend-notice-flash');
+  notice.classList.add('s05-soft-idle-float');
 
   if(typeof Scene05Layout !== 'undefined') Scene05Layout.scheduleLayout(false);
 }
 
 async function scene05HoldWithIdleFloat(assets){
-  var cal = assets.calendar;
-  var mp = assets.memberProduct;
-  var dual = assets.dual;
-  var summary = assets.summary;
+  var rec = assets.recommendStory;
+  var noticeBadge;
+  var i;
+  var wraps;
+  var inner;
 
-  if(summary && summary.card) summary.card.classList.add('s05-soft-idle-float');
+  if(!rec) return;
+
+  noticeBadge = rec.noticeHost && rec.noticeHost.querySelector('.s05-recommend-notice-badge');
+  if(noticeBadge && rec.noticeHost && !rec.noticeHost.classList.contains('is-hidden')){
+    noticeBadge.classList.add('s05-soft-idle-float');
+  }
+
+  wraps = rec.products ? Object.keys(rec.products).map(function(k){ return rec.products[k]; }) : [];
+  if(rec.rightProductWrap) wraps.push(rec.rightProductWrap);
+  for(i = 0; i < wraps.length; i++){
+    inner = wraps[i] && wraps[i].querySelector('.g01-float-inner');
+    if(inner && !inner.classList.contains('g01-idle-float')) inner.classList.add('g01-idle-float');
+  }
 }
 
 async function runScene05MotionCore(tl, assets, canvas, ctx){
@@ -717,25 +705,21 @@ async function runScene05MotionCore(tl, assets, canvas, ctx){
   if(scene05Cancelled(ctx)) return;
   await scene05RevealCashbacks(assets);
 
-  await tl.wait(at(T.main.memberProducts));
+  await tl.wait(at(T.main.calendarFadeOut));
   if(scene05Cancelled(ctx)) return;
-  await scene05EnterMemberProducts(assets);
+  await scene05FadeOutCalendarPhase(assets);
 
-  await tl.wait(at(T.main.productDeny));
+  await tl.wait(at(T.main.recommendScene1));
   if(scene05Cancelled(ctx)) return;
-  await scene05ProductPointDeny(assets);
+  await scene05RecommendScene1(assets);
 
-  await tl.wait(at(T.main.dualCompare));
+  await tl.wait(at(T.main.recommendScene2));
   if(scene05Cancelled(ctx)) return;
-  await scene05EnterDualCompare(assets);
+  await scene05RecommendScene2(assets);
 
-  await tl.wait(at(T.main.multiProductBracket));
+  await tl.wait(at(T.main.recommendNotice));
   if(scene05Cancelled(ctx)) return;
-  await scene05ShowMultiProductBracket(assets);
-
-  await tl.wait(at(T.main.summary));
-  if(scene05Cancelled(ctx)) return;
-  await scene05EnterSummary(assets);
+  await scene05RecommendNotice(assets);
 
   await tl.wait(at(T.main.holdFloat));
   if(scene05Cancelled(ctx)) return;

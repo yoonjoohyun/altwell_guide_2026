@@ -3,7 +3,7 @@
 var Scene05Config = {
   id: 'guide01-scene-05',
   title: 'E.P와 추천포인트 발생',
-  duration: 42600,
+  duration: 38000,
   canvasCls: 'scene05-canvas',
 
   media: {
@@ -11,7 +11,7 @@ var Scene05Config = {
       { part: 'title', file: 'guide01_scene_05_title.mp4' },
       { part: 'main', file: 'guide01_scene_05.mp4' }
     ],
-    fallbackMs: [4000, 35100],
+    fallbackMs: [4000, 37100],
     titleMs: 4000
   },
 
@@ -25,14 +25,14 @@ var Scene05Config = {
     flashes: [
       { atMain: 2000, index: 0 },
       { atMain: 12000, index: 1 },
-      { atMain: 27000, index: 2 }
+      { atMain: 29000, index: 2 }
     ]
   },
 
   T: {
     title: {
       autoship: 0,
-      paymentAfterAutoship: 120
+      paymentAfterAutoship: 2120
     },
     main: {
       paymentTap: 0,
@@ -42,12 +42,11 @@ var Scene05Config = {
       epDistribute: 8100,
       monthBadge: 12100,
       cashback: 14100,
-      memberProducts: 25600,
-      productDeny: 28600,
-      dualCompare: 32600,
-      multiProductBracket: 34600,
-      summary: 36600,
-      holdFloat: 38600
+      calendarFadeOut: 21000,
+      recommendScene1: 22000,
+      recommendScene2: 27000,
+      recommendNotice: 29000,
+      holdFloat: 32000
     }
   },
 
@@ -98,8 +97,12 @@ var Scene05Config = {
     calendarTight: { duration: 520 },
     benefitReveal: { fadeDuration: 480, stagger: 420 },
     cashback: { stagger: 380, connectorDuration: 480 },
-    pointAttempt: { duration: 420, stagger: 160 },
-    summaryEmphasis: { scalePeak: 1.18, duration: 680 }
+    recommendStory: {
+      fadeDuration: 420,
+      productStagger: 280,
+      pointDelay: 200
+    },
+    noticeEmphasis: { flashDuration: 960, popDuration: 520 }
   }
 };
 

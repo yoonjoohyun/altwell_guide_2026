@@ -1832,6 +1832,7 @@
 .guide01-canvas.scene05-canvas .s05-deny-host{
   display:flex;
   justify-content:center;
+  margin-top:-20px;
 }
 
 .guide01-canvas.scene05-canvas .s05-calendar-phase{
@@ -1989,6 +1990,160 @@
   top:auto;
   z-index:auto;
   transform:none;
+}
+
+/* 씬5 — 추천포인트 스토리 (20초~) */
+.guide01-canvas.scene05-canvas .s05-recommend-phase{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  width:100%;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-notice-host{
+  z-index:24;
+  display:flex;
+  justify-content:center;
+  width:max-content;
+  max-width:min(88vw, 440px);
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-notice-badge{
+  position:relative;
+  left:auto;
+  top:auto;
+  transform:none;
+  text-align:center;
+  height:auto;
+  min-height:var(--size);
+  align-items:center;
+  padding:calc(var(--size) * 11 / 36) calc(var(--size) * 16 / 36);
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-notice-badge .guide_info_badge_text{
+  line-height:1.45;
+  white-space:normal;
+  padding:calc(var(--size) * 2 / 36) 0;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-notice-badge.s05-recommend-notice-flash{
+  animation:s05-recommend-notice-flash 960ms ease-in-out;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-notice-badge.s05-soft-idle-float{
+  animation:s05-soft-idle-float 3s ease-in-out infinite;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-body{
+  display:flex;
+  flex-direction:row;
+  align-items:flex-start;
+  justify-content:center;
+  gap:var(--s05-dual-group-gap, 24px);
+  width:100%;
+  padding-top:12px;
+  box-sizing:border-box;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:var(--s05-recommend-member-gap, 29px);
+  flex:0 1 auto;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-member.g01-zone-wrap{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  margin-top:70px;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-member .g01-member-stack{
+  transform:scale(1.05);
+  transform-origin:center bottom;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-member .g01-member-stack.g01-idle-float .member_icon{
+  animation:s05-member-body-idle 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-product-stack{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  width:100%;
+  min-height:calc(72px * .82 + 24px);
+  margin-top:-30px;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-product-row{
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  gap:var(--s05-product-gap, 10px);
+  position:relative;
+  z-index:1;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-product-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-end;
+  position:relative;
+  margin-bottom:20px;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  z-index:12;
+  display:flex;
+  justify-content:center;
+  pointer-events:none;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .g01-float-inner{
+  transform-origin:center center;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .g01-float-inner.g01-idle-float{
+  animation:g01-idle-float 3s ease-in-out infinite;
+  will-change:transform;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge{
+  position:relative;
+  left:auto;
+  top:auto;
+  z-index:auto;
+  transform:none;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .recommend_bonus_ex_text,
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-text{
+  display:block;
+  line-height:1.15;
+  text-align:center;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-text .recommend_bonus_text_1,
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-text .recommend_bonus_text_2{
+  display:inline;
+}
+
+.guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-br{
+  display:block;
+  margin:0;
+  line-height:1.1;
 }
 
 .guide01-canvas.scene05-canvas .s05-month-badge-host{
@@ -2264,7 +2419,29 @@
   50%{box-shadow:0 0 0 6px rgba(13,148,136,.28)}
 }
 
+@keyframes s05-recommend-notice-flash{
+  0%,100%{
+    transform:scale(1);
+    box-shadow:0 0 0 0 rgba(245,158,11,0);
+  }
+  35%{
+    transform:scale(1.06);
+    box-shadow:0 0 0 8px rgba(245,158,11,.22);
+  }
+  65%{
+    transform:scale(1.03);
+    box-shadow:0 0 0 4px rgba(245,158,11,.14);
+  }
+}
+
 @media (max-width:900px){
+  .guide01-canvas.scene05-canvas .s05-recommend-body{
+    flex-direction:column;
+    align-items:center;
+    gap:16px;
+    padding-top:12px;
+  }
+
   .guide01-canvas.scene05-canvas .s05-dual-phase .s05-dual-row{
     flex-direction:column;
     gap:16px;
