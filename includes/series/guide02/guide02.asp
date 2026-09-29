@@ -11,6 +11,7 @@ var SeriesGuide02 = {
     SceneRunner.setLessonMeta(this.meta);
     SceneRunner.registerScene(Guide02Scene01);
     SceneRunner.registerScene(Guide02Scene02);
+    SceneRunner.registerScene(Guide02Scene03);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
@@ -18,6 +19,7 @@ var SeriesGuide02 = {
       var configs = [];
       if(typeof Guide02Scene01Config !== 'undefined') configs.push(Guide02Scene01Config);
       if(typeof Guide02Scene02Config !== 'undefined') configs.push(Guide02Scene02Config);
+      if(typeof Guide02Scene03Config !== 'undefined') configs.push(Guide02Scene03Config);
 
       function probeTitles(done){
         var index = 0;

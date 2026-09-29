@@ -198,29 +198,38 @@
 
 #lo-panel.g02-scene01-panel .scene-title,
 #lo-panel.g02-scene02-panel .scene-title,
+#lo-panel.g02-scene03-panel .scene-title,
 #lo-panel.g02-scene01-panel .bullet-item .bullet-text,
-#lo-panel.g02-scene02-panel .bullet-item .bullet-text{
+#lo-panel.g02-scene02-panel .bullet-item .bullet-text,
+#lo-panel.g02-scene03-panel .bullet-item .bullet-text{
   transition:color 420ms ease-in-out, opacity 420ms ease-in-out;
 }
 #lo-panel.g02-scene01-panel .bullet-item .bullet-dot,
-#lo-panel.g02-scene02-panel .bullet-item .bullet-dot{
+#lo-panel.g02-scene02-panel .bullet-item .bullet-dot,
+#lo-panel.g02-scene03-panel .bullet-item .bullet-dot{
   transition:background-color 420ms ease-in-out, box-shadow 420ms ease-in-out;
 }
 #lo-panel.g02-scene01-panel .bullet-item.is-dim .bullet-dot,
-#lo-panel.g02-scene02-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.g02-scene02-panel .bullet-item.is-dim .bullet-dot,
+#lo-panel.g02-scene03-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
 #lo-panel.g02-scene01-panel .bullet-item.is-dim .bullet-text,
-#lo-panel.g02-scene02-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+#lo-panel.g02-scene02-panel .bullet-item.is-dim .bullet-text,
+#lo-panel.g02-scene03-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
 #lo-panel.g02-scene01-panel .bullet-item.is-emphasis .bullet-dot,
-#lo-panel.g02-scene02-panel .bullet-item.is-emphasis .bullet-dot{
+#lo-panel.g02-scene02-panel .bullet-item.is-emphasis .bullet-dot,
+#lo-panel.g02-scene03-panel .bullet-item.is-emphasis .bullet-dot{
   background-color:#0d9488;
   box-shadow:0 0 0 3px rgba(13,148,136,.22);
 }
 #lo-panel.g02-scene01-panel .bullet-item.is-emphasis .bullet-text,
-#lo-panel.g02-scene02-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
+#lo-panel.g02-scene02-panel .bullet-item.is-emphasis .bullet-text,
+#lo-panel.g02-scene03-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
 #lo-panel.g02-scene01-panel .bullet-item.g02-flash .bullet-dot,
-#lo-panel.g02-scene02-panel .bullet-item.g02-flash .bullet-dot{animation:g02-dot-flash 680ms ease-in-out}
+#lo-panel.g02-scene02-panel .bullet-item.g02-flash .bullet-dot,
+#lo-panel.g02-scene03-panel .bullet-item.g02-flash .bullet-dot{animation:g02-dot-flash 680ms ease-in-out}
 #lo-panel.g02-scene01-panel .bullet-item.g02-flash .bullet-text,
-#lo-panel.g02-scene02-panel .bullet-item.g02-flash .bullet-text{animation:g02-text-flash 680ms ease-in-out}
+#lo-panel.g02-scene02-panel .bullet-item.g02-flash .bullet-text,
+#lo-panel.g02-scene03-panel .bullet-item.g02-flash .bullet-text{animation:g02-text-flash 680ms ease-in-out}
 
 @keyframes g02-dot-flash{
   0%{transform:scale(1)}
@@ -373,4 +382,88 @@
 .g02_blocked_chip{
   background:#E5E7EB;
   color:#6B7280;
+}
+
+.g02-canvas .g02-s03{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+}
+.g02-canvas .g02-s03-row{
+  display:flex;
+  align-items:flex-start;
+  gap:18px;
+}
+.g02-canvas .g02-s03-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.g02_kind{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+  width:148px;
+  padding:12px 10px 14px;
+  border-radius:16px;
+  background:#fff;
+  border:1.5px solid #dbe4f0;
+  box-shadow:0 6px 16px rgba(16,52,172,.12);
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  box-sizing:border-box;
+}
+.g02_kind_signature{
+  border-color:#ddd6fe;
+  box-shadow:0 6px 16px rgba(70,45,179,.12);
+}
+.g02_kind_icon{
+  width:64px;
+  height:64px;
+  display:grid;
+  place-items:center;
+}
+.g02_kind_icon img{
+  width:64px;
+  height:64px;
+  display:block;
+}
+.g02_kind_name{
+  color:#0B2A91;
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+  text-align:center;
+}
+.g02_kind_signature .g02_kind_name{color:#462db3}
+.g02_once{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fff;
+  border:1.5px solid #2c51ca;
+  color:#1034AC;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  box-shadow:0 4px 10px rgba(16,52,172,.1);
+}
+.g02_once_signature{
+  border-color:#462db3;
+  color:#462db3;
+  box-shadow:0 4px 10px rgba(70,45,179,.1);
+}
+.g02_once_check{
+  display:grid;
+  place-items:center;
+  width:16px;
+  height:16px;
+}
+.g02_once_check svg{display:block}
+.g02_once_text{
+  font-size:13px;
+  font-weight:800;
+  white-space:nowrap;
 }

@@ -11,4 +11,7 @@
   <div data-template="startpack_month_card"><!--#include file="startpack_month_card.asp"--></div>
   <div data-template="startpack_join_chip"><!--#include file="startpack_join_chip.asp"--></div>
   <div data-template="startpack_blocked_chip"><!--#include file="startpack_blocked_chip.asp"--></div>
+  <div data-template="startpack_nouvel_kind"><!--#include file="startpack_nouvel_kind.asp"--></div>
+  <div data-template="startpack_signature_kind"><!--#include file="startpack_signature_kind.asp"--></div>
+  <div data-template="startpack_once_badge"><!--#include file="startpack_once_badge.asp"--></div>
 </div>
