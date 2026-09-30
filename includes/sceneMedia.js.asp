@@ -12,8 +12,7 @@ var SceneMedia = (function(){
 
   function getMediaPath(sceneIndex, part){
     var num = padSceneNum(sceneIndex + 1);
-    /* voice_stream.asp는 사이트 루트 고정 (series/season01/ 등 하위 경로 페이지에서도 동일) */
-    var url = '/voice_stream.asp?series=' + encodeURIComponent(seriesId) + '&scene=' + num;
+    var url = (window.GUIDE_ROOT || '') + '/voice_stream.asp?series=' + encodeURIComponent(seriesId) + '&scene=' + num;
     if(part) url += '&part=' + encodeURIComponent(part);
     return url;
   }

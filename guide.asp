@@ -39,7 +39,7 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='/series/season01/guide02_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='guide02_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g1">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
@@ -51,7 +51,7 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='/series/season01/guide01_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>

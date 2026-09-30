@@ -1,0 +1,84 @@
+<%@ Language=VBScript CodePage=65001 %>
+
+<!--#include file="includes/asp_utf8.asp"-->
+
+<html lang="ko">
+
+<head>
+
+<meta charset="utf-8"/>
+
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+
+<title>오토십 알아보기 - ALTWELL SMART GUIDE</title>
+
+<script>window.GUIDE_ROOT="<%=GuideAppRoot()%>";</script>
+
+<!--#include file="includes/fonts.asp"-->
+
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
+
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
+
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css"/>
+
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
+
+<style>
+
+<!--#include file="includes/styles.asp"-->
+
+</style>
+
+</head>
+
+<body class="page-layout">
+
+
+
+<!--#include file="includes/player/video_layout.asp"-->
+
+<!--#include file="includes/components/guide01_templates.asp"-->
+
+<!--#include file="includes/images.asp"-->
+
+<!--#include file="includes/video_runtime.asp"-->
+
+<!--#include file="includes/series/guide01/guide01_common.js.asp"-->
+
+
+
+<!-- FROZEN guide01 scenes 01-06. Do not edit motion, panel animation, assets, or timings in those files. Scene 07+ is new files plus include/register only. Guide02 lives under includes/series/guide02. -->
+<!-- 씬 추가 시: scenes/sceneNN.js.asp include 후 guide01.asp에서 registerScene -->
+<!--#include file="includes/series/guide01/scenes/scene01.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene01.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene01.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene02.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene02.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene02.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene03.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene03.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene03.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene04.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene04.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene04.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene05.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene05.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene05.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene06.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene06.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene06.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene07.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene07.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene07.js.asp"-->
+
+<!--#include file="includes/series/guide01/guide01.asp"-->
+
+<script>SeriesGuide01.init();</script>
+
+
+
+</body>
+
+</html>
+
