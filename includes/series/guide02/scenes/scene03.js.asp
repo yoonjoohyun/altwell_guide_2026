@@ -32,7 +32,7 @@ var Guide02Scene03 = defineScene({
         tl,
         Guide02Scene03Config.panel.title,
         Guide02Scene03Config.panel.bullets,
-        guide02Scene03PanelFlashes()
+        guide02Scene03PanelFlashes(ctx)
       )
     ]);
     if(ctx.isCancelled && ctx.isCancelled()) return;
@@ -61,23 +61,23 @@ async function runGuide02Scene03(tl, assets, ctx){
   if(guide02Scene03Cancelled(ctx)) return;
   await guide02Scene03Reveal(assets.badge);
 
-  await tl.wait(T.nouvel);
+  await tl.wait(guide02Scene03AtMain(T.nouvel, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
   await guide02Scene03Reveal(assets.nouvel);
 
-  await tl.wait(T.nouvelIcon);
+  await tl.wait(guide02Scene03AtMain(T.nouvelIcon, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
   await guide02Scene03Reveal(assets.nouvelIcon);
 
-  await tl.wait(T.signature);
+  await tl.wait(guide02Scene03AtMain(T.signature, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
   await guide02Scene03Reveal(assets.signature);
 
-  await tl.wait(T.signatureIcon);
+  await tl.wait(guide02Scene03AtMain(T.signatureIcon, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
   await guide02Scene03Reveal(assets.signatureIcon);
 
-  await tl.wait(T.once);
+  await tl.wait(guide02Scene03AtMain(T.once, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
   await Promise.all([
     guide02Scene03Reveal(assets.onceNouvel),

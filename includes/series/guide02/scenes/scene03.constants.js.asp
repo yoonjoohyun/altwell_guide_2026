@@ -1,6 +1,7 @@
 <script>
 /* guide02 Scene 03 — 스타트팩은 두 종류 입니다
-   시각은 타이틀 음성을 포함한 재생 시작 기준 */
+   타이틀 음성으로 적힌 시각만 타이틀 시작 기준.
+   그 외 시각은 본문 음성 시작 기준이며, 재생 시 titleMs를 더한다. */
 var Guide02Scene03Config = {
   id: 'guide02-scene-03',
   title: '스타트팩은 두 종류 입니다.',
@@ -43,9 +44,19 @@ var Guide02Scene03Config = {
   layout: { anchorZone: 'd4' }
 };
 
-function guide02Scene03PanelFlashes(){
+function guide02Scene03TitleMs(ctx){
+  if(ctx && ctx.mediaTitleMs > 0) return ctx.mediaTitleMs;
+  var media = Guide02Scene03Config.media;
+  return (media && media.titleMs) || 0;
+}
+
+function guide02Scene03AtMain(ms, ctx){
+  return guide02Scene03TitleMs(ctx) + ms;
+}
+
+function guide02Scene03PanelFlashes(ctx){
   return Guide02Scene03Config.panel.flashes.map(function(f){
-    return { at: f.at, index: f.index };
+    return { at: guide02Scene03AtMain(f.at, ctx), index: f.index };
   });
 }
 </script>

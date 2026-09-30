@@ -54,7 +54,7 @@ function setupGuide02Scene03(canvas){
   }
 
   stack.id = 'g02-s03-stack';
-  stack.className = 'g02-stack lo-zone-place';
+  stack.className = 'g02-stack g01-zone-wrap lo-zone-place';
   Guide02.placeAtZone(stack, zone);
   inner.className = 'g02-stack-inner';
   stage.className = 'g02-s03';
