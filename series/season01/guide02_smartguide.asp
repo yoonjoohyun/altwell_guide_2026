@@ -8,7 +8,7 @@
 <!--#include virtual="/includes/fonts.asp"-->
 <link rel="stylesheet" href="/_css/main.css"/>
 <link rel="stylesheet" href="/_css/icon_style.css"/>
-<link rel="stylesheet" href="/_css/guide02.css"/>
+<link rel="stylesheet" href="/_css/guide02.css?v=20260930s07k"/>
 <link rel="stylesheet" href="/_css/video_controller.css"/>
 <style>
 <!--#include virtual="/includes/styles.asp"-->
@@ -37,6 +37,9 @@
 <!--#include virtual="/includes/series/guide02/scenes/scene06.constants.js.asp"-->
 <!--#include virtual="/includes/series/guide02/scenes/scene06.setup.js.asp"-->
 <!--#include virtual="/includes/series/guide02/scenes/scene06.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene07.constants.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene07.setup.js.asp"-->
+<!--#include virtual="/includes/series/guide02/scenes/scene07.js.asp"-->
 <!--#include virtual="/includes/series/guide02/guide02.asp"-->
 <script>SeriesGuide02.init();</script>
 </body>
