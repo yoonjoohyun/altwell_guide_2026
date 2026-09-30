@@ -63,13 +63,20 @@ function setupGuide02Scene03(canvas){
   colRight.className = 'g02-s03-col';
 
   var badge = slot('startpack_badge', 'g02-s03-badge');
-  var nouvel = slot('startpack_nouvel_kind', 'g02-s03-nouvel');
-  var signature = slot('startpack_signature_kind', 'g02-s03-signature');
+  var nouvel = slot('startpack_nouvel_card', 'g02-s03-nouvel');
+  var signature = slot('startpack_signature_card', 'g02-s03-signature');
   var onceNouvel = slot('startpack_once_badge', 'g02-s03-once-nouvel');
   var onceSignature = slot('startpack_once_badge', 'g02-s03-once-signature');
   var onceNouvelRoot = onceNouvel.querySelector('.g02_once');
   var onceSignatureRoot = onceSignature.querySelector('.g02_once');
   if(onceSignatureRoot) onceSignatureRoot.classList.add('g02_once_signature');
+
+  function hidePackIcon(slotWrap){
+    var img = slotWrap && slotWrap.querySelector('.g02_pack_visual img');
+    if(img) img.classList.add('g02-slot', 'is-hidden');
+  }
+  hidePackIcon(nouvel);
+  hidePackIcon(signature);
 
   colLeft.appendChild(nouvel);
   colLeft.appendChild(onceNouvel);
@@ -89,9 +96,9 @@ function setupGuide02Scene03(canvas){
   return {
     badge: badge,
     nouvel: nouvel,
-    nouvelIcon: nouvel.querySelector('.g02_kind_icon img'),
+    nouvelIcon: nouvel.querySelector('.g02_pack_visual img'),
     signature: signature,
-    signatureIcon: signature.querySelector('.g02_kind_icon img'),
+    signatureIcon: signature.querySelector('.g02_pack_visual img'),
     onceNouvel: onceNouvel,
     onceSignature: onceSignature,
     onceNouvelRoot: onceNouvelRoot
