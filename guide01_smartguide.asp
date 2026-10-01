@@ -21,6 +21,7 @@
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261001close2"/>
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 
@@ -45,6 +46,7 @@
 <!--#include file="includes/video_runtime.asp"-->
 
 <!--#include file="includes/series/guide01/guide01_common.js.asp"-->
+<!--#include file="includes/components/guide_close_panel.js.asp"-->
 
 
 

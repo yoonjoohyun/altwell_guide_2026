@@ -104,6 +104,8 @@ Function FindGuide02Voice(fso, sceneNum, partId)
 
   If partId = "title" Then
     names = Array("guide02_scene_" & sceneNum & "_title")
+  ElseIf partId = "close" Then
+    names = Array("guide02_scene_" & sceneNum & "_close")
   Else
     names = Array("guide02_scene_" & sceneNum)
   End If

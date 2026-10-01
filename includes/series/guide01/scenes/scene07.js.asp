@@ -174,12 +174,10 @@ async function runScene07Motion(tl, assets, ctx){
 
   await tl.wait(T.simButton);
   if(scene07Cancelled(ctx)) return;
-  showElement(assets.simButton);
-  assets.simButton.classList.add('s07-fade-in');
+  GuideClosePanel.open(assets.simSlot, { ms: 420, float: false, ease: 'ease' });
 
   await tl.wait(T.replayButton);
   if(scene07Cancelled(ctx)) return;
-  showElement(assets.replayButton);
-  assets.replayButton.classList.add('s07-fade-in');
+  GuideClosePanel.open(assets.replaySlot, { ms: 420, float: false, ease: 'ease' });
 }
 </script>

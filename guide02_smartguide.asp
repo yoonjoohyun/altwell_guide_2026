@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide02.css?v=20261001s08"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261001close2"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 <style>
 <!--#include file="includes/styles.asp"-->
@@ -20,6 +21,7 @@
 <!--#include file="includes/components/guide02_templates.asp"-->
 <!--#include file="includes/video_runtime.asp"-->
 <!--#include file="includes/series/guide02/guide02_common.js.asp"-->
+<!--#include file="includes/components/guide_close_panel.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene01.constants.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene01.setup.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene01.js.asp"-->
@@ -44,6 +46,9 @@
 <!--#include file="includes/series/guide02/scenes/scene08.constants.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene08.setup.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene08.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene09.constants.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene09.setup.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene09.js.asp"-->
 <!--#include file="includes/series/guide02/guide02.asp"-->
 <script>SeriesGuide02.init();</script>
 </body>

@@ -17,6 +17,7 @@ var SeriesGuide02 = {
     SceneRunner.registerScene(Guide02Scene06);
     SceneRunner.registerScene(Guide02Scene07);
     SceneRunner.registerScene(Guide02Scene08);
+    SceneRunner.registerScene(Guide02Scene09);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
@@ -30,6 +31,7 @@ var SeriesGuide02 = {
       if(typeof Guide02Scene06Config !== 'undefined') configs.push(Guide02Scene06Config);
       if(typeof Guide02Scene07Config !== 'undefined') configs.push(Guide02Scene07Config);
       if(typeof Guide02Scene08Config !== 'undefined') configs.push(Guide02Scene08Config);
+      if(typeof Guide02Scene09Config !== 'undefined') configs.push(Guide02Scene09Config);
 
       function probeTitles(done){
         var index = 0;

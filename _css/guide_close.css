@@ -1,0 +1,90 @@
+/* 가이드 클로징 패널 — 시뮬레이션 / 다시보기. guide01 씬7 아웃트로와 guide02 클로징이 같이 쓴다. */
+
+.g-close{
+  pointer-events:auto;
+  z-index:16;
+}
+.g-close.is-hidden{
+  display:none !important;
+  pointer-events:none !important;
+}
+.g02-canvas .g-close.g02-stack,
+.g02-canvas .g02-stack .g-close{
+  pointer-events:auto;
+}
+
+.g-close-card{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0;
+  box-sizing:border-box;
+  min-width:min(420px, 86vw);
+  padding:28px 32px;
+  border-radius:18px;
+  background:rgba(32,36,42,.78);
+  border:1.5px solid rgba(255,255,255,.55);
+  box-shadow:0 12px 32px rgba(0,0,0,.28);
+  color:#fff;
+  overflow:hidden;
+}
+.g-close-slot{
+  flex-shrink:0;
+  max-height:0;
+  margin-top:0;
+  overflow:hidden;
+  opacity:0;
+}
+.g-close-slot.is-open{
+  max-height:none;
+  opacity:1;
+}
+.g-close-slot.is-open ~ .g-close-slot.is-open{
+  margin-top:12px;
+}
+.g-close-title{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  white-space:nowrap;
+}
+.g-close-btn{
+  pointer-events:auto;
+  appearance:none;
+  border:0;
+  cursor:pointer;
+  min-width:240px;
+  padding:12px 18px;
+  border-radius:999px;
+  background:#fff;
+  color:#1c2430;
+  font:inherit;
+  font-size:15px;
+  font-weight:800;
+}
+.g-close-btn-ghost,
+.guide01-canvas.scene07-canvas .s07-outro-btn.g-close-btn-ghost{
+  background:transparent;
+  color:#fff;
+  border:1.5px solid rgba(255,255,255,.7);
+}
+
+.g-close.is-in{animation:g-close-float 680ms cubic-bezier(.22,1,.36,1) both}
+.g-close.is-idle{animation:g-close-idle 3.2s ease-in-out infinite}
+
+@keyframes g-close-float{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes g-close-fade{
+  from{opacity:0}
+  to{opacity:1}
+}
+@keyframes g-close-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-3px)}
+}
+
+.guide01-canvas.scene07-canvas .s07-outro-card.g-close-card{
+  gap:0;
+}

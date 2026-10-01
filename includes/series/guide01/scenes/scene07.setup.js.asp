@@ -187,38 +187,19 @@ var Scene07Layout = (function(){
   }
 
   function mountOutro(canvas){
-    var wrap = document.createElement('div');
-    var card = document.createElement('div');
-    var title = document.createElement('div');
-    var sim = document.createElement('button');
-    var replay = document.createElement('button');
-    wrap.id = 's07-outro';
-    wrap.className = 'g01-zone-wrap s07-outro is-hidden';
-    Guide01.placeAtZone(wrap, Scene07Config.layout.anchorZone || 'd4');
-    card.className = 's07-outro-card';
-    title.className = 's07-outro-title';
-    title.textContent = '오토십 알아보기';
-    sim.type = 'button';
-    sim.className = 's07-outro-btn is-hidden';
-    sim.textContent = '시뮬레이션으로 복습하기';
-    sim.addEventListener('click', function(){
-      location.href = Scene07Config.links.simulator;
+    return GuideClosePanel.mount(canvas, {
+      id: 's07-outro',
+      className: 's07-outro',
+      cardClass: 's07-outro-card',
+      titleClass: 's07-outro-title',
+      buttonClass: 's07-outro-btn',
+      title: '오토십 알아보기',
+      zone: (Scene07Config.layout && Scene07Config.layout.anchorZone) || 'd4',
+      place: Guide01.placeAtZone,
+      hidden: true,
+      titleOpen: true,
+      simulatorHref: (window.GUIDE_ROOT || '') + (Scene07Config.links.simulator || '/sim.asp')
     });
-    replay.type = 'button';
-    replay.className = 's07-outro-btn s07-outro-btn-ghost is-hidden';
-    replay.textContent = '가이드 영상 다시보기';
-    replay.addEventListener('click', function(){
-      if(typeof SceneRunner === 'undefined') return;
-      if(SceneRunner.pauseLesson) SceneRunner.pauseLesson();
-      if(SceneRunner.restartLesson) SceneRunner.restartLesson();
-      if(SceneRunner.playLesson) SceneRunner.playLesson();
-    });
-    card.appendChild(title);
-    card.appendChild(sim);
-    card.appendChild(replay);
-    wrap.appendChild(card);
-    canvas.appendChild(wrap);
-    return { wrap: wrap, sim: sim, replay: replay };
   }
 
   function visibleChildren(inner){
@@ -391,7 +372,9 @@ function setupScene07Assets(canvas){
     summaryLines: summary.lines,
     outro: outro.wrap,
     simButton: outro.sim,
-    replayButton: outro.replay
+    replayButton: outro.replay,
+    simSlot: outro.simSlot,
+    replaySlot: outro.replaySlot
   };
 }
 </script>
