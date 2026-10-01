@@ -1,8 +1,8 @@
 # ALTWELL SMART GUIDE — 통합 개발 문서
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
-> **미리보기:** `asset_design.asp` · **guide01:** `series/season01/guide01_smartguide.asp`  
-> **Last updated:** 2026-09-29 (§0 Guide01 동결 · Guide02 작업 경계)
+> **미리보기:** `asset_design.asp` · **guide01:** `guide01_smartguide.asp` · **guide02:** `guide02_smartguide.asp`  
+> **Last updated:** 2026-10-01 (§1 진입 경로 · §9 Guide02 현행)
 
 ---
 
@@ -17,6 +17,7 @@
 6. [시나리오 작성 (부록 A)](#6-시나리오-작성-부록-a)
 7. [guide01 씬 추가 가이드](#7-guide01-씬-추가-가이드)
 8. [씬1~5 제작 프로세스 요약](#8-씬15-제작-프로세스-요약)
+9. [Guide02 현행](#9-guide02-현행)
 
 ---
 
@@ -28,7 +29,7 @@ Guide01 씬 01~06은 완성본이다. Guide02는 **새 파일만** 추가한다.
 
 | 영역 | 경로 |
 |------|------|
-| 페이지·등록 | `series/season01/guide01_smartguide.asp`, `includes/series/guide01/guide01.asp` |
+| 페이지·등록 | `guide01_smartguide.asp` (프로젝트 루트), `includes/series/guide01/guide01.asp`. `series/season01/guide01_smartguide.asp`는 루트로 보내는 redirect만 둔다 |
 | 씬 01~06 | `includes/series/guide01/scenes/scene01`~`scene06` `.constants` · `.setup` · `.js` |
 | 가이드 런타임 | `includes/series/guide01/guide01_common.js.asp` (`Guide01.*`) |
 | 모션 | `includes/motions/g01/` |
@@ -47,13 +48,15 @@ Guide02 페이지가 그대로 include할 수 있다. 여기를 고치면 Guide0
 
 `SceneMedia.setSeriesId`는 페이지마다 자기 id를 넘긴다. Guide01은 `'guide01'` 고정이다.
 
+경로 접두만 예외다. 사이트 루트에서는 접두가 빈 문자열이라 주소가 예전과 같다. 하위 폴더에 올리면 `GuideAppRoot()`와 `window.GUIDE_ROOT`가 그 폴더를 붙인다. 모션 시간·배치 계산은 바꾸지 않는다.
+
 ### 0-3. Guide02가 새로 만들 경로
 
 Guide01 파일 안에 씬이나 CSS 선택자를 추가하지 않는다.
 
 | 역할 | 경로 |
 |------|------|
-| 페이지 | `series/season01/guide02_smartguide.asp` |
+| 페이지 | `guide02_smartguide.asp` (프로젝트 루트, `guide.asp`와 같은 폴더). `series/season01/guide02_smartguide.asp`는 redirect |
 | 등록·공통 | `includes/series/guide02/guide02.asp`, `guide02_common.js.asp` |
 | 씬 | `includes/series/guide02/scenes/sceneNN.constants.js.asp` · `.setup` · `.js` |
 | 스타일 | `_css/guide02.css` (`guide01.css`를 링크하지 않음) |
@@ -79,18 +82,21 @@ Guide02의 레이아웃 헬퍼는 `guide02_common`에만 둔다. `Scene02Layout`
 **사용자 흐름**
 
 ```
-index.asp → guide.asp → series/season01/guide01_smartguide.asp
+index.asp → guide.asp → guide01_smartguide.asp   (오토십)
+                    → guide02_smartguide.asp   (스타트팩)
                     → asset_design.asp (에셋 시안·G01 애니)
                     → frame_layout.asp (템플릿·AssetShowcase)
          → sim.asp
 ```
+
+리스트의 영상 링크는 같은 폴더 기준 상대 경로다. `/series/season01/…` 처럼 사이트 최상위로 고정하지 않는다.
 
 ### 1-2. 페이지 2종
 
 | 종류 | 예 | CSS |
 |------|-----|-----|
 | **리스트** | `index.asp`, `guide.asp`, `sim.asp` | `_css/main.css` + 페이지별 |
-| **영상** | `guide01_smartguide.asp`, `frame_layout.asp` | `main.css` + `icon_style.css` + `guide01.css` + `styles.asp` + `video_controller.css` |
+| **영상** | `guide01_smartguide.asp`, `guide02_smartguide.asp`, `frame_layout.asp` | `main.css` + `icon_style.css` + 가이드 CSS(`guide01.css` 또는 `guide02.css`) + `styles.asp` + `video_controller.css` |
 
 ### 1-3. 영상 페이지 셸
 
@@ -131,47 +137,60 @@ Object Library (styles.asp)
 ```
 guide_page/
 ├── index.asp, guide.asp, sim.asp
+├── guide01_smartguide.asp        # 오토십 영상 진입
+├── guide02_smartguide.asp        # 스타트팩 영상 진입
 ├── asset_design.asp              # 에셋 시안 + G01 애니 미리보기
 ├── frame_layout.asp              # 영상 템플릿 + AssetShowcase
 ├── voice_stream.asp              # mp4 스트리밍
 ├── SMART_GUIDE_DOCS.md           # 본 문서
-├── series/season01/
-│   └── guide01_smartguide.asp
+├── series/season01/              # 예전 주소 → 루트 페이지 redirect
 ├── _css/
-│   ├── main.css, icon_style.css, guide01.css, video_controller.css
+│   ├── main.css, icon_style.css, guide01.css, guide02.css, video_controller.css
 │   └── index.css, guide.css, sim.css
-├── voice/guide_season01/guide01/
+├── voice/guide_season01/guide01/ · guide02/
 └── includes/
+    ├── asp_utf8.asp              # GuideAppRoot()
     ├── sceneRunner.js.asp, sceneMedia.js.asp, motion.js.asp
     ├── scenes/defineScene.js.asp
-    ├── components/               # *.asp + *_container.asp + guide01_templates.asp
+    ├── components/               # guide01_templates.asp · guide02_templates.asp
     ├── player/video_layout.asp
     ├── motions/g01/              # zoned · badgeFold · preview
-    └── series/guide01/
-        ├── guide01.asp, guide01_common.js.asp
-        └── scenes/
-            └── scene01~05.constants.js.asp · setup · js (씬별 3파일)
+    └── series/
+        ├── guide01/  scenes/scene01~07 (3파일)
+        └── guide02/  scenes/scene01~07 (3파일)
 ```
 
-### 1-6. guide01 Include 체인
+### 1-6. 영상 페이지 Include 체인
+
+진입 ASP는 프로젝트 루트에 둔다. include는 자식 폴더 `file="includes/…"` 만 쓴다. `virtual="/includes/…"` 와 `../` include는 쓰지 않는다. 이 IIS는 상위 폴더 include가 꺼져 있다.
 
 ```
-guide01_smartguide.asp
-├── virtual /includes/player/video_layout.asp
-├── virtual /includes/components/guide01_templates.asp
-├── virtual /includes/video_runtime.asp
-├── virtual /includes/series/guide01/guide01_common.js.asp
-├── scene01~05.constants · setup · js (씬별)
-├── virtual /includes/sceneTransition.js.asp
-├── virtual /includes/series/guide01/guide01.asp
-└── SeriesGuide01.init()
+guide01_smartguide.asp / guide02_smartguide.asp
+├── file includes/asp_utf8.asp          (GuideAppRoot)
+├── file includes/player/video_layout.asp
+├── file includes/components/guide0N_templates.asp
+├── file includes/video_runtime.asp     (defineScene · sceneMedia · sceneTransition · sceneRunner)
+├── file includes/series/guide0N/guide0N_common.js.asp
+├── scene01~07.constants · setup · js
+├── file includes/series/guide0N/guide0N.asp
+└── SeriesGuide0N.init()
 ```
 
-### 1-7. 배포 참고 (서브폴더)
+`series/season01/guide0N_smartguide.asp`는 쿼리를 유지한 채 `../../guide0N_smartguide.asp`로 redirect한다. 페이지 본문은 없다.
 
-- `index.asp`, `guide.asp` — 상대 경로 `_css/…` → 서브폴더 배포 OK
-- `guide01_smartguide.asp` — `virtual="/includes/…"`, `/_css/…` → **사이트 루트** 또는 IIS 가상 디렉터리 필요
-- 서브폴더만 업로드 시 `/index.asp`(본사 루트) 404와 guide01 리소스 404는 **별개** — 접속 URL·경로 매핑 확인
+### 1-7. 배포 (사이트 루트 · 하위 폴더)
+
+`includes/asp_utf8.asp`의 `GuideAppRoot()`가 앱 폴더를 계산한다.
+
+| 페이지 위치 | 앱 루트 |
+|-------------|---------|
+| `/guide02_smartguide.asp` | 빈 문자열 → `/_css/…`, `/voice_stream.asp` |
+| `/폴더/guide02_smartguide.asp` | `/폴더` |
+| `/폴더/series/season01/…` | `/폴더` (`/series/` 앞까지) |
+
+- 리스트·홈 링크, CSS, 이미지, `voice_stream.asp`는 `GuideAppRoot()` 또는 `window.GUIDE_ROOT`를 붙인다.
+- 사이트 최상위 `/series/season01/…`로 고정하면, 프로젝트를 하위 폴더에 올렸을 때 본사 사이트의 `series`를 찾아 404가 난다.
+- 로컬(사이트 루트)과 하위 폴더 배포는 같은 진입 파일로 연다. 리스트에서 다시 들어간다. 예전에 열린 `/series/season01/…` 탭은 그 경로에 파일이 없으면 그대로 404다.
 
 ---
 
@@ -184,9 +203,9 @@ guide01_smartguide.asp
 
 | 위치 | include |
 |------|---------|
-| 루트 ASP | `<!--#include file="includes/…"-->` |
-| `series/…/*.asp` | `<!--#include virtual="/includes/…"-->` |
-| nested SSI | `../` **금지** |
+| 프로젝트 루트 ASP (리스트·영상 진입) | `<!--#include file="includes/…"-->` |
+| `includes/` 안의 nested SSI | 그 파일 기준 자식·형제 `file="…"` |
+| 금지 | `virtual="/includes/…"`, `file="../../…"` (상위 경로) |
 
 ### 2-2. 씬 작성 API (`defineScene`)
 
@@ -1041,6 +1060,8 @@ voice/guide_season01/guide01/
 | Scene 01 | `0` | `…&scene=01` | `…&scene=01&part=title` |
 | Scene 02 | `1` | `…&scene=02` | `…&scene=02&part=title` |
 
+실제 주소는 `(window.GUIDE_ROOT || '') + '/voice_stream.asp?series=' + id + '&scene=' + num` 이다. 사이트 루트에서는 `GUIDE_ROOT`가 빈 문자열이다.
+
 **constants — 단일 mp4 (일반)**
 
 ```javascript
@@ -1540,6 +1561,56 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 
 ---
 
+## 9. Guide02 현행
+
+스타트팩 알아보기. 씬 01~07. Guide01 씬 파일·`guide01.css`·`sceneTransition.js.asp`는 수정하지 않는다.
+
+| 씬 | id | 제목 |
+|----|-----|------|
+| 01 | `guide02-scene-01` | 스타트팩이란? |
+| 02 | `guide02-scene-02` | 누가, 언제 구매할 수 있나요? |
+| 03 | `guide02-scene-03` | 스타트팩은 두 종류 입니다. |
+| 04 | `guide02-scene-04` | 스타트팩의 가장 큰 혜택 |
+| 05 | `guide02-scene-05` | 추천인에게는 어떤 혜택이 있나요? |
+| 06 | `guide02-scene-06` | 스타트팩과 초기 승급 |
+| 07 | `guide02-scene-07` | 왜 스타트팩을 운영할까요? |
+
+공통 헬퍼는 `Guide02` (`guide02_common.js.asp`)다. `timeline.wait(ms)`는 씬 시작 시각 기준의 절대 대기. `cloneTemplate`은 `#guide02-templates`만 복제한다. 존 배치는 `placeAtZone` → `G01ZonedAnim`. 맞춤 배율은 씬 setup의 `applyFit`이 `--group-scale`에 넣는다. Guide01의 세로 체인 측정(`layoutVerticalChain`)을 가져오지 않는다.
+
+### 9-1. 타이밍
+
+시나리오에 **타이틀 음성**이 있으면 그 시각은 타이틀 mp4 시작이다. 없으면 본문 mp4 시작이다. 본문 시각은 재생 시 `titleMs`를 더한다.
+
+`SeriesGuide02.init`이 타이틀 mp4 길이를 재서 `config.media.titleMs`와 `scene.mediaTitleMs`에 넣는다. 측정 전에는 `media.fallbackMs[0]` / `media.titleMs`를 쓴다. 패널 flash가 본문 기준이면 이 값을 더해 넘긴다 (`guide02Scene07PanelFlashes`와 같은 방식).
+
+### 9-2. 등장 · 퇴장 · idle
+
+| 클래스 | 동작 |
+|--------|------|
+| `g02-enter` | 420ms, 아래에서 나타남 |
+| `g02-idle` | 3.2s, `translateY` 0 ↔ −3px. 무한 반복 |
+| `g01-zone-wrap` | 씬 종료 시 패널과 같이 2초 fade. 스택 루트에 붙인다 |
+
+`g02-idle`과 다른 transform 애니메이션은 한 요소에 동시에 두지 않는다. 떠 있는 동안의 idle은 바깥, 등장 transform은 안쪽에 둔다. `sceneTransition.js.asp`는 고치지 않는다. wrap이 없으면 패널이 먼저 사라지고 캔버스가 한 번 더 2초 fade된다.
+
+### 9-3. Scene 07
+
+앵커는 d4. 스택은 세로 flex. 시각은 본문 기준(뱃지 등장만 타이틀 0초).
+
+| 본문 시각 | 연출 |
+|-----------|------|
+| 타이틀 0 | 스타트팩 뱃지 |
+| 0 | 이름 트랙을 접은 뒤 뱃지가 사라짐. 너비를 48px로 순간 축소하지 않음 |
+| 2초 | `높은 할인 혜택` 등장 후 1.5초 유지, 840ms에 두 바퀴 돌며 원형 `!`로 바뀜. `!`는 0.2초 뒤 투명도만으로 680ms에 사라짐. 높이로 눌러 찌그러뜨리지 않음 |
+| 6 / 12 / 18초 | 원형 패널 3개. 가로 한 줄, 사이 라인은 `#333`이고 idle 없음 |
+| 패널 6 / 14 / 20초 | 텍스트 박스 bullet flash |
+
+원형 패널은 떠오르는 순간부터 idle. 다음 패널이 떠오를 때 이전 패널은 idle을 끄고 색을 반전한다(크림 배경, 버건디 글자). 반전·등장·왼쪽 이동은 680ms ease-in-out. 마지막 패널은 반전하지 않고 idle을 유지한다. 왼쪽 이동은 현재 화면 위치에서 이어 붙인다. idle을 끄자마자 좌표가 튀지 않게 한다.
+
+혜택·`!` 배경은 `#3D8BFF` → `#1554E0`, 글자는 `#FFE566`.
+
+---
+
 ## 관련 파일 빠른 참조
 
 | 파일 | 내용 |
@@ -1547,14 +1618,22 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 | `asset_design.asp` | 6계열 시안 + G01 애니 |
 | `includes/components/guide01_templates.asp` | clone template |
 | `includes/motions/g01/preview.js.asp` | G01 미리보기 |
-| `includes/series/guide01/scenes/sceneNN.*` | 씬별 constants · setup · js |
-| `includes/sceneTransition.js.asp` | 씬 간 1s hold + 2s opacity 퇴장 |
+| `includes/series/guide01/scenes/sceneNN.*` | guide01 씬별 constants · setup · js |
+| `includes/series/guide02/scenes/sceneNN.*` | guide02 씬별 constants · setup · js |
+| `includes/series/guide02/guide02_common.js.asp` | `Guide02` timeline · clone · placeAtZone |
+| `includes/components/guide02_templates.asp` | guide02 clone template |
+| `includes/sceneTransition.js.asp` | 씬 간 1s hold + 2s opacity 퇴장. 수정하지 않음 |
 | `includes/motions/g01/zonedCore.js.asp` | `g01-float-host`, idle float, resolveWrap |
-| `includes/series/guide01/guide01.asp` | registerScene · init |
-| `series/season01/guide01_smartguide.asp` | 씬 include · 페이지 진입 |
+| `includes/series/guide01/guide01.asp` | guide01 registerScene · init |
+| `includes/series/guide02/guide02.asp` | guide02 registerScene · init |
+| `guide01_smartguide.asp` | guide01 페이지 진입 |
+| `guide02_smartguide.asp` | guide02 페이지 진입 |
+| `includes/asp_utf8.asp` | `GuideAppRoot()` |
 | `voice/guide_season01/guide01/` | guide01 음성 mp4 |
+| `voice/guide_season01/guide02/` | guide02 음성 mp4 |
 | `_css/icon_style.css` | 전 에셋 CSS |
-| `_css/guide01.css` | 존·fold·씬별 panel |
+| `_css/guide01.css` | guide01 존·fold·씬별 panel |
+| `_css/guide02.css` | guide02 전용. guide01.css를 링크하지 않음 |
 
 ---
 
