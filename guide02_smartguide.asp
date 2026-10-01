@@ -9,7 +9,7 @@
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide02.css?v=20260930s07k"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide02.css?v=20261001s08"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 <style>
 <!--#include file="includes/styles.asp"-->
@@ -41,6 +41,9 @@
 <!--#include file="includes/series/guide02/scenes/scene07.constants.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene07.setup.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene07.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene08.constants.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene08.setup.js.asp"-->
+<!--#include file="includes/series/guide02/scenes/scene08.js.asp"-->
 <!--#include file="includes/series/guide02/guide02.asp"-->
 <script>SeriesGuide02.init();</script>
 </body>
