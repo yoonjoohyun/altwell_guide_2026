@@ -12,6 +12,13 @@ var GuideClosePanel = (function(){
     return slot;
   }
 
+  function closeTitleText(title){
+    var base = String(title || '').trim();
+    if(!base) return '완료';
+    if(/완료\s*$/.test(base)) return base;
+    return base + ' 완료';
+  }
+
   function mount(parent, options){
     var opts = options || {};
     var root = document.createElement('div');
@@ -31,7 +38,7 @@ var GuideClosePanel = (function(){
 
     card.className = 'g-close-card' + (opts.cardClass ? ' ' + opts.cardClass : '');
     title.className = 'g-close-title' + (opts.titleClass ? ' ' + opts.titleClass : '');
-    title.textContent = opts.title || '';
+    title.textContent = closeTitleText(opts.title);
     titleSlot.appendChild(title);
     if(opts.titleOpen) titleSlot.classList.add('is-open');
 

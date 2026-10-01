@@ -47,6 +47,7 @@
   font-weight:800;
   letter-spacing:-.02em;
   white-space:nowrap;
+  margin-bottom:10px;
 }
 .g-close-btn{
   pointer-events:auto;
@@ -59,7 +60,7 @@
   background:#fff;
   color:#1c2430;
   font:inherit;
-  font-size:15px;
+  font-size:17px;
   font-weight:800;
 }
 .g-close-btn-ghost,
