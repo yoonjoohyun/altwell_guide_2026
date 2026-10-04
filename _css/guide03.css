@@ -1,0 +1,143 @@
+/* guide03 — BASE사업자 이해하기. guide01.css · guide02.css 와 분리 */
+
+.g03-canvas{position:relative}
+.g03-canvas .lo-zone-place{
+  left:calc(10px + (var(--zone-col) - 0.5) / 7 * (100% - 20px));
+  top:calc(10px + (var(--zone-row) - 0.5) / 7 * (100% - 20px));
+  transform:translate(-50%, -50%);
+}
+.g03-canvas .g03-stack{
+  position:absolute;
+  z-index:12;
+  pointer-events:none;
+}
+.g03-canvas .g03-stack-inner{
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
+}
+.g03-canvas .g03-slot.is-hidden{display:none !important}
+.g03-canvas .g03-enter{animation:g03-enter 760ms cubic-bezier(.16,1,.3,1) both}
+@keyframes g03-enter{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.g03-s01{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+.g03-canvas .g03-base-badge .base_business_icon_o{--size:52px}
+.g03-board{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  min-width:220px;
+  padding:18px 22px 16px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #FFFDF8, #F3EDE2);
+  box-shadow:inset 0 0 0 2px #E6D9C6, 0 8px 18px rgba(40,48,40,.12);
+  box-sizing:border-box;
+}
+.g03-tree{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+}
+.g03-lines{
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:0;
+  overflow:visible;
+  pointer-events:none;
+  opacity:0;
+}
+.g03-lines.is-on{opacity:1}
+.g03-lines path{
+  fill:none;
+  stroke:#5E8F78;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-dasharray:7 6;
+}
+.g03-member-row{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:22px;
+}
+.g03-grow{
+  display:grid;
+  grid-template-rows:0fr;
+  grid-template-columns:0fr;
+  transition:grid-template-rows 740ms cubic-bezier(.16,1,.3,1), grid-template-columns 740ms cubic-bezier(.16,1,.3,1);
+}
+.g03-grow.is-open{
+  grid-template-rows:1fr;
+  grid-template-columns:1fr;
+}
+.g03-grow-clip{
+  overflow:hidden;
+  min-width:0;
+  min-height:0;
+}
+.g03-canvas .g03-member .member_icon{--size:132px}
+.g03-canvas .member_icon.is-jump{animation:g03-jump 680ms cubic-bezier(.16,1,.3,1)}
+@keyframes g03-jump{
+  0%{transform:translateY(0) scale(1)}
+  38%{transform:translateY(-20px) scale(1.06)}
+  100%{transform:translateY(0) scale(1)}
+}
+.g03-unit-label{
+  color:#12382C;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-size:18px;
+  font-weight:800;
+  line-height:1.3;
+  white-space:nowrap;
+  padding:2px 4px 4px;
+}
+.g03-canvas .g03-chip .recommend_bonus_icon_o,
+.g03-canvas .g03-chip .guide_info_badge{--size:44px}
+.g03-canvas .g03-fold{
+  gap:0 !important;
+  justify-content:flex-start;
+}
+.g03-canvas .g03-fold-track{
+  display:inline-flex;
+  overflow:hidden;
+  vertical-align:middle;
+  max-width:0;
+}
+.g03-canvas .g03-fold .base_text,
+.g03-canvas .g03-fold .recommend_bonus_text,
+.g03-canvas .g03-fold .guide_info_badge_text{
+  display:inline-block;
+  white-space:nowrap;
+  margin-left:var(--g03-gap, 6px);
+  opacity:0;
+}
+
+#lo-panel.g03-scene01-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.g03-scene01-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+#lo-panel.g03-scene01-panel .bullet-item.is-emphasis .bullet-dot{background-color:#118839}
+#lo-panel.g03-scene01-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
+#lo-panel.g03-scene01-panel .bullet-item.g03-flash .bullet-dot{animation:g03-dot-flash 680ms ease-in-out}
+#lo-panel.g03-scene01-panel .bullet-item.g03-flash .bullet-text{animation:g03-text-flash 680ms ease-in-out}
+@keyframes g03-dot-flash{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.35)}
+  100%{transform:scale(1)}
+}
+@keyframes g03-text-flash{
+  0%{color:#222}
+  40%{color:#118839}
+  100%{color:#222}
+}

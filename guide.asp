@@ -63,12 +63,12 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="vcard">
+      <div class="vcard" onclick="location.href='guide03_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g4">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">STEP 2B</span><span class="vc-soon">준비 중</span></div>
+          <div class="vc-top"><span class="vc-step">GUIDE 03</span><span class="vc-new">제작 중</span></div>
           <div class="vc-title">BASE사업자 이해하기</div>
           <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자</div>
           <div class="vc-meta">? 3분</div>
