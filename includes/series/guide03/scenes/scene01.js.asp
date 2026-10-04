@@ -180,8 +180,8 @@ async function guide03Scene01UnfoldChip(wrap){
   var gap;
   var textW;
   if(!wrap) return;
-  badge = wrap.querySelector('.base_business_icon_o, .recommend_bonus_icon_o, .guide_info_badge');
-  text = badge && badge.querySelector('.base_text, .recommend_bonus_text, .guide_info_badge_text');
+  badge = wrap.querySelector('.base_business_icon_o, .recommend_bonus_icon_o, .guide_info_badge, .autoship_icon_o');
+  text = badge && badge.querySelector('.base_text, .recommend_bonus_text, .guide_info_badge_text, .autoship_text');
   if(!badge || !text){
     await guide03Scene01Reveal(wrap);
     return;
