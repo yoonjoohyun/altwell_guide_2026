@@ -890,6 +890,26 @@
 
 .member_icon.member_base_self{--color:#016450}
 .member_icon.member_base_partner{--color:#319069}
+.member_icon.member_base_self .member_face_label,
+.member_icon.member_base_partner .member_face_label{
+    position:absolute;
+    top:37%;
+    left:50%;
+    z-index:1;
+    width:40%;
+    transform:translate(-50%, -50%);
+    color:#FFE14A;
+    font-family:var(--font-sans, 'MinSansVF', sans-serif);
+    font-weight:500;
+    font-size:16px;
+    line-height:1.15;
+    letter-spacing:-.04em;
+    text-align:center;
+    pointer-events:none;
+}
+.member_icon.member_base_partner .member_face_label{
+    line-height:1.1;
+}
 
 
 
