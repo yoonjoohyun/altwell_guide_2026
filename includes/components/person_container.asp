@@ -2,4 +2,6 @@
 <div class="badge_container">
 <!--#include file="person_icon.asp"-->
 <!--#include file="member_icon.asp"-->
+<!--#include file="member_base_self.asp"-->
+<!--#include file="member_base_partner.asp"-->
 </div>

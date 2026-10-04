@@ -888,6 +888,9 @@
     transform: translateX(-50%);
 }
 
+.member_icon.member_base_self{--color:#016450}
+.member_icon.member_base_partner{--color:#319069}
+
 
 
 /*************  SUB ASSET — 추천포인트 토큰  *******************************************************************************************************/
