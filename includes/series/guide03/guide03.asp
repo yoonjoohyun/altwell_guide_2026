@@ -10,12 +10,14 @@ var SeriesGuide03 = {
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
     SceneRunner.registerScene(Guide03Scene01);
+    SceneRunner.registerScene(Guide03Scene02);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
       var scenes = SceneRunner.getScenes();
       var configs = [];
       if(typeof Guide03Scene01Config !== 'undefined') configs.push(Guide03Scene01Config);
+      if(typeof Guide03Scene02Config !== 'undefined') configs.push(Guide03Scene02Config);
 
       function probeTitles(done){
         var index = 0;
