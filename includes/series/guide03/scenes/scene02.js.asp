@@ -130,6 +130,8 @@ async function runGuide03Scene02(tl, assets, ctx){
     if(guide03Scene02Cancelled(ctx)) return;
     await guide03Scene02Open(assets.members[i].member);
   }
+  if(guide03Scene02Cancelled(ctx)) return;
+  guide03Scene01DrawLines(assets, true);
 
   await tl.wait(at(T.badge));
   if(guide03Scene02Cancelled(ctx)) return;
@@ -147,11 +149,13 @@ async function runGuide03Scene02(tl, assets, ctx){
     await tl.wait(at(T.checks[i - 1]));
     if(guide03Scene02Cancelled(ctx)) return;
     await guide03Scene02Open(assets.members[i].check);
+    guide03Scene01DrawLines(assets, false);
   }
 
   await tl.wait(at(T.selfCheck));
   if(guide03Scene02Cancelled(ctx)) return;
   await guide03Scene02Open(assets.members[0].check);
+  guide03Scene01DrawLines(assets, false);
 
   await tl.wait(at(T.move));
   if(guide03Scene02Cancelled(ctx)) return;

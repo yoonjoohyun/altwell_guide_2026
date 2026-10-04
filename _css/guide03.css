@@ -170,7 +170,12 @@
   white-space:nowrap;
   padding:2px 4px 4px;
 }
-.g03-s02-check{--size:36px}
+.g03-s02-check{
+  --size:36px;
+  background-color:#B6F23A;
+  box-shadow:0 calc(var(--size) * 2 / 32) calc(var(--size) * 6 / 32) rgba(140,210,20,.45);
+}
+.g03-s02-check::after{border-color:#1B6B12}
 .g03-s02-col{position:relative}
 .g03-s02-dock{
   position:absolute;

@@ -42,6 +42,7 @@ function setupGuide03Scene02(canvas){
   var stage = document.createElement('div');
   var board = document.createElement('div');
   var tree = document.createElement('div');
+  var lines = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   var rowTop = document.createElement('div');
   var rowBottom = document.createElement('div');
 
@@ -89,6 +90,13 @@ function setupGuide03Scene02(canvas){
   board.id = 'g03-s02-board';
   board.className = 'g03-board g03-slot is-hidden';
   tree.className = 'g03-tree';
+  lines.setAttribute('class', 'g03-lines');
+  lines.setAttribute('aria-hidden', 'true');
+  [0, 1].forEach(function(){
+    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('fill', 'none');
+    lines.appendChild(path);
+  });
   rowTop.className = 'g03-member-row';
   rowBottom.className = 'g03-member-row';
 
@@ -107,7 +115,7 @@ function setupGuide03Scene02(canvas){
   var month = document.createElement('div');
   month.id = 'g03-s02-month';
   month.className = 'g03-slot g03-s02-month is-hidden';
-  month.textContent = '매월 조건 충족';
+  month.textContent = '매월 조건 충족 시 자격 유지';
 
   var badge = Guide03.cloneTemplate('base_business_icon');
   var badgeWrap = document.createElement('div');
@@ -120,6 +128,7 @@ function setupGuide03Scene02(canvas){
   qual.className = 'g03-slot g03-s02-qual is-hidden';
   qual.textContent = '지위가 아닌 사업자 자격';
 
+  tree.appendChild(lines);
   tree.appendChild(rowTop);
   tree.appendChild(rowBottom);
   board.appendChild(tree);
@@ -141,6 +150,8 @@ function setupGuide03Scene02(canvas){
     month: month,
     board: board,
     caption: captionSlot,
+    tree: tree,
+    lines: lines,
     members: [self, left, right],
     badge: badgeWrap,
     qual: qual,
