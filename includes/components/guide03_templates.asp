@@ -12,4 +12,5 @@
   <div data-template="member_icon"><!--#include file="member_icon.asp"--></div>
   <div data-template="recommend_bonus_icon"><!--#include file="recommend_bonus_icon.asp"--></div>
   <div data-template="guide_info_badge_red"><!--#include file="guide_info_badge_red.asp"--></div>
+  <div data-template="product_swap_box"><!--#include file="product_swap_box.asp"--></div>
 </div>

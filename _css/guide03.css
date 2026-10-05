@@ -129,27 +129,33 @@
 #lo-panel.g03-scene01-panel .bullet-item.is-dim .bullet-dot,
 #lo-panel.g03-scene02-panel .bullet-item.is-dim .bullet-dot,
 #lo-panel.g03-scene03-panel .bullet-item.is-dim .bullet-dot,
-#lo-panel.g03-scene04-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.g03-scene04-panel .bullet-item.is-dim .bullet-dot,
+#lo-panel.g03-scene05-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
 #lo-panel.g03-scene01-panel .bullet-item.is-dim .bullet-text,
 #lo-panel.g03-scene02-panel .bullet-item.is-dim .bullet-text,
 #lo-panel.g03-scene03-panel .bullet-item.is-dim .bullet-text,
-#lo-panel.g03-scene04-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+#lo-panel.g03-scene04-panel .bullet-item.is-dim .bullet-text,
+#lo-panel.g03-scene05-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
 #lo-panel.g03-scene01-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.g03-scene02-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.g03-scene03-panel .bullet-item.is-emphasis .bullet-dot,
-#lo-panel.g03-scene04-panel .bullet-item.is-emphasis .bullet-dot{background-color:#118839}
+#lo-panel.g03-scene04-panel .bullet-item.is-emphasis .bullet-dot,
+#lo-panel.g03-scene05-panel .bullet-item.is-emphasis .bullet-dot{background-color:#118839}
 #lo-panel.g03-scene01-panel .bullet-item.is-emphasis .bullet-text,
 #lo-panel.g03-scene02-panel .bullet-item.is-emphasis .bullet-text,
 #lo-panel.g03-scene03-panel .bullet-item.is-emphasis .bullet-text,
-#lo-panel.g03-scene04-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
+#lo-panel.g03-scene04-panel .bullet-item.is-emphasis .bullet-text,
+#lo-panel.g03-scene05-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
 #lo-panel.g03-scene01-panel .bullet-item.g03-flash .bullet-dot,
 #lo-panel.g03-scene02-panel .bullet-item.g03-flash .bullet-dot,
 #lo-panel.g03-scene03-panel .bullet-item.g03-flash .bullet-dot,
-#lo-panel.g03-scene04-panel .bullet-item.g03-flash .bullet-dot{animation:g03-dot-flash 680ms ease-in-out}
+#lo-panel.g03-scene04-panel .bullet-item.g03-flash .bullet-dot,
+#lo-panel.g03-scene05-panel .bullet-item.g03-flash .bullet-dot{animation:g03-dot-flash 680ms ease-in-out}
 #lo-panel.g03-scene01-panel .bullet-item.g03-flash .bullet-text,
 #lo-panel.g03-scene02-panel .bullet-item.g03-flash .bullet-text,
 #lo-panel.g03-scene03-panel .bullet-item.g03-flash .bullet-text,
-#lo-panel.g03-scene04-panel .bullet-item.g03-flash .bullet-text{animation:g03-text-flash 680ms ease-in-out}
+#lo-panel.g03-scene04-panel .bullet-item.g03-flash .bullet-text,
+#lo-panel.g03-scene05-panel .bullet-item.g03-flash .bullet-text{animation:g03-text-flash 680ms ease-in-out}
 @keyframes g03-dot-flash{
   0%{transform:scale(1)}
   40%{transform:scale(1.35)}
@@ -421,3 +427,73 @@
 }
 .g03-s04-block{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
 .g03-s04-panel.is-clip{position:relative;overflow:visible}
+
+.g03-s05{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:16px;
+}
+.g03-s05-row{
+  align-self:center;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:36px;
+}
+.g03-s05-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.g03-canvas .g03-s05-col .member_icon{--size:161px}
+.g03-canvas .g03-s05-auto .autoship_icon_o{--size:36px}
+.g03-s05-auto{margin-top:calc(-8px - 161px * 0.08 + 12px)}
+.g03-s05-boxes{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.g03-canvas .g03-s05-box.product_swap_box{--size:148px}
+.g03-s05-gauge{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:8px;
+}
+.g03-s05-gauge-label{
+  color:#12382C;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-weight:800;
+  font-size:16px;
+  line-height:1.3;
+  text-align:center;
+  white-space:nowrap;
+}
+.g03-s05-gauge-track{
+  height:18px;
+  border-radius:999px;
+  background:#E7E1D6;
+  box-shadow:inset 0 0 0 2px #E6D9C6;
+  overflow:hidden;
+}
+.g03-s05-gauge-fill{
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg, #0E7A45, #54BE12);
+}
+.g03-s05-stable{
+  align-self:center;
+  padding:8px 14px;
+  border-radius:12px;
+  background:#12382C;
+  color:#fff;
+  font-family:var(--font-sans, 'MinSansVF', sans-serif);
+  font-weight:800;
+  font-size:16px;
+  line-height:1.3;
+  white-space:nowrap;
+}
