@@ -21,7 +21,7 @@ var Guide03Scene09Config = {
   panel: {
     title: 'BASE사업자를 늘려야 하는 이유',
     bullets: [
-      '개인 활동보다 파트너와 함께하여 체계적이고 안정적인 그룹 확장'
+      '개인 활동보다 파트너와 함께하여 체계적이고 안정적인 조직 확장'
     ],
     flashes: [
       { at: 0, index: 0 }
