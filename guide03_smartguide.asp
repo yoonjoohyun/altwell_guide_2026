@@ -9,7 +9,8 @@
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261006panel"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261006s10b"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261006s10"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 <style>
 <!--#include file="includes/styles.asp"-->
@@ -20,6 +21,7 @@
 <!--#include file="includes/components/guide03_templates.asp"-->
 <!--#include file="includes/video_runtime.asp"-->
 <!--#include file="includes/series/guide03/guide03_common.js.asp"-->
+<!--#include file="includes/components/guide_close_panel.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene01.constants.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene01.setup.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene01.js.asp"-->
@@ -47,6 +49,12 @@
 <!--#include file="includes/series/guide03/scenes/scene09.constants.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene09.setup.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene09.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene10.constants.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene10.setup.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene10.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene11.constants.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene11.setup.js.asp"-->
+<!--#include file="includes/series/guide03/scenes/scene11.js.asp"-->
 <!--#include file="includes/series/guide03/guide03.asp"-->
 <script>SeriesGuide03.init();</script>
 </body>
