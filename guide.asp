@@ -27,7 +27,7 @@
       <button class="vt" onclick="setView('list',this)">리스트</button>
     </div>
     <div class="cards-grid" id="vcards">
-      <div class="vcard" onclick="location.href='frame_layout.asp'">
+      <div class="vcard" onclick="location.href='frame_layout.asp'" style="display:none;">
         <div class="vc-thumb"><div class="vc-thumb-inner g1">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
@@ -39,18 +39,7 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:100%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='guide02_smartguide.asp?from=guide'">
-        <div class="vc-thumb"><div class="vc-thumb-inner g1">
-          <span>?</span><div class="vc-play">▶</div>
-        </div></div>
-        <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">GUIDE 02</span><span class="vc-new">제작 중</span></div>
-          <div class="vc-title">스타트팩 알아보기</div>
-          <div class="vc-desc">신규 회원 전용 패키지로 제품 경험과 사업의 출발점</div>
-          <div class="vc-meta">? —</div>
-          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
-        </div>
-      </div>
+
       <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>?</span><div class="vc-play">▶</div>
@@ -63,6 +52,20 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
+
+      <div class="vcard" onclick="location.href='guide02_smartguide.asp?from=guide'">
+        <div class="vc-thumb"><div class="vc-thumb-inner g1">
+          <span>?</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span class="vc-step">GUIDE 02</span><span class="vc-new">제작 중</span></div>
+          <div class="vc-title">스타트팩 알아보기</div>
+          <div class="vc-desc">신규 회원 전용 패키지로 제품 경험과 사업의 출발점</div>
+          <div class="vc-meta">? —</div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+      
       <div class="vcard" onclick="location.href='guide03_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g4">
           <span>?</span><div class="vc-play">▶</div>
@@ -75,7 +78,7 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="vcard" onclick="location.href='03_sep_growth_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='03_sep_growth_smartguide.asp?from=guide'" style="display:none;">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
@@ -87,7 +90,7 @@
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
-      <div class="vcard">
+      <div class="vcard" style="display:none;">
         <div class="vc-thumb"><div class="vc-thumb-inner g4">
           <span>?</span><div class="vc-play">▶</div>
         </div></div>
