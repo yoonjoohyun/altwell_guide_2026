@@ -149,7 +149,10 @@
 #lo-panel.g03-scene05-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.g03-scene06-panel .bullet-item.is-emphasis .bullet-dot,
 #lo-panel.g03-scene07-panel .bullet-item.is-emphasis .bullet-dot,
-#lo-panel.g03-scene08-panel .bullet-item.is-emphasis .bullet-dot{background-color:#118839}
+#lo-panel.g03-scene08-panel .bullet-item.is-emphasis .bullet-dot{
+  background-color:#0d9488;
+  box-shadow:0 0 0 3px rgba(13,148,136,.22);
+}
 #lo-panel.g03-scene01-panel .bullet-item.is-emphasis .bullet-text,
 #lo-panel.g03-scene02-panel .bullet-item.is-emphasis .bullet-text,
 #lo-panel.g03-scene03-panel .bullet-item.is-emphasis .bullet-text,
@@ -179,9 +182,16 @@
   40%{transform:scale(1.35)}
   100%{transform:scale(1)}
 }
+#lo-panel[class*="g03-scene"] .scene-title,
+#lo-panel[class*="g03-scene"] .bullet-item .bullet-text{
+  transition:color 420ms ease-in-out, opacity 420ms ease-in-out;
+}
+#lo-panel[class*="g03-scene"] .bullet-item .bullet-dot{
+  transition:background-color 420ms ease-in-out, box-shadow 420ms ease-in-out;
+}
 @keyframes g03-text-flash{
   0%{color:#222}
-  40%{color:#118839}
+  40%{color:#0d9488}
   100%{color:#222}
 }
 
@@ -769,7 +779,10 @@
 
 #lo-panel.g03-scene09-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
 #lo-panel.g03-scene09-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
-#lo-panel.g03-scene09-panel .bullet-item.is-emphasis .bullet-dot{background-color:#118839}
+#lo-panel.g03-scene09-panel .bullet-item.is-emphasis .bullet-dot{
+  background-color:#0d9488;
+  box-shadow:0 0 0 3px rgba(13,148,136,.22);
+}
 #lo-panel.g03-scene09-panel .bullet-item.is-emphasis .bullet-text{color:#222;font-weight:800}
 #lo-panel.g03-scene09-panel .bullet-item.g03-flash .bullet-dot{animation:g03-dot-flash 680ms ease-in-out}
 #lo-panel.g03-scene09-panel .bullet-item.g03-flash .bullet-text{animation:g03-text-flash 680ms ease-in-out}

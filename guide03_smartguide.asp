@@ -9,7 +9,7 @@
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261006s09e"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261006panel"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 <style>
 <!--#include file="includes/styles.asp"-->
