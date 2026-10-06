@@ -27,8 +27,8 @@ var Guide03Scene08Config = {
     ],
     flashes: [
       { at: 0, index: 0 },
-      { at: 5000, index: 1 },
-      { at: 14000, index: 2 }
+      { at: 12000, index: 1 },
+      { at: 18000, index: 2 }
     ]
   },
 
