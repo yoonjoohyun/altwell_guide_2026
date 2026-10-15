@@ -472,7 +472,13 @@ var Scene01Layout = (function(){
     fitGroupScale(canvas, group, inner);
     alignMemberHeadToZoneTop(canvas, group, assets);
     fitGroupScale(canvas, group, inner);
+    applyScene01ObjectScale(inner);
     endMeasure();
+  }
+
+  function applyScene01ObjectScale(inner){
+    var base = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
+    inner.style.setProperty('--group-scale', String(Math.round(base * 1.2 * 1000) / 1000));
   }
 
   function fitGroupScale(canvas, group, inner){
