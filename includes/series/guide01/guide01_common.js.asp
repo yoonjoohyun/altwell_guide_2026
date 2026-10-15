@@ -747,4 +747,12 @@ var Guide01 = (function(){
     enterZonedBadge: enterZonedBadge
   };
 })();
+
+(function(){
+  var nodes = document.querySelectorAll('#guide01-templates .recommend_bonus_label, #guide01-templates .recommend_bonus_ex_label');
+  var i;
+  for(i = 0; i < nodes.length; i++){
+    if(nodes[i].textContent.replace(/\s/g, '') === 'R') nodes[i].textContent = '￦';
+  }
+})();
 </script>
