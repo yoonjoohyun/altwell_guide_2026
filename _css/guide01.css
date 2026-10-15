@@ -2772,6 +2772,26 @@
 #lo-panel.scene07-panel .bullet-item.g01-flash .bullet-dot{animation:g01-panel-bullet-dot-flash 680ms ease-in-out}
 #lo-panel.scene07-panel .bullet-item.g01-flash .bullet-text{animation:g01-panel-bullet-text-flash 680ms ease-in-out}
 
+#lo-panel.scene08-panel .scene-title,
+#lo-panel.scene08-panel .bullet-item .bullet-text{
+  transition:color 420ms ease-in-out, opacity 420ms ease-in-out;
+}
+#lo-panel.scene08-panel .bullet-item .bullet-dot{
+  transition:background-color 420ms ease-in-out, opacity 420ms ease-in-out, box-shadow 420ms ease-in-out;
+}
+#lo-panel.scene08-panel .bullet-item.is-dim .bullet-dot{background-color:#B8BDC5}
+#lo-panel.scene08-panel .bullet-item.is-dim .bullet-text{color:#B8BDC5}
+.guide01-canvas.scene08-canvas .s08-stack{
+  position:absolute;
+  z-index:12;
+  pointer-events:none;
+}
+.guide01-canvas.scene08-canvas .s08-stack-inner{
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
+}
+.guide01-canvas.scene08-canvas .g-close{pointer-events:auto}
+
 .guide01-canvas.scene07-canvas .scene07-stack-group{z-index:12}
 .guide01-canvas.scene07-canvas .scene07-group-inner{
   position:relative;

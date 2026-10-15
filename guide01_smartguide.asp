@@ -20,7 +20,7 @@
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
 
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css?v=20261015s08"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261001close2"/>
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
@@ -73,6 +73,9 @@
 <!--#include file="includes/series/guide01/scenes/scene07.constants.js.asp"-->
 <!--#include file="includes/series/guide01/scenes/scene07.setup.js.asp"-->
 <!--#include file="includes/series/guide01/scenes/scene07.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene08.constants.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene08.setup.js.asp"-->
+<!--#include file="includes/series/guide01/scenes/scene08.js.asp"-->
 
 <!--#include file="includes/series/guide01/guide01.asp"-->
 

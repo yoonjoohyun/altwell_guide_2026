@@ -17,7 +17,8 @@ var SeriesGuide01 = {
       { config: typeof Scene04Config !== 'undefined' ? Scene04Config : null },
       { config: typeof Scene05Config !== 'undefined' ? Scene05Config : null },
       { config: typeof Scene06Config !== 'undefined' ? Scene06Config : null },
-      { config: typeof Scene07Config !== 'undefined' ? Scene07Config : null }
+      { config: typeof Scene07Config !== 'undefined' ? Scene07Config : null },
+      { config: typeof Scene08Config !== 'undefined' ? Scene08Config : null }
     ];
   },
 
@@ -31,6 +32,7 @@ var SeriesGuide01 = {
     SceneRunner.registerScene(Guide01Scene05);
     SceneRunner.registerScene(Guide01Scene06);
     SceneRunner.registerScene(Guide01Scene07);
+    SceneRunner.registerScene(Guide01Scene08);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);

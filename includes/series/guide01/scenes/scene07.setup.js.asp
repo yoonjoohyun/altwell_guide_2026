@@ -186,22 +186,6 @@ var Scene07Layout = (function(){
     return { wrap: mountFloat(panel, 's07-summary', 1), lines: nodes };
   }
 
-  function mountOutro(canvas){
-    return GuideClosePanel.mount(canvas, {
-      id: 's07-outro',
-      className: 's07-outro',
-      cardClass: 's07-outro-card',
-      titleClass: 's07-outro-title',
-      buttonClass: 's07-outro-btn',
-      title: '오토십 알아보기',
-      zone: (Scene07Config.layout && Scene07Config.layout.anchorZone) || 'd4',
-      place: Guide01.placeAtZone,
-      hidden: true,
-      titleOpen: true,
-      simulatorHref: (window.GUIDE_ROOT || '') + (Scene07Config.links.simulator || '/sim.asp')
-    });
-  }
-
   function visibleChildren(inner){
     var nodes = inner ? inner.querySelectorAll('.scene07-group-child') : [];
     var list = [];
@@ -298,7 +282,6 @@ var Scene07Layout = (function(){
     mountCashback: mountCashback,
     mountBase: mountBase,
     mountSummary: mountSummary,
-    mountOutro: mountOutro,
     scheduleLayout: scheduleLayout,
     bindResize: bindResize,
     unbindResize: unbindResize
@@ -326,7 +309,6 @@ function setupScene07Assets(canvas){
   var cashback = Scene07Layout.mountCashback(canvas);
   var base = Scene07Layout.mountBase();
   var summary = Scene07Layout.mountSummary();
-  var outro = Scene07Layout.mountOutro(canvas);
 
   if(autoship) badgeRow.appendChild(autoship);
   if(calendar) calRow.appendChild(calendar);
@@ -369,12 +351,7 @@ function setupScene07Assets(canvas){
     cashback: cashback,
     base: base,
     summary: summary.wrap,
-    summaryLines: summary.lines,
-    outro: outro.wrap,
-    simButton: outro.sim,
-    replayButton: outro.replay,
-    simSlot: outro.simSlot,
-    replaySlot: outro.replaySlot
+    summaryLines: summary.lines
   };
 }
 </script>

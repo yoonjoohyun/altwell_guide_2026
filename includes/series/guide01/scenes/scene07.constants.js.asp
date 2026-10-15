@@ -44,10 +44,7 @@ var Scene07Config = {
     cashback: 24700,
     base: 28000,
     summary: 33000,
-    summaryLines: [33600, 35800, 38000],
-    outro: 45000,
-    simButton: 46200,
-    replayButton: 47800
+    summaryLines: [33600, 35800, 38000]
   },
 
   layout: {
@@ -61,10 +58,6 @@ var Scene07Config = {
     POP: { pop: true, duration: 520 },
     BADGE: { unfoldDuration: 620 },
     layoutTransition: 480
-  },
-
-  links: {
-    simulator: '/sim.asp'
   }
 };
 

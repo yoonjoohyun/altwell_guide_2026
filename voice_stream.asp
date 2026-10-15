@@ -162,6 +162,8 @@ Function FindGuide01Voice(fso, sceneNum, partId)
       "guide01_scene_" & sceneNum & "_title", _
       "guide01_scene_" & sceneNum & "_title(1)" _
     )
+  ElseIf partId = "close" Then
+    names = Array("guide01_scene_" & sceneNum & "_close")
   Else
     ' part=main 또는 part 생략 → guide01_scene_NN.mp4
     names = Array( _

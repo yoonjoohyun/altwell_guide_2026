@@ -160,24 +160,5 @@ async function runScene07Motion(tl, assets, ctx){
     await scene07RevealLine(assets.summaryLines[i]);
     if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
   }
-
-  await tl.wait(T.outro);
-  if(scene07Cancelled(ctx)) return;
-  if(assets.group){
-    assets.group.classList.add('s07-fade-out');
-    await wait(420);
-    hideElement(assets.group);
-  }
-  showElement(assets.outro);
-  assets.outro.classList.add('s07-fade-in');
-  await wait(420);
-
-  await tl.wait(T.simButton);
-  if(scene07Cancelled(ctx)) return;
-  GuideClosePanel.open(assets.simSlot, { ms: 420, float: false, ease: 'ease' });
-
-  await tl.wait(T.replayButton);
-  if(scene07Cancelled(ctx)) return;
-  GuideClosePanel.open(assets.replaySlot, { ms: 420, float: false, ease: 'ease' });
 }
 </script>
