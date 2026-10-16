@@ -278,26 +278,29 @@ var Scene03Layout = (function(){
       if(item) chain.push(item);
     }
 
-    if(!chain.length){
-      endMeasure();
-      return;
+    if(chain.length){
+      for(i = 0; i < chain.length; i++){
+        totalH += chain[i].size.height;
+        if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps, assets);
+      }
+
+      cursor = -totalH / 2;
+      for(i = 0; i < chain.length; i++){
+        h = chain[i].size.height;
+        setOffset(chain[i].wrap, 0, cursor + h / 2);
+        cursor += h;
+        if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps, assets);
+      }
     }
 
-    for(i = 0; i < chain.length; i++){
-      totalH += chain[i].size.height;
-      if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps, assets);
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinGroupFill(canvas, inner, '.scene03-group-child', function(){
+        applyLayout(canvas, group, assets);
+      });
+      applyLayout._busy = false;
     }
-
-    cursor = -totalH / 2;
-    for(i = 0; i < chain.length; i++){
-      h = chain[i].size.height;
-      setOffset(chain[i].wrap, 0, cursor + h / 2);
-      cursor += h;
-      if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps, assets);
-    }
-
     endMeasure();
-    inner.style.setProperty('--group-scale', '1.44');
   }
 
   function scheduleLayout(immediate){

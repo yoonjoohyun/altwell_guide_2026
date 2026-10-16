@@ -683,6 +683,163 @@ var Guide01 = (function(){
     if(badge) await unfoldZonedBadge(wrap, opts);
   }
 
+  function localEdges(inner, nodes){
+    var scale = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
+    var origin = inner.getBoundingClientRect();
+    var minX = Infinity;
+    var minY = Infinity;
+    var maxX = -Infinity;
+    var maxY = -Infinity;
+    var i;
+    var rect;
+    for(i = 0; i < nodes.length; i++){
+      if(!nodes[i] || nodes[i].classList.contains('is-hidden')) continue;
+      rect = nodes[i].getBoundingClientRect();
+      if(rect.width < 1 && rect.height < 1) continue;
+      minX = Math.min(minX, rect.left);
+      minY = Math.min(minY, rect.top);
+      maxX = Math.max(maxX, rect.right);
+      maxY = Math.max(maxY, rect.bottom);
+    }
+    if(!isFinite(minX)) return null;
+    return {
+      left: (minX - origin.left) / scale,
+      right: (maxX - origin.left) / scale,
+      top: (minY - origin.top) / scale,
+      bottom: (maxY - origin.top) / scale
+    };
+  }
+
+  function noteFillState(inner, edges){
+    var list;
+    var i;
+    if(!inner || !edges) return;
+    if(edges.right - edges.left < 2 || edges.bottom - edges.top < 2) return;
+    list = inner._fillStates || (inner._fillStates = []);
+    for(i = 0; i < list.length; i++){
+      if(Math.abs(list[i].left - edges.left) < 2 && Math.abs(list[i].right - edges.right) < 2 && Math.abs(list[i].top - edges.top) < 2 && Math.abs(list[i].bottom - edges.bottom) < 2) return;
+    }
+    if(list.length > 12) list.shift();
+    list.push(edges);
+  }
+
+  function scaleForEdges(canvas, inner, edges){
+    var origin = inner.getBoundingClientRect();
+    var box = canvas.getBoundingClientRect();
+    var insetX = box.width * 0.075;
+    var insetY = box.height * 0.075;
+    var scale = Infinity;
+    function consider(local, originPos, limit){
+      var next;
+      if(Math.abs(local) < 0.5) return;
+      next = (limit - originPos) / local;
+      if(next > 0 && next < scale) scale = next;
+    }
+    consider(edges.left, origin.left, box.left + insetX);
+    consider(edges.right, origin.left, box.right - insetX);
+    consider(edges.top, origin.top, box.top + insetY);
+    consider(edges.bottom, origin.top, box.bottom - insetY);
+    if(!isFinite(scale) || scale <= 0) return 1;
+    return scale;
+  }
+
+  function fillScaleFromNotes(canvas, inner){
+    var list = inner && inner._fillStates || [];
+    var scale = Infinity;
+    var i;
+    var next;
+    for(i = 0; i < list.length; i++){
+      next = scaleForEdges(canvas, inner, list[i]);
+      if(next < scale) scale = next;
+    }
+    if(!isFinite(scale) || scale <= 0) return 1;
+    return Math.round(scale * 1000) / 1000;
+  }
+
+  function applyNotedFill(canvas, inner){
+    if(!canvas || !inner) return 1;
+    var scale = fillScaleFromNotes(canvas, inner);
+    inner.style.setProperty('--group-scale', String(scale));
+    return scale;
+  }
+
+  function pinGroupFill(canvas, inner, childSelector, relayout){
+    var saved = [];
+    var hidden;
+    var host;
+    var hostHidden = false;
+    var prevOpacity = '';
+    var i;
+    var edges;
+    if(!canvas || !inner) return;
+    host = inner.parentElement;
+    if(host){
+      hostHidden = host.classList.contains('is-hidden');
+      prevOpacity = host.style.opacity;
+      if(hostHidden) host.classList.remove('is-hidden');
+      host.style.opacity = '0';
+    }
+    hidden = inner.querySelectorAll('.is-hidden');
+    for(i = 0; i < hidden.length; i++){
+      saved.push(hidden[i]);
+      hidden[i].classList.remove('is-hidden');
+    }
+    if(relayout) relayout();
+    inner.style.setProperty('--group-scale', '1');
+    edges = localEdges(inner, inner.querySelectorAll('*'));
+    noteFillState(inner, edges);
+    for(i = 0; i < saved.length; i++) saved[i].classList.add('is-hidden');
+    if(relayout) relayout();
+    applyNotedFill(canvas, inner);
+    if(host){
+      if(hostHidden) host.classList.add('is-hidden');
+      if(prevOpacity) host.style.opacity = prevOpacity;
+      else host.style.removeProperty('opacity');
+    }
+  }
+
+  function pinNodeFill(canvas, inner, nodes){
+    var host = inner && inner.parentElement;
+    var hostHidden = false;
+    var prevOpacity = '';
+    var i;
+    var j;
+    var saved;
+    var nested;
+    var edges;
+    if(!canvas || !inner || !nodes) return;
+    if(host){
+      hostHidden = host.classList.contains('is-hidden');
+      prevOpacity = host.style.opacity;
+      if(hostHidden) host.classList.remove('is-hidden');
+      host.style.opacity = '0';
+    }
+    for(i = 0; i < nodes.length; i++){
+      if(!nodes[i]) continue;
+      saved = [];
+      if(nodes[i].classList.contains('is-hidden')){
+        saved.push(nodes[i]);
+        nodes[i].classList.remove('is-hidden');
+      }
+      nested = nodes[i].querySelectorAll('.is-hidden');
+      for(j = 0; j < nested.length; j++){
+        saved.push(nested[j]);
+        nested[j].classList.remove('is-hidden');
+      }
+      inner.style.setProperty('--group-scale', '1');
+      nested = nodes[i].querySelectorAll('*');
+      edges = localEdges(inner, [nodes[i]].concat(Array.prototype.slice.call(nested)));
+      noteFillState(inner, edges);
+      for(j = 0; j < saved.length; j++) saved[j].classList.add('is-hidden');
+    }
+    applyNotedFill(canvas, inner);
+    if(host){
+      if(hostHidden) host.classList.add('is-hidden');
+      if(prevOpacity) host.style.opacity = prevOpacity;
+      else host.style.removeProperty('opacity');
+    }
+  }
+
   return {
     CANVAS_CLS: CANVAS_CLS,
     setSceneDesc: setSceneDesc,
@@ -744,7 +901,12 @@ var Guide01 = (function(){
     badgeToClosed: badgeToClosed,
     resolveZonedBadge: resolveZonedBadge,
     unfoldZonedBadge: unfoldZonedBadge,
-    enterZonedBadge: enterZonedBadge
+    enterZonedBadge: enterZonedBadge,
+    noteFillState: noteFillState,
+    localEdges: localEdges,
+    applyNotedFill: applyNotedFill,
+    pinGroupFill: pinGroupFill,
+    pinNodeFill: pinNodeFill
   };
 })();
 

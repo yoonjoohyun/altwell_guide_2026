@@ -2794,6 +2794,12 @@
   transform:scale(var(--group-scale, 1));
   transform-origin:center center;
 }
+.guide01-canvas.scene08-canvas .s08-close-center{
+  position:absolute;
+  left:0;
+  top:0;
+  transform:translate(-50%, -50%);
+}
 .guide01-canvas.scene08-canvas .g-close{pointer-events:auto}
 
 .guide01-canvas.scene07-canvas .scene07-stack-group{z-index:12}

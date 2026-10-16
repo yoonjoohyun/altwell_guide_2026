@@ -472,13 +472,13 @@ var Scene01Layout = (function(){
     fitGroupScale(canvas, group, inner);
     alignMemberHeadToZoneTop(canvas, group, assets);
     fitGroupScale(canvas, group, inner);
-    applyScene01ObjectScale(inner);
+    applyScene01ObjectScale(canvas, inner);
     endMeasure();
   }
 
-  function applyScene01ObjectScale(inner){
-    var base = parseFloat(inner.style.getPropertyValue('--group-scale')) || 1;
-    inner.style.setProperty('--group-scale', String(Math.round(base * 1.2 * 1000) / 1000));
+  function applyScene01ObjectScale(canvas, inner){
+    Guide01.noteFillState(inner, Guide01.localEdges(inner, inner.querySelectorAll('.scene01-group-child')));
+    Guide01.applyNotedFill(canvas, inner);
   }
 
   function fitGroupScale(canvas, group, inner){

@@ -631,7 +631,7 @@ var Scene05Layout = (function(){
     if(boundsW > 0 && boundsW > canvasW) scale = Math.min(scale, canvasW / boundsW);
     if(boundsH > 0 && boundsH > canvasH) scale = Math.min(scale, canvasH / boundsH);
 
-    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
+    inner.style.setProperty('--group-scale', '1');
   }
 
   function applyD4StackLayout(canvas, assets, inner, gaps){
@@ -656,6 +656,15 @@ var Scene05Layout = (function(){
     var gaps = Scene05Config.layout.gaps || {};
     var endMeasure = beginMeasurePass(group);
     applyD4StackLayout(canvas, assets, inner, gaps);
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinNodeFill(canvas, inner, [
+        assets.intro && assets.intro.phase,
+        assets.calendar && assets.calendar.phase,
+        assets.recommendStory && assets.recommendStory.phase
+      ]);
+      applyLayout._busy = false;
+    }
     endMeasure();
   }
 

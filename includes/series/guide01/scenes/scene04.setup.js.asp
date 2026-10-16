@@ -373,7 +373,7 @@ var Scene04Layout = (function(){
       scale = Math.min(scale, canvasH / boundsH);
     }
 
-    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
+    inner.style.setProperty('--group-scale', '1');
   }
 
   function syncStackContentWidth(assets, inner){
@@ -427,6 +427,14 @@ var Scene04Layout = (function(){
     var endMeasure = beginMeasurePass(group);
 
     applyD4StackLayout(canvas, assets, inner, gaps);
+
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinGroupFill(canvas, inner, '.scene04-group-child', function(){
+        applyLayout(canvas, group, assets);
+      });
+      applyLayout._busy = false;
+    }
 
     endMeasure();
   }

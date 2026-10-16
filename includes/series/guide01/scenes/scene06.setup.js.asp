@@ -348,7 +348,7 @@ var Scene06Layout = (function(){
     if(maxX - minX > canvasW) scale = Math.min(scale, canvasW / (maxX - minX));
     if(maxY - minY > canvasH) scale = Math.min(scale, canvasH / (maxY - minY));
 
-    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
+    inner.style.setProperty('--group-scale', '1');
   }
 
   function applyLayout(canvas, group, assets){
@@ -387,6 +387,13 @@ var Scene06Layout = (function(){
 
     inner.style.setProperty('--s04-stack-content-width-fallback', 'min(92vw, 460px)');
     fitGroupScale(canvas, inner);
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinGroupFill(canvas, inner, '.scene06-group-child', function(){
+        applyLayout(canvas, group, assets);
+      });
+      applyLayout._busy = false;
+    }
     endMeasure();
   }
 

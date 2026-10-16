@@ -7,16 +7,32 @@ var Scene08Layout = (function(){
     var canvas = _ctx && _ctx.canvas;
     var inner = _ctx && _ctx.inner;
     var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    var w;
-    var h;
+    var slots;
+    var closed = [];
+    var stageHidden = false;
+    var prevOpacity = '';
+    var i;
+    var rect;
     if(!canvas || !inner || !stage) return;
-    w = stage.offsetWidth || 1;
-    h = stage.offsetHeight || 1;
-    if(w < 2 || h < 2) return;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.42) fit = 0.42;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    stageHidden = stage.classList.contains('is-hidden');
+    prevOpacity = stage.style.opacity;
+    if(stageHidden) stage.classList.remove('is-hidden');
+    stage.style.opacity = '0';
+    slots = stage.querySelectorAll('.g-close-slot');
+    for(i = 0; i < slots.length; i++){
+      if(!slots[i].classList.contains('is-open')){
+        closed.push(slots[i]);
+        slots[i].classList.add('is-open');
+      }
+    }
+    inner.style.setProperty('--group-scale', '1');
+    rect = stage.getBoundingClientRect();
+    Guide01.noteFillState(inner, Guide01.localEdges(inner, [stage]));
+    for(i = 0; i < closed.length; i++) closed[i].classList.remove('is-open');
+    if(stageHidden) stage.classList.add('is-hidden');
+    if(prevOpacity) stage.style.opacity = prevOpacity;
+    else stage.style.removeProperty('opacity');
+    Guide01.applyNotedFill(canvas, inner);
   }
 
   function schedule(){
@@ -42,18 +58,21 @@ function setupScene08Assets(canvas){
   var zone = Scene08Config.layout.anchorZone;
   var stack = document.createElement('div');
   var inner = document.createElement('div');
+  var center = document.createElement('div');
   var panel;
 
   stack.className = 's08-stack g01-zone-wrap';
   inner.className = 's08-stack-inner';
+  center.className = 's08-close-center';
   Guide01.placeAtZone(stack, zone);
-  panel = GuideClosePanel.mount(inner, {
+  panel = GuideClosePanel.mount(center, {
     id: 's08-close',
     title: '오토십 알아보기',
     zoneWrap: false,
     hidden: true,
     titleOpen: false
   });
+  inner.appendChild(center);
   stack.appendChild(inner);
   canvas.appendChild(stack);
   Scene08Layout.bind({ canvas: canvas, inner: inner, stage: panel.wrap });

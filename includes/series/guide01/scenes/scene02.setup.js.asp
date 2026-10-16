@@ -258,27 +258,30 @@ var Scene02Layout = (function(){
       if(item) chain.push(item);
     }
 
-    if(!chain.length){
-      endMeasure();
-      return;
+    if(chain.length){
+      var totalH = 0;
+      for(i = 0; i < chain.length; i++){
+        totalH += chain[i].size.height;
+        if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps);
+      }
+
+      var cursor = -totalH / 2;
+      for(i = 0; i < chain.length; i++){
+        var h = chain[i].size.height;
+        setOffset(chain[i].wrap, 0, cursor + h / 2);
+        cursor += h;
+        if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps);
+      }
     }
 
-    var totalH = 0;
-    for(i = 0; i < chain.length; i++){
-      totalH += chain[i].size.height;
-      if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps);
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinGroupFill(canvas, inner, '.scene02-group-child', function(){
+        applyLayout(canvas, group, assets);
+      });
+      applyLayout._busy = false;
     }
-
-    var cursor = -totalH / 2;
-    for(i = 0; i < chain.length; i++){
-      var h = chain[i].size.height;
-      setOffset(chain[i].wrap, 0, cursor + h / 2);
-      cursor += h;
-      if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps);
-    }
-
     endMeasure();
-    inner.style.setProperty('--group-scale', '1.2');
   }
 
   function scheduleLayout(immediate){

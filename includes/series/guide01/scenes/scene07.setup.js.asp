@@ -234,7 +234,14 @@ var Scene07Layout = (function(){
       );
       if(fit < minFit) fit = minFit;
     }
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
+    inner.style.setProperty('--group-scale', '1');
+    if(!applyLayout._busy){
+      applyLayout._busy = true;
+      Guide01.pinGroupFill(canvas, inner, '.scene07-group-child', function(){
+        applyLayout();
+      });
+      applyLayout._busy = false;
+    }
   }
 
   function scheduleLayout(immediate){
