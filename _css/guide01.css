@@ -2061,6 +2061,7 @@
 .guide01-canvas.scene05-canvas .s05-recommend-body{
   display:flex;
   flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-start;
   justify-content:center;
   gap:var(--s05-dual-group-gap, 24px);
@@ -2107,6 +2108,8 @@
 
 .guide01-canvas.scene05-canvas .s05-recommend-product-row{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-end;
   justify-content:center;
   gap:var(--s05-product-gap, 10px);
@@ -2222,6 +2225,8 @@
 
 .guide01-canvas.scene05-canvas .s05-product-row{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-end;
   justify-content:center;
   gap:var(--s05-product-gap, 10px);
@@ -2264,6 +2269,8 @@
 
 .guide01-canvas.scene05-canvas .s05-dual-phase .s05-dual-row{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-start;
   justify-content:center;
   gap:24px;
@@ -2283,6 +2290,8 @@
 
 .guide01-canvas.scene05-canvas .s05-dual-product-row{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-end;
   justify-content:center;
   gap:10px;
@@ -2457,20 +2466,6 @@
   }
 }
 
-@media (max-width:900px){
-  .guide01-canvas.scene05-canvas .s05-recommend-body{
-    flex-direction:column;
-    align-items:center;
-    gap:16px;
-    padding-top:12px;
-  }
-
-  .guide01-canvas.scene05-canvas .s05-dual-phase .s05-dual-row{
-    flex-direction:column;
-    gap:16px;
-  }
-}
-
 /* ========== Scene 06 — 구독 중 추가·변경·해지 ========== */
 #lo-panel.scene06-panel .scene-title,
 #lo-panel.scene06-panel .bullet-item .bullet-text{
@@ -2614,6 +2609,8 @@
 
 .guide01-canvas.scene06-canvas .s03-product-row{
   display:flex;
+  flex-direction:row;
+  flex-wrap:nowrap;
   align-items:flex-end;
   justify-content:center;
   gap:var(--s03-product-gap,10px);
@@ -2702,9 +2699,10 @@
   transform:none;
 }
 
+.guide01-canvas.scene06-canvas .s04-calendar-wrap,
 .guide01-canvas.scene06-canvas .s06-calendar-block{
   width:var(--s04-stack-content-width, var(--s04-stack-content-width-fallback, min(92vw,460px)));
-  max-width:min(92vw,520px);
+  max-width:none;
 }
 
 .guide01-canvas.scene06-canvas .s04-subscription-flow.s06-cancel-flow .subscription_flow_title{
@@ -2752,13 +2750,6 @@
 @keyframes s06-fade-in{from{opacity:0}to{opacity:1}}
 @keyframes s06-fade-out{from{opacity:1}to{opacity:0}}
 @keyframes s06-pop-in{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
-
-@media (max-width:900px){
-  .guide01-canvas.scene06-canvas .s03-product-row{
-    flex-wrap:wrap;
-    max-width:92vw;
-  }
-}
 
 /* ========== Scene 07 — 오토십 핵심 요약 ========== */
 #lo-panel.scene07-panel .scene-title,

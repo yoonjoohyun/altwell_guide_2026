@@ -314,47 +314,80 @@ var Scene06Layout = (function(){
     return gaps.sectionGap != null ? gaps.sectionGap : 14;
   }
 
-  function fitGroupScale(canvas, inner){
-    var scales = Scene06Config.layout.scales || {};
-    var minScale = scales.minFit != null ? scales.minFit : 0.4;
-    var pad = 12;
-    var canvasW = canvas.clientWidth - pad * 2;
-    var canvasH = canvas.clientHeight - pad * 2;
-    var children = inner.querySelectorAll('.scene06-group-child:not(.is-hidden)');
-    var minX = Infinity;
-    var minY = Infinity;
-    var maxX = -Infinity;
-    var maxY = -Infinity;
-    var scale = 1;
+  function hiddenSnapshot(root){
+    var nodes = root.querySelectorAll('*');
+    var list = [];
     var i;
-    var r;
-
-    inner.style.setProperty('--group-scale', '1');
-
-    for(i = 0; i < children.length; i++){
-      r = children[i].getBoundingClientRect();
-      if(r.width < 1 && r.height < 1) continue;
-      minX = Math.min(minX, r.left);
-      minY = Math.min(minY, r.top);
-      maxX = Math.max(maxX, r.right);
-      maxY = Math.max(maxY, r.bottom);
+    for(i = 0; i < nodes.length; i++){
+      if(nodes[i].classList.contains('is-hidden')) list.push(nodes[i]);
     }
-
-    if(!isFinite(minX)){
-      inner.style.setProperty('--group-scale', '1.2');
-      return;
-    }
-
-    if(maxX - minX > canvasW) scale = Math.min(scale, canvasW / (maxX - minX));
-    if(maxY - minY > canvasH) scale = Math.min(scale, canvasH / (maxY - minY));
-
-    inner.style.setProperty('--group-scale', '1');
+    return list;
   }
 
-  function applyLayout(canvas, group, assets){
-    if(!canvas || !group || !assets) return;
-    var inner = group._scene06Inner;
-    if(!inner) return;
+  function restoreHidden(root, hidden){
+    var nodes = root.querySelectorAll('*');
+    var i;
+    for(i = 0; i < nodes.length; i++){
+      if(hidden.indexOf(nodes[i]) !== -1) nodes[i].classList.add('is-hidden');
+      else nodes[i].classList.remove('is-hidden');
+    }
+  }
+
+  function revealTree(el){
+    var nodes;
+    var i;
+    if(!el) return;
+    el.classList.remove('is-hidden');
+    nodes = el.querySelectorAll('.is-hidden');
+    for(i = 0; i < nodes.length; i++) nodes[i].classList.remove('is-hidden');
+  }
+
+  function readOffsetState(inner){
+    var nodes = inner.querySelectorAll('.scene06-group-child');
+    var list = [];
+    var i;
+    var el;
+    for(i = 0; i < nodes.length; i++){
+      el = nodes[i];
+      list.push({
+        el: el,
+        x: el.style.getPropertyValue('--offset-x'),
+        y: el.style.getPropertyValue('--offset-y')
+      });
+    }
+    return list;
+  }
+
+  function writeOffsetState(list){
+    var i;
+    var row;
+    for(i = 0; i < list.length; i++){
+      row = list[i];
+      if(row.x) row.el.style.setProperty('--offset-x', row.x);
+      else row.el.style.removeProperty('--offset-x');
+      if(row.y) row.el.style.setProperty('--offset-y', row.y);
+      else row.el.style.removeProperty('--offset-y');
+    }
+  }
+
+  function lockLayoutInstant(inner){
+    var nodes = inner.querySelectorAll('.scene06-group-child');
+    var added = [];
+    var i;
+    for(i = 0; i < nodes.length; i++){
+      if(nodes[i].classList.contains('s06-layout-instant')) continue;
+      nodes[i].classList.add('s06-layout-instant');
+      added.push(nodes[i]);
+    }
+    return added;
+  }
+
+  function unlockLayoutInstant(added){
+    var i;
+    for(i = 0; i < added.length; i++) added[i].classList.remove('s06-layout-instant');
+  }
+
+  function positionVisible(assets, inner){
     var gaps = Scene06Config.layout.gaps || {};
     var order = stackOrder();
     var chain = [];
@@ -363,37 +396,88 @@ var Scene06Layout = (function(){
     var i;
     var h;
     var wrap;
-    var endMeasure = beginMeasurePass(group);
-
     for(i = 0; i < order.length; i++){
       wrap = resolveWrap(assets, order[i]);
       if(!wrap || !isWrapVisible(wrap)) continue;
       chain.push({ key: order[i], wrap: wrap, size: measureBlock(wrap, inner) });
     }
-
-    if(chain.length){
-      for(i = 0; i < chain.length; i++){
-        totalH += chain[i].size.height;
-        if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps, assets);
-      }
-      cursor = -totalH / 2;
-      for(i = 0; i < chain.length; i++){
-        h = chain[i].size.height;
-        setOffset(chain[i].wrap, 0, cursor + h / 2);
-        cursor += h;
-        if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps, assets);
-      }
+    if(!chain.length) return;
+    for(i = 0; i < chain.length; i++){
+      totalH += chain[i].size.height;
+      if(i > 0) totalH += gapAfterKey(chain[i - 1].key, gaps, assets);
     }
+    cursor = -totalH / 2;
+    for(i = 0; i < chain.length; i++){
+      h = chain[i].size.height;
+      setOffset(chain[i].wrap, 0, cursor + h / 2);
+      cursor += h;
+      if(i < chain.length - 1) cursor += gapAfterKey(chain[i].key, gaps, assets);
+    }
+  }
 
-    inner.style.setProperty('--s04-stack-content-width-fallback', 'min(92vw, 460px)');
-    fitGroupScale(canvas, inner);
+  function noteComposition(canvas, group, assets, inner, keys){
+    var children = inner.querySelectorAll('.scene06-group-child');
+    var wraps = [];
+    var nodes = [];
+    var wrap;
+    var desc;
+    var i;
+    var j;
+    for(i = 0; i < children.length; i++) children[i].classList.add('is-hidden');
+    for(i = 0; i < keys.length; i++){
+      wrap = resolveWrap(assets, keys[i]);
+      if(!wrap) continue;
+      wraps.push(wrap);
+      revealTree(wrap);
+    }
+    positionVisible(assets, inner);
+    inner.style.setProperty('--group-scale', '1');
+    for(i = 0; i < wraps.length; i++){
+      nodes.push(wraps[i]);
+      desc = wraps[i].querySelectorAll('*');
+      for(j = 0; j < desc.length; j++) nodes.push(desc[j]);
+    }
+    Guide01.noteFillState(inner, Guide01.localEdges(inner, nodes));
+  }
+
+  function sizeCancelFlow(canvas, inner){
+    var scale = Guide01.applyNotedFill(canvas, inner);
+    var width = canvas.getBoundingClientRect().width;
+    if(!(scale > 0)) scale = 1;
+    inner.style.setProperty('--s04-stack-content-width-fallback', Math.round(width * 0.85 / scale) + 'px');
+  }
+
+  function measureScene06Fill(canvas, group, assets, inner){
+    var locked = lockLayoutInstant(inner);
+    var prevOffsets = readOffsetState(inner);
+    var prevScale = inner.style.getPropertyValue('--group-scale');
+    var saved = hiddenSnapshot(inner);
+    inner._fillStates = [];
+    noteComposition(canvas, group, assets, inner, ['member', 'primary', 'duplicate', 'swap']);
+    sizeCancelFlow(canvas, inner);
+    restoreHidden(inner, saved);
+    noteComposition(canvas, group, assets, inner, ['calendar']);
+    restoreHidden(inner, saved);
+    writeOffsetState(prevOffsets);
+    if(prevScale) inner.style.setProperty('--group-scale', prevScale);
+    else inner.style.removeProperty('--group-scale');
+    inner.getBoundingClientRect();
+    unlockLayoutInstant(locked);
+    Guide01.applyNotedFill(canvas, inner);
+  }
+
+  function applyLayout(canvas, group, assets){
+    if(!canvas || !group || !assets) return;
+    var inner = group._scene06Inner;
+    if(!inner) return;
+    var endMeasure = beginMeasurePass(group);
+
     if(!applyLayout._busy){
       applyLayout._busy = true;
-      Guide01.pinGroupFill(canvas, inner, '.scene06-group-child', function(){
-        applyLayout(canvas, group, assets);
-      });
+      measureScene06Fill(canvas, group, assets, inner);
       applyLayout._busy = false;
     }
+    positionVisible(assets, inner);
     endMeasure();
   }
 
