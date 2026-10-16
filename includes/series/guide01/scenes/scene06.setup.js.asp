@@ -329,6 +329,8 @@ var Scene06Layout = (function(){
     var i;
     var r;
 
+    inner.style.setProperty('--group-scale', '1');
+
     for(i = 0; i < children.length; i++){
       r = children[i].getBoundingClientRect();
       if(r.width < 1 && r.height < 1) continue;
@@ -339,14 +341,14 @@ var Scene06Layout = (function(){
     }
 
     if(!isFinite(minX)){
-      inner.style.setProperty('--group-scale', '1');
+      inner.style.setProperty('--group-scale', '1.2');
       return;
     }
 
     if(maxX - minX > canvasW) scale = Math.min(scale, canvasW / (maxX - minX));
     if(maxY - minY > canvasH) scale = Math.min(scale, canvasH / (maxY - minY));
 
-    inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
+    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
   }
 
   function applyLayout(canvas, group, assets){

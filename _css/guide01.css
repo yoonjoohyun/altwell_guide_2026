@@ -711,6 +711,8 @@
   position:relative;
   width:0;
   height:0;
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
 }
 
 .guide01-canvas.scene02-canvas .scene02-group-child{
@@ -904,6 +906,8 @@
   position:relative;
   width:0;
   height:0;
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
 }
 
 .guide01-canvas.scene03-canvas .scene03-group-child{

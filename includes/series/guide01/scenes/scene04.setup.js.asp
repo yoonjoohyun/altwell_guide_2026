@@ -347,6 +347,8 @@ var Scene04Layout = (function(){
     var i;
     var r;
 
+    inner.style.setProperty('--group-scale', '1');
+
     for(i = 0; i < children.length; i++){
       r = children[i].getBoundingClientRect();
       if(r.width < 1 && r.height < 1) continue;
@@ -357,7 +359,7 @@ var Scene04Layout = (function(){
     }
 
     if(!isFinite(minX)){
-      inner.style.setProperty('--group-scale', '1');
+      inner.style.setProperty('--group-scale', '1.2');
       return;
     }
 
@@ -371,7 +373,7 @@ var Scene04Layout = (function(){
       scale = Math.min(scale, canvasH / boundsH);
     }
 
-    inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
+    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
   }
 
   function syncStackContentWidth(assets, inner){

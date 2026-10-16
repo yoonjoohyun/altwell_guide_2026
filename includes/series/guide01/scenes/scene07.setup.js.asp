@@ -234,7 +234,7 @@ var Scene07Layout = (function(){
       );
       if(fit < minFit) fit = minFit;
     }
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
   }
 
   function scheduleLayout(immediate){

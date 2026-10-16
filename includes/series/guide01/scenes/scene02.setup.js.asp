@@ -278,6 +278,7 @@ var Scene02Layout = (function(){
     }
 
     endMeasure();
+    inner.style.setProperty('--group-scale', '1.2');
   }
 
   function scheduleLayout(immediate){

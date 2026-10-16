@@ -20,7 +20,7 @@
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
 
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css?v=20261015s08"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css?v=20261016s27"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261001close2"/>
 
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>

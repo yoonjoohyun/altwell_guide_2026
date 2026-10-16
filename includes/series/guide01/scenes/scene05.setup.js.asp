@@ -609,6 +609,8 @@ var Scene05Layout = (function(){
     var i;
     var r;
 
+    inner.style.setProperty('--group-scale', '1');
+
     for(i = 0; i < children.length; i++){
       r = children[i].getBoundingClientRect();
       if(r.width < 1 && r.height < 1) continue;
@@ -619,7 +621,7 @@ var Scene05Layout = (function(){
     }
 
     if(!isFinite(minX)){
-      inner.style.setProperty('--group-scale', '1');
+      inner.style.setProperty('--group-scale', '1.2');
       return;
     }
 
@@ -629,7 +631,7 @@ var Scene05Layout = (function(){
     if(boundsW > 0 && boundsW > canvasW) scale = Math.min(scale, canvasW / boundsW);
     if(boundsH > 0 && boundsH > canvasH) scale = Math.min(scale, canvasH / boundsH);
 
-    inner.style.setProperty('--group-scale', String(Math.max(minScale, Math.min(1, scale))));
+    inner.style.setProperty('--group-scale', String(Math.round(Math.max(minScale, Math.min(1, scale)) * 1.2 * 1000) / 1000));
   }
 
   function applyD4StackLayout(canvas, assets, inner, gaps){
