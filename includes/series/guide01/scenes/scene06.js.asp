@@ -70,14 +70,12 @@ async function scene06PrepBlock(wrap, assets){
     }
   }
 
-  wrap.style.opacity = '0';
   showElement(wrap);
   showElement(assets.group);
   if(typeof Scene06Layout !== 'undefined'){
     Scene06Layout.scheduleLayout(!hasVisibleSibling);
   }
-  if(hasVisibleSibling) await wait(scene06LayoutSettleMs());
-  wrap.style.removeProperty('opacity');
+  if(hasVisibleSibling) await wait(180);
 }
 
 async function scene06PopEl(el, opts){
@@ -89,19 +87,14 @@ async function scene06PopEl(el, opts){
 }
 
 async function scene06EnterProduct(wrap){
-  var FADE = scene06Motion('FADE');
-
   if(!wrap) return;
 
-  wrap.style.opacity = '0';
   showElement(wrap);
+  wrap.classList.add('s06-soft-in');
   if(typeof Scene06Layout !== 'undefined') Scene06Layout.scheduleLayout(false);
-  await wait(scene06LayoutSettleMs());
-  wrap.style.removeProperty('opacity');
-
-  await Guide01.fadeZoned(wrap, true, FADE);
+  await wait(680);
+  wrap.classList.remove('s06-soft-in');
   Guide01.startIdleFloat(wrap);
-  if(typeof Scene06Layout !== 'undefined') Scene06Layout.scheduleLayout(false);
 }
 
 async function scene06EnterTitleIntro(tl, canvas, assets, ctx){
@@ -146,8 +139,12 @@ async function scene06EnterBcdeAndBadge(assets){
   if(!primary) return;
 
   for(i = 0; i < letters.length; i++){
-    await scene06EnterProduct(primary.products[letters[i]]);
-    if(i < letters.length - 1) await wait(stagger);
+    if(i < letters.length - 1){
+      scene06EnterProduct(primary.products[letters[i]]);
+      await wait(Math.min(stagger, 220));
+    }else{
+      await scene06EnterProduct(primary.products[letters[i]]);
+    }
   }
 
   if(primary.addBadgeHost){
@@ -217,10 +214,10 @@ async function scene06EnterSwapPanel(assets){
 
   await scene06PrepBlock(swap.block, assets);
   showElement(swap.block);
-  swap.block.classList.add('s06-pop-in');
+  swap.block.classList.add('s06-soft-rise');
   if(swap.panel) swap.panel.classList.add('s06-soft-idle-float');
-  await wait(scene06Motion('POP').duration || 520);
-  swap.block.classList.remove('s06-pop-in');
+  await wait(760);
+  swap.block.classList.remove('s06-soft-rise');
 
   if(typeof Scene06Layout !== 'undefined') Scene06Layout.scheduleLayout(false);
 }
@@ -299,12 +296,36 @@ async function scene06FadeOutPriorAssets(assets){
 }
 
 function scene06RepositionFlowProgress(track, progress){
-  if(!track || !progress || typeof scene04PositionPaymentProgress !== 'function') return;
+  if(!track || !progress) return;
 
   return new Promise(function(resolve){
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
-        scene04PositionPaymentProgress(track, progress);
+        var slots = track.querySelectorAll('.s04-flow-month-slot');
+        var pay = slots[0] && slots[0].querySelector('.s04-flow-payment-coin');
+        var endCoin = slots[3] && slots[3].querySelector('.s04-flow-payment-coin');
+        var trackRect;
+        var payRect;
+        var endRect;
+        var scale;
+        var pad;
+        var left;
+        var right;
+
+        if(pay && endCoin){
+          trackRect = track.getBoundingClientRect();
+          payRect = pay.getBoundingClientRect();
+          endRect = endCoin.getBoundingClientRect();
+          scale = track.offsetWidth ? (trackRect.width / track.offsetWidth) : 1;
+          if(!scale || scale < 0.05) scale = 1;
+          pad = 8;
+          left = ((payRect.right - trackRect.left) + pad) / scale;
+          right = ((endRect.left - trackRect.left) - pad) / scale;
+          progress.style.left = left + 'px';
+          progress.style.width = Math.max(0, right - left) + 'px';
+        }else if(typeof scene04PositionPaymentProgress === 'function'){
+          scene04PositionPaymentProgress(track, progress);
+        }
         resolve();
       });
     });
@@ -312,17 +333,42 @@ function scene06RepositionFlowProgress(track, progress){
 }
 
 function scene06CalendarStepMotion(){
-  if(typeof Scene04Config !== 'undefined' && Scene04Config.motion && Scene04Config.motion.calendarStep){
-    return Scene04Config.motion.calendarStep;
-  }
   return {
-    jumpDuration: 600,
-    stagger: 380,
-    jumpPeak: -5,
-    jumpSettle: 2,
-    jumpScalePeak: 1.015,
-    jumpScaleSettle: 0.995
+    jumpDuration: 440,
+    stagger: 70,
+    jumpPeak: -4,
+    jumpSettle: 0,
+    jumpScalePeak: 1.02,
+    jumpScaleSettle: 1
   };
+}
+
+function scene06RunMonthJump(month, motion, jumpDur){
+  var slot = month && month.closest('.s04-flow-month-slot');
+  var target = slot || month;
+  var peak = motion && motion.jumpPeak != null ? motion.jumpPeak : -4;
+  var settle = motion && motion.jumpSettle != null ? motion.jumpSettle : 0;
+  var scalePeak = motion && motion.jumpScalePeak != null ? motion.jumpScalePeak : 1.02;
+  var scaleSettle = motion && motion.jumpScaleSettle != null ? motion.jumpScaleSettle : 1;
+
+  if(!target) return Promise.resolve();
+  target.style.transform = 'translate3d(0,0,0)';
+  if(typeof target.animate !== 'function') return wait(jumpDur);
+
+  return target.animate([
+    { transform: 'translate3d(0,0,0) scale(1)', offset: 0 },
+    { transform: 'translate3d(0,' + peak + 'px,0) scale(' + scalePeak + ')', offset: 0.42 },
+    { transform: 'translate3d(0,' + settle + 'px,0) scale(' + scaleSettle + ')', offset: 0.72 },
+    { transform: 'translate3d(0,0,0) scale(1)', offset: 1 }
+  ], {
+    duration: jumpDur,
+    easing: 'cubic-bezier(.16,1,.3,1)',
+    fill: 'none'
+  }).finished.then(function(){
+    target.style.transform = '';
+  }).catch(function(){
+    target.style.transform = '';
+  });
 }
 
 async function scene06ActivateCalendarSteps(assets, ctx){
@@ -380,11 +426,7 @@ async function scene06ActivateCalendarSteps(assets, ctx){
       if(inner) inner.classList.remove('s04-soft-idle-float');
     }
 
-    if(typeof scene04RunMonthJump === 'function'){
-      await scene04RunMonthJump(month, jumpDur);
-    }else{
-      await wait(jumpDur);
-    }
+    await scene06RunMonthJump(month, motion, jumpDur);
 
     if(entry.index === 1 && coin && typeof scene04RevealPaymentCoin === 'function'){
       await scene04RevealPaymentCoin(coin);
@@ -406,6 +448,9 @@ async function scene06ActivateCalendarSteps(assets, ctx){
           showElement(progress);
         }
         await scene04RevealPaymentCoin(coin);
+        if(entry.index === 3 && progress && track){
+          await scene06RepositionFlowProgress(track, progress);
+        }
         if(entry.index === 0 && progress && track){
           if(typeof scene04ResetProgressDots === 'function'){
             scene04ResetProgressDots(progress);
@@ -425,19 +470,27 @@ async function scene06ActivateCalendarSteps(assets, ctx){
 
 async function scene06EnterCancelFlow(assets, ctx){
   var cal = assets.calendar;
-  var FADE = scene06Motion('FADE');
+  var flowInner;
 
   if(!cal) return;
 
   await scene06FadeOutPriorAssets(assets);
 
-  await scene06PrepBlock(cal.block, assets);
   showElement(cal.block);
+  showElement(assets.group);
+  if(typeof Scene06Layout !== 'undefined') Scene06Layout.scheduleLayout(true);
 
   if(cal.wrap){
     showElement(cal.wrap);
     Guide01.stopIdleFloat(cal.wrap);
-    await Guide01.fadeZoned(cal.wrap, true, FADE);
+    flowInner = cal.wrap.querySelector('.g01-float-inner');
+    if(flowInner){
+      flowInner.classList.add('s06-flow-rise');
+      await wait(980);
+      flowInner.classList.remove('s06-flow-rise');
+    }else{
+      await Guide01.fadeZoned(cal.wrap, true, scene06Motion('FADE'));
+    }
     await scene06ActivateCalendarSteps(assets, ctx);
   }
 

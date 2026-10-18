@@ -1572,6 +1572,10 @@
   opacity:1;
 }
 
+.guide01-canvas.scene06-canvas .s04-subscription-flow .s04-flow-payment-progress{
+  justify-content:space-between;
+}
+
 .guide01-canvas.scene04-canvas .s04-subscription-flow .s04-flow-progress-dot,
 .guide01-canvas.scene06-canvas .s04-subscription-flow .s04-flow-progress-dot{
   flex-shrink:0;
@@ -2578,7 +2582,7 @@
   top:50%;
   transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px)));
   transform-origin:center center;
-  transition:transform 480ms cubic-bezier(.22,1,.36,1), opacity 420ms ease;
+  transition:transform 680ms cubic-bezier(.16,1,.3,1), opacity 520ms cubic-bezier(.16,1,.3,1);
 }
 
 .guide01-canvas.scene06-canvas .scene06-group-child.s06-layout-instant{transition:none !important}
@@ -2750,6 +2754,34 @@
 @keyframes s06-fade-in{from{opacity:0}to{opacity:1}}
 @keyframes s06-fade-out{from{opacity:1}to{opacity:0}}
 @keyframes s06-pop-in{from{opacity:0;transform:scale(.82)}to{opacity:1;transform:scale(1)}}
+@keyframes s06-soft-in{
+  0%{opacity:0;transform:translateY(16px)}
+  100%{opacity:1;transform:translateY(0)}
+}
+@keyframes s06-soft-rise{
+  0%{
+    opacity:0;
+    transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px) + 20px)) scale(.985);
+  }
+  100%{
+    opacity:1;
+    transform:translate(calc(-50% + var(--offset-x,0px)), calc(-50% + var(--offset-y,0px))) scale(1);
+  }
+}
+@keyframes s06-flow-rise{
+  0%{opacity:0;transform:scale(var(--g01-base-scale,1)) translate3d(0,28px,0)}
+  100%{opacity:1;transform:scale(var(--g01-base-scale,1)) translate3d(0,0,0)}
+}
+.guide01-canvas.scene06-canvas .s06-soft-in{
+  animation:s06-soft-in 680ms cubic-bezier(.16,1,.3,1) both;
+}
+.guide01-canvas.scene06-canvas .scene06-group-child.s06-soft-rise{
+  animation:s06-soft-rise 760ms cubic-bezier(.16,1,.3,1) both;
+  transition:none;
+}
+.guide01-canvas.scene06-canvas .g01-float-inner.s06-flow-rise{
+  animation:s06-flow-rise 980ms cubic-bezier(.16,1,.28,1) both;
+}
 
 /* ========== Scene 07 — 오토십 핵심 요약 ========== */
 #lo-panel.scene07-panel .scene-title,

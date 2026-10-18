@@ -198,11 +198,11 @@ var Scene06Layout = (function(){
     }
 
     flow.classList.add('s06-cancel-flow');
-    flow.setAttribute('aria-label', '해지 신청 시 3개월 구독 유지 후 자동 해지');
+    flow.setAttribute('aria-label', '갱신 종료 신청 시 3개월 구독 유지 후 갱신 종료');
 
     title = flow.querySelector('.subscription_flow_title');
     if(title){
-      title.innerHTML = '해지 신청 시 <br class="s06-flow-title-br">3개월 구독 유지 후 자동 해지';
+      title.innerHTML = '갱신 종료 신청 시 <br class="s06-flow-title-br">3개월 구독 유지 후 갱신 종료';
     }
 
     slots = flow.querySelectorAll('.s04-flow-month-slot');
@@ -210,7 +210,7 @@ var Scene06Layout = (function(){
     if(slot2){
       coin = slot2.querySelector('.s04-flow-payment-coin');
       if(coin){
-        coin.innerHTML = '<span class="s04-flow-payment-coin-inner s04-flow-payment-coin-auto s06-flow-request-coin">해지 신청</span>';
+        coin.innerHTML = '<span class="s04-flow-payment-coin-inner s04-flow-payment-coin-auto s06-flow-request-coin">갱신 종료 신청</span>';
       }
     }
 
@@ -218,7 +218,7 @@ var Scene06Layout = (function(){
     if(slot4){
       coin = slot4.querySelector('.s04-flow-payment-coin');
       if(coin){
-        coin.innerHTML = '<span class="s04-flow-payment-coin-inner s04-flow-payment-coin-auto s06-flow-done-coin">자동 해지</span>';
+        coin.innerHTML = '<span class="s04-flow-payment-coin-inner s04-flow-payment-coin-auto s06-flow-done-coin">갱신 종료</span>';
       }
     }
 
