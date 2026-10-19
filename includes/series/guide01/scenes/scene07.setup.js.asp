@@ -148,6 +148,7 @@ var Scene07Layout = (function(){
 
   function mountBenefitPanel(){
     var panel = document.createElement('div');
+    var cols = document.createElement('div');
     var epRow = document.createElement('div');
     var cbRow = document.createElement('div');
     var caption = document.createElement('div');
@@ -158,6 +159,7 @@ var Scene07Layout = (function(){
     panel.className = 's07-benefit-panel';
     panel.setAttribute('role', 'group');
     panel.setAttribute('aria-label', 'E.P와 캐시백은 매월 1개월분씩 총 3회 발생');
+    cols.className = 's07-coin-cols';
     epRow.className = 's07-ep-row is-hidden';
     cbRow.className = 's07-cb-row is-hidden';
     for(i = 0; i < 3; i++){
@@ -179,8 +181,9 @@ var Scene07Layout = (function(){
     }
     caption.className = 's07-ep-caption is-hidden';
     caption.textContent = '매월 1개월분씩 총 3회 발생';
-    panel.appendChild(epRow);
-    panel.appendChild(cbRow);
+    cols.appendChild(epRow);
+    cols.appendChild(cbRow);
+    panel.appendChild(cols);
     panel.appendChild(caption);
     return {
       wrap: mountFloat(panel, 's07-benefit', 1),
@@ -260,12 +263,15 @@ var Scene07Layout = (function(){
     var cursor;
     var i;
     var h;
+    var shouldMeasure = !applyLayout._busy && canvas && inner && !inner._fillReady;
     if(!inner) return;
-    if(!applyLayout._busy && group){
+    if(shouldMeasure && group){
       groupHidden = group.classList.contains('is-hidden');
       prevOpacity = group.style.opacity;
-      if(groupHidden) group.classList.remove('is-hidden');
-      group.style.opacity = '0';
+      if(groupHidden){
+        group.classList.remove('is-hidden');
+        group.style.opacity = '0';
+      }
     }
     children = visibleChildren(inner);
     gap = (Scene07Config.layout.gaps && Scene07Config.layout.gaps.stackGap) || 14;
@@ -280,12 +286,13 @@ var Scene07Layout = (function(){
       setOffset(children[i], 0, cursor + heights[i] / 2);
       cursor += heights[i] + gap;
     }
-    if(!applyLayout._busy && canvas){
+    if(shouldMeasure){
       applyLayout._busy = true;
       measureScene07Fill(canvas, inner);
       applyLayout._busy = false;
+      inner._fillReady = true;
     }
-    if(group && group.style.opacity === '0' && !applyLayout._busy){
+    if(shouldMeasure && group && group.style.opacity === '0' && !applyLayout._busy){
       if(groupHidden) group.classList.add('is-hidden');
       if(prevOpacity) group.style.opacity = prevOpacity;
       else group.style.removeProperty('opacity');
@@ -366,10 +373,44 @@ var Scene07Layout = (function(){
     Guide01.noteFillState(inner, Guide01.localEdges(inner, inner.querySelectorAll('*')));
   }
 
+  function captureAnimTimes(root){
+    var anims = root.getAnimations ? root.getAnimations({ subtree: true }) : [];
+    var list = [];
+    var i;
+    var effect;
+    for(i = 0; i < anims.length; i++){
+      effect = anims[i].effect;
+      list.push({
+        node: effect && effect.target,
+        name: anims[i].animationName,
+        time: anims[i].currentTime
+      });
+    }
+    return list;
+  }
+
+  function restoreAnimTimes(root, saved){
+    var anims = root.getAnimations ? root.getAnimations({ subtree: true }) : [];
+    var i;
+    var j;
+    var effect;
+    for(i = 0; i < saved.length; i++){
+      if(saved[i].time == null) continue;
+      for(j = 0; j < anims.length; j++){
+        effect = anims[j].effect;
+        if(effect && effect.target === saved[i].node && anims[j].animationName === saved[i].name){
+          anims[j].currentTime = saved[i].time;
+          break;
+        }
+      }
+    }
+  }
+
   function measureScene07Fill(canvas, inner){
     var stage = inner.querySelector('#s07-stage');
     var finale = inner.querySelector('#s07-finale');
     var calendar = inner.querySelector('#s07-calendar');
+    var animTimes = captureAnimTimes(inner);
     var saved = hiddenSnapshot(inner);
     var rows = inner.querySelectorAll('.ads_row');
     var shownRows = [];
@@ -409,6 +450,7 @@ var Scene07Layout = (function(){
     if(prevScale) inner.style.setProperty('--group-scale', prevScale);
     else inner.style.removeProperty('--group-scale');
     inner.getBoundingClientRect();
+    restoreAnimTimes(inner, animTimes);
     unlockInstant(locked);
     Guide01.applyNotedFill(canvas, inner);
   }
@@ -437,7 +479,10 @@ var Scene07Layout = (function(){
     _ctx = ctx;
     if(_resizeBound) return;
     _resizeBound = true;
-    window.addEventListener('resize', function(){ scheduleLayout(false); });
+    window.addEventListener('resize', function(){
+      if(_ctx && _ctx.group && _ctx.group._inner) _ctx.group._inner._fillReady = false;
+      scheduleLayout(false);
+    });
   }
 
   function unbindResize(){
@@ -525,16 +570,13 @@ function setupScene07Assets(canvas){
   if(delivery) ship.appendChild(delivery);
   if(benefit && benefit.wrap) ship.appendChild(benefit.wrap);
 
+  var tail = document.createElement('div');
+  tail.className = 's07-tail';
   stage.appendChild(hero);
   stage.appendChild(ship);
-  if(recommend){
-    recommend.classList.add('s07-follow');
-    stage.appendChild(recommend);
-  }
-  if(base){
-    base.classList.add('s07-follow');
-    stage.appendChild(base);
-  }
+  if(recommend) tail.appendChild(recommend);
+  if(base) tail.appendChild(base);
+  stage.appendChild(tail);
   inner.appendChild(stage);
 
   if(finale && finale.wrap){

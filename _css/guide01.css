@@ -2908,7 +2908,7 @@
 }
 .guide01-canvas.scene07-canvas #s07-member .g01-attach-slot[data-slot="rank"] .lev_d{--size:60px}
 .guide01-canvas.scene07-canvas #s07-member .g01-attach-slot[data-slot="rank"] .lev_d.s03-d-rank-enter{
-  animation:s07-d-rank-float-in 720ms cubic-bezier(.22,1,.36,1) both;
+  animation:s07-d-rank-float-in 1100ms ease-in-out both;
 }
 .guide01-canvas.scene07-canvas .s07-payment,
 .guide01-canvas.scene07-canvas .s07-delivery{
@@ -2960,12 +2960,24 @@
   box-shadow:0 8px 24px rgba(31,41,55,.12);
   box-sizing:border-box;
 }
+.guide01-canvas.scene07-canvas .s07-coin-cols{
+  display:grid;
+  grid-template-columns:repeat(3, auto);
+  justify-content:center;
+  justify-items:center;
+  align-items:center;
+  column-gap:14px;
+  row-gap:8px;
+}
 .guide01-canvas.scene07-canvas .s07-ep-row,
 .guide01-canvas.scene07-canvas .s07-cb-row{
+  display:contents;
+}
+.guide01-canvas.scene07-canvas .s07-tail{
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:8px;
+  gap:16px;
 }
 .guide01-canvas.scene07-canvas .s07-point-badge .recommend_bonus_text_1,
 .guide01-canvas.scene07-canvas .s07-point-badge .recommend_bonus_text_2{
@@ -3162,23 +3174,30 @@
   color:#fff;
   border:1.5px solid rgba(255,255,255,.7);
 }
+.guide01-canvas.scene07-canvas .autoship_discount_summary_card .ads_row{
+  transition:
+    opacity 1100ms ease-in-out,
+    max-height 1100ms ease-in-out,
+    transform 1100ms ease-in-out,
+    margin 1100ms ease-in-out;
+}
 .guide01-canvas.scene07-canvas .g01-float-inner.s07-float-in{
-  animation:s07-float-in 720ms cubic-bezier(.22,1,.36,1) both;
+  animation:s07-float-in 1100ms ease-in-out both;
 }
 .guide01-canvas.scene07-canvas .g01-float-inner.g01-anim-enter{
   animation-name:s07-float-in;
-  animation-timing-function:cubic-bezier(.22,1,.36,1);
+  animation-timing-function:ease-in-out;
 }
 .guide01-canvas.scene07-canvas .g01-float-inner.g01-idle-float,
 .guide01-canvas.scene07-canvas .s04-delivery-product-wrap .g01-float-inner.g01-idle-float{
   animation:s07-soft-float 5.2s cubic-bezier(.45,0,.55,1) infinite;
 }
-.guide01-canvas.scene07-canvas .s07-fade-in{animation:s07-fade-in 720ms cubic-bezier(.22,1,.36,1) both}
-.guide01-canvas.scene07-canvas .s07-fade-out{animation:s07-fade-out 720ms cubic-bezier(.22,1,.36,1) both}
+.guide01-canvas.scene07-canvas .s07-fade-in{animation:s07-fade-in 1100ms ease-in-out both}
+.guide01-canvas.scene07-canvas .s07-fade-out{animation:s07-fade-out 1100ms ease-in-out both}
 
 @keyframes s07-float-in{
-  from{opacity:0;transform:scale(var(--g01-base-scale,1)) translate3d(0,8px,0)}
-  to{opacity:1;transform:scale(var(--g01-base-scale,1)) translateZ(0)}
+  0%{opacity:0;transform:scale(var(--g01-base-scale,1)) translate3d(0,10px,0)}
+  100%{opacity:1;transform:scale(var(--g01-base-scale,1)) translateZ(0)}
 }
 @keyframes s07-soft-float{
   0%,100%{transform:scale(var(--g01-base-scale,1)) translateY(0)}
@@ -3189,16 +3208,19 @@
   50%{transform:translateY(-2px)}
 }
 @keyframes s07-d-rank-float-in{
-  from{opacity:0;transform:scale(.92) translateY(6px)}
-  to{opacity:1;transform:scale(1) translateY(0)}
+  0%{opacity:0;transform:scale(.96) translateY(8px)}
+  100%{opacity:1;transform:scale(1) translateY(0)}
+}
+.guide01-canvas.scene07-canvas #s07-member .g01-attach-slot[data-slot="rank"] .lev_d.s03-d-rank-enter{
+  animation-timing-function:ease-in-out;
 }
 @keyframes s07-fade-in{
-  from{opacity:0;transform:translateY(8px)}
-  to{opacity:1;transform:translateY(0)}
+  0%{opacity:0;transform:translateY(10px)}
+  100%{opacity:1;transform:translateY(0)}
 }
 @keyframes s07-fade-out{
-  from{opacity:1;transform:translateY(0)}
-  to{opacity:0;transform:translateY(6px)}
+  0%{opacity:1;transform:translateY(0)}
+  100%{opacity:0;transform:translateY(8px)}
 }
 @keyframes s07-line-flash{
   0%{transform:scale(1);color:#fff}

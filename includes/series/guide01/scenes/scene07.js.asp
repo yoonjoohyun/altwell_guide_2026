@@ -56,18 +56,32 @@ function scene07Relayout(immediate){
   if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(!!immediate);
 }
 
+function scene07PlayIn(node){
+  if(!node) return;
+  node.classList.remove('s07-fade-in', 's07-float-in');
+  node.style.opacity = '0';
+  void node.offsetWidth;
+  node.style.removeProperty('opacity');
+  if(node.classList.contains('g01-float-inner')) node.classList.add('s07-float-in');
+  else node.classList.add('s07-fade-in');
+}
+
 async function scene07Reveal(el, floatIt){
-  var dur = (Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 720;
+  var dur = (Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 1100;
   var inner;
+  var i;
   if(!el) return;
   inner = el._float;
   showElement(el);
-  if(inner) inner.classList.add('s07-float-in');
-  else el.classList.add('s07-fade-in');
+  if(inner) scene07PlayIn(inner);
+  else if(el.classList.contains('s07-ep-row') || el.classList.contains('s07-cb-row')){
+    for(i = 0; i < el.children.length; i++) scene07PlayIn(el.children[i]);
+  }else scene07PlayIn(el);
   scene07Relayout(false);
   await wait(dur);
   if(inner) inner.classList.remove('s07-float-in');
   el.classList.remove('s07-fade-in');
+  for(i = 0; i < el.children.length; i++) el.children[i].classList.remove('s07-fade-in');
   if(floatIt && inner) Guide01.startIdleFloat(el);
 }
 
@@ -87,6 +101,7 @@ async function runScene07Motion(tl, assets, ctx){
   if(scene07Cancelled(ctx)) return;
   showElement(assets.stage);
   showElement(assets.member);
+  scene07PlayIn(assets.member);
   if(typeof scene03StartMemberIdle === 'function') scene03StartMemberIdle(assets.member);
   else Guide01.startIdleFloat(assets.member);
   scene07Relayout(false);
@@ -160,7 +175,7 @@ async function runScene07Motion(tl, assets, ctx){
     await wait(T.finaleStep);
     if(scene07Cancelled(ctx)) return;
     showElement(assets.finale.lines[i]);
-    assets.finale.lines[i].classList.add('s07-fade-in');
+    scene07PlayIn(assets.finale.lines[i]);
     scene07Relayout(false);
   }
 }

@@ -56,7 +56,7 @@ var Scene07Config = {
   },
 
   motion: {
-    FADE: { duration: 720 },
+    FADE: { duration: 1100 },
     POP: { duration: 720 },
     BADGE: { unfoldDuration: 780 },
     layoutTransition: 720
