@@ -52,113 +52,116 @@ function scene07LayoutSettleMs(){
   return (Scene07Config.motion && Scene07Config.motion.layoutTransition) || 480;
 }
 
-async function scene07PrepRow(row, assets){
-  var inner = assets.group && assets.group._inner;
-  var siblings;
-  var hasVisibleSibling = false;
-  var i;
-  if(!row) return;
-  if(inner){
-    siblings = inner.querySelectorAll('.scene07-group-child');
-    for(i = 0; i < siblings.length; i++){
-      if(siblings[i] !== row && !siblings[i].classList.contains('is-hidden')){
-        hasVisibleSibling = true;
-        break;
-      }
-    }
-  }
-  row.style.opacity = '0';
-  showElement(row);
-  showElement(assets.group);
-  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(!hasVisibleSibling);
-  if(hasVisibleSibling) await wait(scene07LayoutSettleMs());
-  row.style.removeProperty('opacity');
+function scene07Relayout(immediate){
+  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(!!immediate);
 }
 
-async function scene07OpenRow(row, slot, assets){
-  if(slot) showElement(slot);
-  await scene07PrepRow(row, assets);
-  if(!slot) return;
-  slot.classList.add('s07-fade-in');
-  Guide01.startIdleFloat(slot);
-  await wait((Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 420);
-  slot.classList.remove('s07-fade-in');
-}
-
-async function scene07RevealSlot(slot, assets){
-  if(!slot) return;
-  slot.style.opacity = '0';
-  showElement(slot);
-  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
-  await wait(scene07LayoutSettleMs());
-  slot.style.removeProperty('opacity');
-  slot.classList.add('s07-fade-in');
-  Guide01.startIdleFloat(slot);
-  await wait((Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 420);
-  slot.classList.remove('s07-fade-in');
-}
-
-async function scene07RevealLine(line){
-  if(!line) return;
-  showElement(line);
-  line.classList.add('is-emphasis', 's07-line-flash');
-  await wait(680);
-  line.classList.remove('s07-line-flash');
+async function scene07Reveal(el, floatIt){
+  var dur = (Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 720;
+  var inner;
+  if(!el) return;
+  inner = el._float;
+  showElement(el);
+  if(inner) inner.classList.add('s07-float-in');
+  else el.classList.add('s07-fade-in');
+  scene07Relayout(false);
+  await wait(dur);
+  if(inner) inner.classList.remove('s07-float-in');
+  el.classList.remove('s07-fade-in');
+  if(floatIt && inner) Guide01.startIdleFloat(el);
 }
 
 async function runScene07Motion(tl, assets, ctx){
   var T = Scene07Config.T;
+  var at = function(ms){ return scene07AtMain(ms, ctx); };
   var i;
 
-  await tl.wait(T.badge);
+  await tl.wait(T.autoship);
   if(scene07Cancelled(ctx)) return;
-  await scene07PrepRow(assets.badgeRow, assets);
-  if(scene07Cancelled(ctx)) return;
+  showElement(assets.group);
   await Guide01.enterZonedBadge(assets.autoship, scene07BadgeEnter());
   Guide01.startIdleFloat(assets.autoship);
-  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
+  scene07Relayout(false);
 
-  await tl.wait(T.calendar);
+  await tl.wait(at(T.member));
   if(scene07Cancelled(ctx)) return;
-  await scene07OpenRow(assets.calRow, assets.calendar, assets);
+  showElement(assets.stage);
+  showElement(assets.member);
+  if(typeof scene03StartMemberIdle === 'function') scene03StartMemberIdle(assets.member);
+  else Guide01.startIdleFloat(assets.member);
+  scene07Relayout(false);
+  await wait(T.drank);
+  if(scene07Cancelled(ctx)) return;
+  if(typeof scene03PromoteWithDRank === 'function') await scene03PromoteWithDRank(assets);
 
-  await tl.wait(T.discount);
+  await tl.wait(at(T.calendar));
   if(scene07Cancelled(ctx)) return;
-  await scene07RevealSlot(assets.discount, assets);
+  await scene07Reveal(assets.calendar, true);
 
-  await tl.wait(T.delivery);
+  await tl.wait(at(T.discount));
   if(scene07Cancelled(ctx)) return;
-  await scene07OpenRow(assets.shipRow, assets.delivery, assets);
-
-  await tl.wait(T.ep);
-  if(scene07Cancelled(ctx)) return;
-  await scene07RevealSlot(assets.ep, assets);
-
-  await tl.wait(T.recommend);
-  if(scene07Cancelled(ctx)) return;
-  await scene07OpenRow(assets.benefitRow, assets.recommend, assets);
-
-  await tl.wait(T.cashback);
-  if(scene07Cancelled(ctx)) return;
-  showElement(assets.cashback);
-  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
-  await wait(scene07LayoutSettleMs());
-  await Guide01.enterZonedBadge(assets.cashback, scene07BadgeEnter());
-  Guide01.startIdleFloat(assets.cashback);
-  if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
-
-  await tl.wait(T.base);
-  if(scene07Cancelled(ctx)) return;
-  await scene07OpenRow(assets.baseRow, assets.base, assets);
-
-  await tl.wait(T.summary);
-  if(scene07Cancelled(ctx)) return;
-  await scene07OpenRow(assets.summaryRow, assets.summary, assets);
-  for(i = 0; i < assets.summaryLines.length; i++){
-    await tl.wait(T.summaryLines[i]);
+  await scene07Reveal(assets.discount && assets.discount.wrap, true);
+  for(i = 0; i < assets.discount.rows.length; i++){
+    await wait(T.discountStep);
     if(scene07Cancelled(ctx)) return;
-    await scene07RevealLine(assets.summaryLines[i]);
-    if(typeof Scene07Layout !== 'undefined') Scene07Layout.scheduleLayout(false);
+    assets.discount.rows[i].classList.add('is-visible');
+    scene07Relayout(false);
+  }
+
+  await tl.wait(at(T.swap));
+  if(scene07Cancelled(ctx)) return;
+  if(assets.calendar){
+    assets.calendar.classList.add('s07-fade-out');
+    await wait((Scene07Config.motion.FADE && Scene07Config.motion.FADE.duration) || 720);
+    hideElement(assets.calendar);
+    assets.calendar.classList.remove('s07-fade-out');
+  }
+  await scene07Reveal(assets.payment, true);
+  await wait(T.benefitStep);
+  if(scene07Cancelled(ctx)) return;
+  showElement(assets.ship);
+  await scene07Reveal(assets.delivery, true);
+  if(typeof scene04StartDeliveryProductLoop === 'function'){
+    scene04StartDeliveryProductLoop(assets.delivery && assets.delivery._deliveryBox, assets.delivery && assets.delivery._deliveryProducts, ctx);
+  }
+  await wait(T.benefitStep);
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.benefit && assets.benefit.wrap, true);
+  await wait(T.benefitStep);
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.benefit.epRow, false);
+  await wait(T.benefitStep);
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.benefit.cbRow, false);
+  await wait(T.benefitStep);
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.benefit.caption, false);
+
+  await tl.wait(at(T.recommend));
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.recommend, true);
+  await wait(T.baseStep);
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.base, true);
+
+  await tl.wait(at(T.finale));
+  if(scene07Cancelled(ctx)) return;
+  if(assets.stage){
+    assets.stage.classList.add('is-leaving');
+    await wait(900);
+    hideElement(assets.stage);
+    assets.stage.classList.remove('is-leaving');
+  }
+  scene07Relayout(false);
+  await wait(scene07LayoutSettleMs());
+  if(scene07Cancelled(ctx)) return;
+  await scene07Reveal(assets.finale && assets.finale.wrap, true);
+  for(i = 0; i < assets.finale.lines.length; i++){
+    await wait(T.finaleStep);
+    if(scene07Cancelled(ctx)) return;
+    showElement(assets.finale.lines[i]);
+    assets.finale.lines[i].classList.add('s07-fade-in');
+    scene07Relayout(false);
   }
 }
 </script>

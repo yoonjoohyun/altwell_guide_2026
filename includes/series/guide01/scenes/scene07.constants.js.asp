@@ -1,6 +1,6 @@
 <script>
 /* guide01 Scene 07 — 오토십 핵심 요약
-   시나리오 시각은 타이틀 음성을 포함한 재생 시작 기준(절대 ms) */
+   모션 시각은 본문 음성 시작 기준. 타이틀 0초만 재생 시작 기준 */
 var Scene07Config = {
   id: 'guide01-scene-07',
   title: '오토십, 이것만 기억하세요',
@@ -35,16 +35,18 @@ var Scene07Config = {
   },
 
   T: {
-    badge: 0,
-    calendar: 1000,
-    discount: 8000,
-    delivery: 18000,
-    ep: 21000,
-    recommend: 24000,
-    cashback: 24700,
-    base: 28000,
-    summary: 33000,
-    summaryLines: [33600, 35800, 38000]
+    autoship: 0,
+    member: 0,
+    drank: 700,
+    calendar: 4000,
+    discount: 9000,
+    discountStep: 700,
+    swap: 18000,
+    benefitStep: 520,
+    recommend: 27000,
+    baseStep: 700,
+    finale: 35000,
+    finaleStep: 650
   },
 
   layout: {
@@ -54,10 +56,10 @@ var Scene07Config = {
   },
 
   motion: {
-    FADE: { duration: 420 },
-    POP: { pop: true, duration: 520 },
-    BADGE: { unfoldDuration: 620 },
-    layoutTransition: 480
+    FADE: { duration: 720 },
+    POP: { duration: 720 },
+    BADGE: { unfoldDuration: 780 },
+    layoutTransition: 720
   }
 };
 
@@ -69,6 +71,18 @@ function scene07Motion(preset){
 
 function scene07BadgeEnter(extra){
   return Object.assign({}, Scene07Config.motion.POP, Scene07Config.motion.BADGE, extra || {});
+}
+
+function scene07TitleMs(ctx){
+  if(ctx && ctx.mediaTitleMs > 0) return ctx.mediaTitleMs;
+  var media = Scene07Config.media;
+  if(media.titleMs > 0) return media.titleMs;
+  var fb = media.fallbackMs;
+  return (fb && fb[0]) || 0;
+}
+
+function scene07AtMain(mainMs, ctx){
+  return scene07TitleMs(ctx) + mainMs;
 }
 
 function scene07PanelFlashes(){
