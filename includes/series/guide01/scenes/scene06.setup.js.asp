@@ -472,10 +472,11 @@ var Scene06Layout = (function(){
     if(!inner) return;
     var endMeasure = beginMeasurePass(group);
 
-    if(!applyLayout._busy){
+    if(!applyLayout._busy && !inner._fillReady){
       applyLayout._busy = true;
       measureScene06Fill(canvas, group, assets, inner);
       applyLayout._busy = false;
+      inner._fillReady = true;
     }
     positionVisible(assets, inner);
     endMeasure();
@@ -501,6 +502,7 @@ var Scene06Layout = (function(){
     if(_resizeBound) return;
     _resizeBound = true;
     window.addEventListener('resize', function(){
+      if(_ctx && _ctx.group && _ctx.group._scene06Inner) _ctx.group._scene06Inner._fillReady = false;
       scheduleLayout(false);
     });
   }
@@ -516,7 +518,7 @@ var Scene06Layout = (function(){
     var labelEl;
     var textEl;
     if(!badge) return null;
-    badge.classList.add('is_green', 'guide01-asset', 's06-add-badge');
+    badge.classList.add('guide01-asset', 's06-add-badge');
     labelEl = badge.querySelector('.guide_info_badge_label');
     textEl = badge.querySelector('.guide_info_badge_text');
     if(labelEl) labelEl.textContent = '+';

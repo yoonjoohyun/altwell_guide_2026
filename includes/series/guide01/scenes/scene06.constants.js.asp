@@ -74,7 +74,8 @@ var Scene06Config = {
     layoutTransition: 480,
     colorPromote: { duration: 520 },
     unavailable: { duration: 520 },
-    productStagger: 320
+    productStagger: 320,
+    productEnter: 1000
   }
 };
 

@@ -87,13 +87,20 @@ async function scene06PopEl(el, opts){
 }
 
 async function scene06EnterProduct(wrap){
+  var inner;
+  var dur = (Scene06Config.motion && Scene06Config.motion.productEnter) || 1000;
   if(!wrap) return;
 
+  inner = wrap.querySelector('.g01-float-inner');
   showElement(wrap);
-  wrap.classList.add('s06-soft-in');
+  if(inner){
+    inner.classList.remove('g01-idle-float', 's06-soft-in');
+    void inner.offsetWidth;
+    inner.classList.add('s06-soft-in');
+  }
   if(typeof Scene06Layout !== 'undefined') Scene06Layout.scheduleLayout(false);
-  await wait(680);
-  wrap.classList.remove('s06-soft-in');
+  await wait(dur);
+  if(inner) inner.classList.remove('s06-soft-in');
   Guide01.startIdleFloat(wrap);
 }
 
