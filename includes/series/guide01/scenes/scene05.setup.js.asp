@@ -233,6 +233,7 @@ var Scene05Layout = (function(){
     if(textEl){
       textEl.innerHTML = '오토십 구독자 1인 당<br class="s05-notice-br">매월 1Point 발생';
     }
+    badge.style.setProperty('--size', '46.8px');
     badge.classList.add('guide01-asset', 's05-recommend-notice-badge');
     badge.setAttribute('aria-label', '오토십 구독자 1인 당 매월 1Point 발생');
     return badge;

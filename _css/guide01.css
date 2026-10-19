@@ -2168,6 +2168,7 @@
 .guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-text .recommend_bonus_text_1,
 .guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-text .recommend_bonus_text_2{
   display:inline;
+  white-space:nowrap;
 }
 
 .guide01-canvas.scene05-canvas .s05-recommend-point-host .s05-point-badge .s05-rec-point-br{

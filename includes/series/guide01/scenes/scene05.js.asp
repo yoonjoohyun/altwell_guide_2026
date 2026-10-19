@@ -521,7 +521,7 @@ async function scene05FadeOutCalendarPhase(assets){
 
 async function scene05EnterRecommendPoint(host){
   var pointBadge;
-  var scale = (Scene05Config.layout.scales && Scene05Config.layout.scales.pointBadge) || 0.85;
+  var scale = ((Scene05Config.layout.scales && Scene05Config.layout.scales.pointBadge) || 0.85) * 0.9;
   var floatInner;
   var motion = Scene05Config.motion.recommendStory || {};
   var delay = motion.pointDelay != null ? motion.pointDelay : 200;
