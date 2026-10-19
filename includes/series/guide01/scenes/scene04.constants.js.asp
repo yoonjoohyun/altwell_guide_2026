@@ -23,9 +23,9 @@ var Scene04Config = {
       '4개월 차 3개월 단위 자동 갱신'
     ],
     flashes: [
-      { atMain: 2000, index: 0 },
-      { atMain: 9000, index: 1 },
-      { atMain: 17000, index: 2 }
+      { atMain: 0, index: 0 },
+      { atMain: 8000, index: 1 },
+      { atMain: 16000, index: 2 }
     ]
   },
 

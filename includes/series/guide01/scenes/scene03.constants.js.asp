@@ -23,9 +23,9 @@ var Scene03Config = {
       '동일 상품 중복 구독 불가'
     ],
     flashes: [
-      { atMain: 2000, index: 0 },
-      { atMain: 7000, index: 1 },
-      { atMain: 13000, index: 2 }
+      { atMain: 0, index: 0 },
+      { atMain: 5000, index: 1 },
+      { atMain: 12000, index: 2 }
     ]
   },
 

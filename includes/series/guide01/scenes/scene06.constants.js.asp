@@ -23,9 +23,9 @@ var Scene06Config = {
       '갱신 종료 시 4개월 차 자동결제부터 중단'
     ],
     flashes: [
-      { atMain: 1000, index: 0 },
-      { atMain: 5000, index: 1 },
-      { atMain: 15000, index: 2 }
+      { atMain: 0, index: 0 },
+      { atMain: 6000, index: 1 },
+      { atMain: 14000, index: 2 }
     ]
   },
 

@@ -26,10 +26,10 @@ var Scene01Config = {
     ],
     /* atMain — 본문 음성 기준(ms), 절대 시각 = titleMs + atMain */
     flashes: [
-      { atMain: 2000, index: 0 },
-      { atMain: 7000, index: 1 },
-      { atMain: 15400, index: 2 },
-      { atMain: 23000, index: 3 }
+      { atMain: 0, index: 0 },
+      { atMain: 6000, index: 1 },
+      { atMain: 11000, index: 2 },
+      { atMain: 22000, index: 3 }
     ]
   },
 
