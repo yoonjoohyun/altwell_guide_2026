@@ -53,6 +53,7 @@ var Scene04Config = {
     },
     scales: {
       autoship: 1,
+      autoshipFloat: 1.4,
       paymentBox: 1,
       deliveryBox: 1,
       deliveryProduct: 1,

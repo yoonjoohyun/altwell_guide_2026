@@ -436,6 +436,7 @@ var Scene04Layout = (function(){
       applyLayout._busy = false;
     }
 
+    scene04RefitPaymentProgress(assets);
     endMeasure();
   }
 

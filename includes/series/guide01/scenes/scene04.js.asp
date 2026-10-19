@@ -83,10 +83,24 @@ async function scene04PrepStackSlot(wrap){
   wrap.style.removeProperty('opacity');
 }
 
+async function scene04GrowFloatingAutoship(wrap){
+  var inner = wrap && wrap.querySelector('.g01-float-inner');
+  var scales = Scene04Config.layout.scales || {};
+  var scale = scales.autoshipFloat != null ? scales.autoshipFloat : 1.4;
+  if(!inner) return;
+  inner.style.transition = 'transform 420ms cubic-bezier(.22,1,.36,1)';
+  inner.style.setProperty('--g01-base-scale', String(scale));
+  void inner.offsetWidth;
+  inner.style.transform = 'scale(' + scale + ')';
+  await wait(420);
+  inner.style.transition = '';
+}
+
 async function scene04EnterAutoship(wrap, opts){
   if(!wrap) return;
   await scene04PrepStackSlot(wrap);
   await Guide01.enterZonedBadge(wrap, opts || scene04BadgeEnter());
+  await scene04GrowFloatingAutoship(wrap);
   Guide01.startIdleFloat(wrap);
   if(typeof Scene04Layout !== 'undefined') Scene04Layout.scheduleLayout(false);
 }
@@ -393,31 +407,56 @@ function scene04RunMonthJump(month, jumpDur){
   });
 }
 
+function scene04RefitPaymentProgress(assets){
+  var flow = assets && assets.subscriptionFlow;
+  var track = flow && flow.querySelector('.subscription_flow_track');
+  var progress = track && track.querySelector('.s04-flow-payment-progress');
+  if(!progress || progress.classList.contains('is-hidden')) return;
+  scene04PositionPaymentProgress(track, progress);
+}
+
+function scene04TrackScale(track){
+  var rect = track.getBoundingClientRect();
+  var local = track.offsetWidth;
+  if(rect.width > 0 && local > 0) return rect.width / local;
+  return 1;
+}
+
 function scene04PositionPaymentProgress(track, progress){
   var slots;
-  var slot0;
-  var slot3;
+  var coin0;
+  var coin3;
   var trackRect;
-  var s0Rect;
-  var s3Rect;
-  var leftCenter;
-  var rightCenter;
+  var scale;
+  var gap;
+  var left;
+  var right;
+  var width;
+  var max;
 
   if(!track || !progress) return;
 
   slots = track.querySelectorAll('.s04-flow-month-slot');
-  slot0 = slots[0];
-  slot3 = slots[3];
-  if(!slot0 || !slot3) return;
+  if(!slots[0] || !slots[3]) return;
+  coin0 = slots[0].querySelector('.s04-flow-payment-coin-inner');
+  coin3 = slots[3].querySelector('.s04-flow-payment-coin-inner');
+  if(!coin0 || !coin3) return;
 
   trackRect = track.getBoundingClientRect();
-  s0Rect = slot0.getBoundingClientRect();
-  s3Rect = slot3.getBoundingClientRect();
-  leftCenter = s0Rect.left + s0Rect.width / 2 - trackRect.left;
-  rightCenter = s3Rect.left + s3Rect.width / 2 - trackRect.left;
+  scale = scene04TrackScale(track);
+  gap = Math.max(6, (parseFloat(getComputedStyle(track).fontSize) || 16) * 0.35);
+  left = (coin0.getBoundingClientRect().right - trackRect.left) / scale + gap;
+  right = (coin3.getBoundingClientRect().left - trackRect.left) / scale - gap;
+  width = Math.max(0, right - left);
+  max = track.clientWidth;
+  if(left < 0){
+    width += left;
+    left = 0;
+  }
+  if(left + width > max) width = Math.max(0, max - left);
 
-  progress.style.left = leftCenter + 'px';
-  progress.style.width = Math.max(0, rightCenter - leftCenter) + 'px';
+  progress.style.left = left + 'px';
+  progress.style.width = width + 'px';
 }
 
 function scene04EnsureProgressDotCount(progress){
