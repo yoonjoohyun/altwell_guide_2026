@@ -23,6 +23,22 @@
       <div class="lp-desc">인터랙티브 애니메이션으로 비즈니스 구조를 직접 체험하세요.</div>
     </div>
     <div class="sim-grid">
+      <div class="sc-card" onclick="location.href='guide01_simulator.asp'">
+        <div class="sc-thumb t3">
+          <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(44,81,202,.35),transparent 70%)"></div>
+          <div class="sc-thumb-icon">?</div>
+          <div class="sc-badge">NEW</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-label">인터랙티브 시뮬레이터</div>
+          <div class="sc-title">오토십 알아보기</div>
+          <div class="sc-desc">가이드01 모션으로 오토십 구독의 핵심을 질문하며 복습합니다.</div>
+          <div class="sc-footer">
+            <span class="sc-meta">7단계 · 질문형 학습</span>
+            <button class="sc-go">▶ 시작하기</button>
+          </div>
+        </div>
+      </div>
       <div class="sc-card" onclick="location.href='01_base_business_simulator.asp'">
         <div class="sc-thumb t1">
           <div class="sc-thumb-glow"></div>

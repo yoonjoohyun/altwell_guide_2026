@@ -84,6 +84,21 @@
     ],
     sim: [
       {
+        title: '오토십 알아보기',
+        href: 'guide01_simulator.asp',
+        tone: 'tone-a',
+        doneLabel: '복습 완료',
+        scenes: [
+          { title: '오토십이란?', done: false },
+          { title: '오토십의 장점', done: false },
+          { title: '어떻게 구독하나요?', done: false },
+          { title: '결제와 배송', done: false },
+          { title: 'E.P와 추천포인트 발생', done: false },
+          { title: '구독 중 추가·변경·해지', done: false },
+          { title: '오토십, 이것만 기억하세요', done: false }
+        ]
+      },
+      {
         title: 'BASE사업자 이해하기',
         href: '01_base_business_simulator.asp',
         tone: 'tone-s',

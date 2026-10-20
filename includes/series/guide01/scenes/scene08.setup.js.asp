@@ -70,7 +70,8 @@ function setupScene08Assets(canvas){
     title: '오토십 알아보기',
     zoneWrap: false,
     hidden: true,
-    titleOpen: false
+    titleOpen: false,
+    simulatorHref: (window.GUIDE_ROOT || '') + '/guide01_simulator.asp'
   });
   inner.appendChild(center);
   stack.appendChild(inner);
