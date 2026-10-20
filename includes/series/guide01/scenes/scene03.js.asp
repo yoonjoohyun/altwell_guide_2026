@@ -292,13 +292,26 @@ async function scene03FlyOpenBadgeToSlot(ctx, canvas, plan, floatWrap){
   Guide01.badgeToOpen(attached);
 }
 
+function scene03AutoshipFloatScale(assets){
+  var group = assets && assets.group;
+  var inner = group && (group._scene03Inner || group.querySelector('.scene03-group-inner'));
+  var groupScale = inner ? parseFloat(inner.style.getPropertyValue('--group-scale')) : 1;
+  var memberScale = Scene03Config.layout.scales && Scene03Config.layout.scales.member;
+  var scale;
+
+  if(!(groupScale > 0)) groupScale = 1;
+  if(!(memberScale > 0)) memberScale = 1;
+  scale = groupScale * memberScale;
+  return scale > 0 ? scale : 1;
+}
+
 async function scene03AttachAutoshipOpen(canvas, assets, opts){
   var plan = assets.autoshipAttach;
   if(!plan || !plan.attached || !canvas) return;
   opts = opts || {};
 
   var floatWrap = Guide01.addZonedAsset(canvas, 'autoship_icon', 's03-autoship-float', Scene03Config.layout.anchorZone, {
-    scale: 1
+    scale: scene03AutoshipFloatScale(assets)
   });
   if(!floatWrap) return;
 
