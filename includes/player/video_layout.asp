@@ -27,7 +27,7 @@
           <div id="motion-canvas"></div>
 
           <!-- 7×7 존 배치 그리드 (씬 reset 시에도 유지) -->
-          <div id="motion-zone-grid" aria-hidden="true"></div>
+          <div id="motion-zone-grid" aria-hidden="true" style="display:none;"></div>
 
         </section>
       </div>

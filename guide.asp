@@ -20,7 +20,7 @@
   <div class="list-wrap">
     <div class="lp-head">
       <div class="lp-title">가이드 영상</div>
-      <div class="lp-desc">단계별로 앨트웰 비즈니스 구조를 배워보세요.</div>
+      <div class="lp-desc">단계별로 앨트웰 비즈니스와 보상플랜에 대해 배워보세요.</div>
     </div>
     <div class="view-tabs">
       <button class="vt on" onclick="setView('grid',this)">단계별</button>

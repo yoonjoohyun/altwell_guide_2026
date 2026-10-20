@@ -15,6 +15,7 @@
   <button type="button" class="nav-logo" onclick="location.href='index.asp'" aria-label="홈으로">ALTWELL<span> SMART GUIDE</span></button>
   <span id="nav-page-title"></span>
   <div class="nav-spacer"></div>
+  <button type="button" class="nav-mypage" onclick="location.href='mypage.asp'">마이페이지</button>
 </nav>
 <div id="home-page" class="page">
   <section id="hero">

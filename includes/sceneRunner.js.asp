@@ -393,10 +393,15 @@ var SceneRunner = (function(){
       var total = getTotalDuration();
       var timeCurrent = document.getElementById('time-current');
       var timeTotal = document.getElementById('time-total');
+      var sceneQuery;
+      var sceneNo;
       if(timeCurrent) timeCurrent.textContent = '0:00';
       if(timeTotal) timeTotal.textContent = fmtMs(total);
       renderTimelineMarkers();
       updatePlayerUI();
+      sceneQuery = location.search.match(/[?&]scene=(\d+)/);
+      sceneNo = sceneQuery ? parseInt(sceneQuery[1], 10) : 0;
+      if(sceneNo > 0 && sceneNo <= scenes.length) prepareSceneAt(sceneNo - 1);
     }
   };
 })();

@@ -46,7 +46,8 @@ function togglePlay(){
   var state = SceneRunner.getState();
 
   if(state === 'idle'){
-    SceneRunner.armGestureMedia(0);
+    var startIndex = SceneRunner.getCurrentIndex();
+    SceneRunner.armGestureMedia(startIndex < 0 ? 0 : startIndex);
     SceneRunner.playLesson();
     if(btn) setPlayButtonState(true);
   } else if(state === 'playing'){
