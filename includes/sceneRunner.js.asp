@@ -226,6 +226,10 @@ var SceneRunner = (function(){
 
     if(scene.endState) scene.endState();
 
+    if(typeof ReadLog !== 'undefined' && lessonMeta && lessonMeta.id){
+      ReadLog.guideScene(lessonMeta.id, index + 1);
+    }
+
     elapsedMs = startElapsed + (scene.duration || 0);
     updatePlayerUI();
 
