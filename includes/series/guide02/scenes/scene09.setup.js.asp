@@ -16,7 +16,7 @@ var Guide02Scene09Layout = (function(){
     if(w < 2 || h < 2) return;
     fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
     if(fit < 0.42) fit = 0.42;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
   }
 
   function schedule(){

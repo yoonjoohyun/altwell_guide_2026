@@ -13,7 +13,7 @@ var Guide02Scene01Layout = (function(){
     var h = cluster.offsetHeight || 1;
     fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
     if(fit < 0.45) fit = 0.45;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
   }
 
   function schedule(){

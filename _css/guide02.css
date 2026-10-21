@@ -62,7 +62,8 @@
 .g02-canvas .g02-slot.is-hidden,
 .g02-canvas .g02_startpack_sub.is-hidden{display:none !important}
 
-.g02-canvas .g02-member{--size:132px}
+.g02-canvas.g02-scene01-canvas .g02-member,
+.g02-canvas.g02-scene02-canvas .g02-member{--size:158.4px}
 .g02-canvas .g02-enter{animation:g02-enter 420ms cubic-bezier(.22,1,.36,1) both}
 .g02-canvas .g02-idle{animation:g02-idle 3.2s ease-in-out infinite}
 
