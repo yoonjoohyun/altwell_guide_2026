@@ -48,7 +48,7 @@ async function guide02Scene07Reveal(el){
   if(!el) return;
   showElement(el);
   el.classList.add('g02-enter');
-  if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.schedule();
+  if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.flush();
   await wait(420);
   el.classList.remove('g02-enter');
   el.classList.add('g02-idle');
@@ -99,7 +99,7 @@ async function guide02Scene07RevealStill(el){
   showElement(el);
   el.classList.remove('g02-idle');
   el.classList.add('g02-enter');
-  if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.schedule();
+  if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.flush();
   await wait(420);
   el.classList.remove('g02-enter');
 }
@@ -112,14 +112,22 @@ async function guide02Scene07BenefitToPlus(el, ctx){
   el.style.width = el.offsetWidth + 'px';
   void el.offsetWidth;
   el.classList.add('is-spin', 'is-plus');
-  el.style.width = '72px';
+  el.style.width = (Guide02Scene07Config.layout.benefitPlusPx || 72) + 'px';
+  var fitting = true;
+  (function fitDuringMorph(){
+    if(!fitting || !el.isConnected) return;
+    if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.flush();
+    requestAnimationFrame(fitDuringMorph);
+  })();
   await wait(320);
-  if(!el.isConnected || guide02Scene07Cancelled(ctx)) return;
+  if(!el.isConnected || guide02Scene07Cancelled(ctx)){ fitting = false; return; }
   el.textContent = '!';
   await wait(520);
-  if(!el.isConnected || guide02Scene07Cancelled(ctx)) return;
+  if(!el.isConnected || guide02Scene07Cancelled(ctx)){ fitting = false; return; }
   el.classList.remove('is-spin');
-  await wait(200);
+  await wait(280);
+  fitting = false;
+  if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.flush();
   if(!el.isConnected || guide02Scene07Cancelled(ctx)) return;
   el.style.transition = 'none';
   await new Promise(function(resolve){
@@ -215,6 +223,10 @@ async function runGuide02Scene07(tl, assets, ctx){
   for(i = 0; i < assets.orbs.length; i++){
     await tl.wait(at(T.orbs[i]));
     if(guide02Scene07Cancelled(ctx)) return;
+    if(i === 0 && assets.row){
+      assets.row.classList.add('is-fit-locked');
+      if(typeof Guide02Scene07Layout !== 'undefined') Guide02Scene07Layout.schedule();
+    }
     if(i > 0){
       guide02Scene07EaseRow(assets.orbs[i - 1].wrap.parentNode, function(){
         assets.orbs[i - 1].wrap.classList.remove('g02-idle');

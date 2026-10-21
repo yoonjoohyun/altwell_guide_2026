@@ -3,9 +3,31 @@ var Guide02Scene07Layout = (function(){
   var _ctx = null;
   var _resizeBound = false;
 
+  function heroVisible(el){
+    return !!(el && el.isConnected && !el.classList.contains('is-hidden'));
+  }
+
+  function fitHero(canvas, inner, hero){
+    var w = hero.offsetWidth || 0;
+    var h = hero.offsetHeight || 0;
+    var fit;
+    if(w < 2 || h < 2 || !canvas.clientWidth || !canvas.clientHeight) return;
+    fit = Math.min((canvas.clientWidth * 0.5) / w, (canvas.clientHeight * 0.5) / h);
+    if(!(fit > 0)) return;
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+  }
+
   function applyFit(){
     if(!_ctx) return;
-    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage);
+    if(heroVisible(_ctx.badge)){
+      fitHero(_ctx.canvas, _ctx.inner, _ctx.badge);
+      return;
+    }
+    if(heroVisible(_ctx.benefit)){
+      fitHero(_ctx.canvas, _ctx.inner, _ctx.benefit);
+      return;
+    }
+    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, 0.85);
   }
 
   function schedule(){
@@ -85,15 +107,40 @@ function setupGuide02Scene07(canvas){
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
-  Guide02Scene07Layout.bind({ canvas: canvas, inner: inner, stage: stage });
+  lockGuide02Scene07RowSize(row);
+
+  Guide02Scene07Layout.bind({ canvas: canvas, inner: inner, stage: stage, badge: badge, benefit: benefit });
   Guide02Scene07Layout.schedule();
 
   return {
     badge: badge,
     badgeRoot: badge.querySelector('.g02_startpack_badge'),
     benefit: benefit,
+    row: row,
     orbs: [orb1, orb2, orb3],
     lines: [line1, line2]
   };
+}
+
+function lockGuide02Scene07RowSize(row){
+  var nodes = row.children;
+  var hidden = [];
+  var i;
+  var w;
+  var h;
+  if(!row || !nodes.length) return;
+  for(i = 0; i < nodes.length; i++){
+    hidden[i] = nodes[i].classList.contains('is-hidden');
+    nodes[i].classList.remove('is-hidden');
+    nodes[i].style.visibility = 'hidden';
+  }
+  w = row.scrollWidth;
+  h = row.scrollHeight;
+  for(i = 0; i < nodes.length; i++){
+    nodes[i].style.visibility = '';
+    if(hidden[i]) nodes[i].classList.add('is-hidden');
+  }
+  row.style.setProperty('--g02-s07-row-min-width', w + 'px');
+  row.style.setProperty('--g02-s07-row-min-height', h + 'px');
 }
 </script>

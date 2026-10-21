@@ -39,7 +39,10 @@ var Guide02Scene07Config = {
     orbs: [6000, 12000, 18000]
   },
 
-  layout: { anchorZone: 'd4' }
+  layout: {
+    anchorZone: 'd4',
+    benefitPlusPx: 72
+  }
 };
 
 function guide02Scene07TitleMs(ctx){

@@ -1343,6 +1343,10 @@
   align-items:center;
   gap:16px;
 }
+.g02-scene07-canvas .g02-s07-row.is-fit-locked{
+  min-width:var(--g02-s07-row-min-width, auto);
+  min-height:var(--g02-s07-row-min-height, auto);
+}
 .g02-s07-row{
   display:flex;
   flex-direction:row;
