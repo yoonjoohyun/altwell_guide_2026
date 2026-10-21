@@ -79,7 +79,7 @@ async function guide02Scene06Fly(assets, fromEl, toEl){
   showElement(flyer);
   hideElement(fromEl);
   await wait(420);
-  flyer.style.transition = 'left 1100ms cubic-bezier(.16,1,.3,1), top 1100ms cubic-bezier(.16,1,.3,1), transform 1100ms cubic-bezier(.16,1,.3,1), opacity 420ms ease 760ms';
+  flyer.style.transition = 'left 1100ms ease-in-out, top 1100ms ease-in-out, transform 1100ms ease-in-out, opacity 420ms ease-in-out 760ms';
   flyer.style.left = end.x + 'px';
   flyer.style.top = end.y + 'px';
   flyer.style.opacity = '0';

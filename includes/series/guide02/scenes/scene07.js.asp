@@ -76,12 +76,12 @@ async function guide02Scene07FoldAway(assets){
 
   var widthDur = 536;
   var textDur = 208;
-  track.style.transition = 'max-width ' + widthDur + 'ms cubic-bezier(.22,1,.36,1)';
+  track.style.transition = 'max-width ' + widthDur + 'ms ease-in-out';
   track.style.maxWidth = '0px';
   await wait(widthDur);
   if(!wrap.isConnected) return;
 
-  name.style.transition = 'opacity ' + textDur + 'ms cubic-bezier(.25,.1,.25,1)';
+  name.style.transition = 'opacity ' + textDur + 'ms ease-in-out';
   name.style.opacity = '0';
   await wait(textDur);
   if(!wrap.isConnected) return;

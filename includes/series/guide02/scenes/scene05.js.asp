@@ -77,7 +77,7 @@ async function guide02Scene05FlyCoin(assets, fromEl, toEl){
   coin.style.transform = 'translate(-50%, -50%) scale(1)';
   showElement(coin);
   await wait(480);
-  coin.style.transition = 'left 1200ms cubic-bezier(.16,1,.3,1), top 1200ms cubic-bezier(.16,1,.3,1), transform 1200ms cubic-bezier(.16,1,.3,1), opacity 460ms ease 760ms';
+  coin.style.transition = 'left 1200ms ease-in-out, top 1200ms ease-in-out, transform 1200ms ease-in-out, opacity 460ms ease-in-out 760ms';
   coin.style.left = end.x + 'px';
   coin.style.top = end.y + 'px';
   coin.style.opacity = '0';
@@ -91,7 +91,7 @@ function guide02Scene05Count(el, from, to, ms){
   return new Promise(function(resolve){
     function frame(now){
       var t = Math.min(1, (now - start) / ms);
-      var eased = 1 - Math.pow(1 - t, 3);
+      var eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
       el.textContent = String(Math.round(from + (to - from) * eased));
       if(t < 1) requestAnimationFrame(frame);
       else resolve();
