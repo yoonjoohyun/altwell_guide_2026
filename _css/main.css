@@ -89,14 +89,36 @@ body.d2 .nav-back{
 }
 .nav-logo:hover{opacity:.85}
 body.d1 .nav-logo{color:var(--red)}
-body.d1 .nav-logo span{color:var(--fg)}
+body.d1 .nav-logo:not(.nav-logo--img) span{color:var(--fg)}
 body.d2 .nav-logo{color:var(--red)}
-body.d2 .nav-logo span{color:var(--fg)}
+body.d2 .nav-logo:not(.nav-logo--img) span{color:var(--fg)}
+.nav-logo--img{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  color:var(--fg);
+}
+.nav-logo--img .nav-logo-mark{
+  height:1em;
+  width:auto;
+  max-width:min(42vw,168px);
+  object-fit:contain;
+  object-position:left center;
+}
+.nav-logo--img .nav-logo-divider{
+  color:var(--sub);
+  font-size:14px;
+  font-weight:400;
+  line-height:1;
+  user-select:none;
+}
+.nav-logo.nav-logo--img .nav-logo-text{color:var(--red)}
 #nav-page-title{
   font-size:16px;font-weight:700;color:var(--sub);
-  display:none;
+  display:block;
+  flex-shrink:0;
 }
-body.d2 #nav-page-title{display:block}
+#nav-page-title.is-empty{display:none}
 .nav-spacer{flex:1}
 
 /* ── Page shell ── */
@@ -133,10 +155,10 @@ body.page-layout #layout-ov{
 }
 
 /* ── List layout (guide · sim 공통) ── */
-.list-wrap{max-width:1060px;margin:0 auto;padding:32px 22px 60px}
-.lp-head{margin-bottom:28px}
-.lp-title{font-size:21px;font-weight:900;letter-spacing:-.025em;margin-bottom:5px}
-.lp-desc{font-size:16px;color:var(--sub)}
+.list-wrap{max-width:1060px;margin:0 auto;padding:32px 22px 60px;}
+.lp-head{margin-bottom:38px}
+.lp-title{font-size:42px;font-weight:900;letter-spacing:-.025em;margin-bottom:0px;word-break:keep-all;}
+.lp-desc{font-size:24px;font-weight:300;color:var(--sub);word-break:keep-all;}
 
 @media(max-width:480px){
   .nav-logo{font-size:12px}

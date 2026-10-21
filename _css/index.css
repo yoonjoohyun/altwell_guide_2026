@@ -36,13 +36,13 @@
 .hero-title{
   position:relative;z-index:1;
   font-size:clamp(26px,4.5vw,54px);font-weight:900;
-  color:#0f172a;line-height:1.16;letter-spacing:-.03em;margin-bottom:16px;
+  color:#0f172a;line-height:1.16;letter-spacing:-.03em;margin-bottom:26px;
 }
-.hero-title em{color:var(--red);font-style:normal}
+.hero-title em{color:var(--red);font-style:normal;}
 .hero-desc{
   position:relative;z-index:1;
   font-size:clamp(16px,1.7vw,19px);color:#64748b;
-  line-height:2;max-width:440px;margin:0 auto 54px;
+  line-height:1.6;max-width:440px;margin:0 auto 54px;
 }
 
 .hero-ctas{
@@ -65,9 +65,10 @@
 .hcta.s{
   background:#ffffff;
   border:1.5px solid rgba(0,0,0,.1) !important;
-  box-shadow:0 4px 20px rgba(0,0,0,.1);color:#1e293b;
+  box-shadow:0 4px 20px rgba(0,0,0,.1);color:var(--red);
 }
 .hcta.s:hover{background:#f8fafc;box-shadow:0 12px 32px rgba(0,0,0,.14)}
+.hcta.s .hcta-label{color:var(--red)}
 .hcta-icon{display:flex;align-items:center;justify-content:center}
 .hcta-icon svg{width:clamp(40px,5.5vw,52px);height:clamp(40px,5.5vw,52px)}
 .hcta-label{font-size:clamp(16px,1.5vw,18px);font-weight:700;line-height:1.5;text-align:center}

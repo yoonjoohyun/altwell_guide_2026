@@ -10,18 +10,16 @@
 <link rel="stylesheet" href="_css/index.css"/>
 </head>
 <body class="d1 page-home">
-<nav id="nav">
-  <button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>
-  <button type="button" class="nav-logo" onclick="location.href='index.asp'" aria-label="홈으로">ALTWELL<span> SMART GUIDE</span></button>
-  <span id="nav-page-title"></span>
-  <div class="nav-spacer"></div>
-  <button type="button" class="nav-mypage" onclick="location.href='mypage.asp'">마이페이지</button>
-</nav>
+<%
+NavSubTitle = ""
+NavShowMypage = True
+%>
+<!--#include file="includes/site_nav.asp"-->
 <div id="home-page" class="page">
   <section id="hero">
     <div class="hero-badge">ALTWELL SMART GUIDE</div>
     <h1 class="hero-title">앨트웰 비즈니스,<br><em>스마트하게</em> 시작하세요</h1>
-    <p class="hero-desc">가이드 영상과 인터랙티브 시뮬레이터로<br>복잡한 구조를 쉽고 빠르게 이해하세요.</p>
+    <p class="hero-desc">가이드 영상과 실습 콘텐츠로<br>비즈니스 성장을 위한 핵심 내용을 알아보세요.</p>
     <div class="hero-ctas">
       <button class="hcta p" onclick="location.href='guide.asp'">
         <span class="hcta-icon">
@@ -48,7 +46,7 @@
             <line x1="33" y1="29" x2="45" y2="34" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span class="hcta-label">가이드 영상<br>시청하기</span>
+        <span class="hcta-label">가이드 영상으로<br>학습하기</span>
       </button>
       <button class="hcta s" onclick="location.href='sim.asp'">
         <span class="hcta-icon">
@@ -66,7 +64,7 @@
             <circle cx="26" cy="9.2" r="1" fill="#EE3338" opacity=".5"/>
           </svg>
         </span>
-        <span class="hcta-label">시뮬레이터로<br>복습하기</span>
+        <span class="hcta-label">실습 콘텐츠로<br>복습하기</span>
       </button>
     </div>
   </section>

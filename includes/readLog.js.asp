@@ -2,15 +2,18 @@
 /* 가이드 학습·시뮬레이션 복습 기록. 계정은 로그인 세션으로 구분한다. */
 var ReadLog = (function(){
   var ENDPOINT = 'https://m.altwell.co.kr/2025/business/bzguide/read_ins.asp';
-  var CATALOG = {
+  var GUIDE = {
     guide01: { id: 1, title: 'autoship_guide' },
     guide02: { id: 2, title: 'startpack_guide' },
     guide03: { id: 3, title: 'basebusiness_guide' }
   };
+  var SIM = {
+    guide01: { id: 4, title: 'autoship_quiz' }
+  };
   var sent = {};
 
   function send(div, lessonId, section){
-    var item = CATALOG[lessonId];
+    var item = div === 's' ? SIM[lessonId] : GUIDE[lessonId];
     var key;
     var url;
     var img;

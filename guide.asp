@@ -10,17 +10,16 @@
 <link rel="stylesheet" href="_css/guide.css"/>
 </head>
 <body class="d2 page-list">
-<nav id="nav">
-  <!--<button class="nav-back" onclick="location.href='index.asp'">&#8592;</button>-->
-  <button type="button" class="nav-logo" onclick="location.href='index.asp'" aria-label="홈으로">ALTWELL<span> SMART GUIDE</span></button>
-  <span id="nav-page-title">가이드 영상</span>
-  <div class="nav-spacer"></div>
-</nav>
+<%
+NavSubTitle = "가이드 영상"
+NavShowMypage = False
+%>
+<!--#include file="includes/site_nav.asp"-->
 <div class="list-page" id="guide-page">
   <div class="list-wrap">
     <div class="lp-head">
-      <div class="lp-title">가이드 영상</div>
-      <div class="lp-desc">단계별로 앨트웰 비즈니스와 보상플랜에 대해 배워보세요.</div>
+      <div class="lp-title">스마트 가이드</div>
+      <div class="lp-desc">앨트웰의 성공적인 비즈니스를 위해 필요한 모든 것들을 영상을 통해 알아보세요.</div>
     </div>
     <div class="view-tabs">
       <button class="vt on" onclick="setView('grid',this)">단계별</button>
@@ -41,40 +40,40 @@
       </div>
 
       <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
-        <div class="vc-thumb"><div class="vc-thumb-inner g2">
-          <span>?</span><div class="vc-play">▶</div>
+        <div class="vc-thumb"><div class="vc-thumb-inner g1">
+          <span>SMART<br>AUTOSHIP<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">STEP 2</span><span class="vc-soon">제작 중</span></div>
-          <div class="vc-title">오토십 알아보기</div>
-          <div class="vc-desc">3개월 정기 구독 서비스의 혜택과 이용 기준</div>
-          <div class="vc-meta">? —</div>
+          <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 01</span><span class="vc-new">NEW</span></div>
+          <div class="vc-title">스마트 오토십 알아보기</div>
+          <div class="vc-desc">3개월 단위 정기 구독 서비스의 혜택과 이용 방법 및 활용도에 대해 알아보세요.</div>
+          <div class="vc-meta">4분 37초</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
 
       <div class="vcard" onclick="location.href='guide02_smartguide.asp?from=guide'">
-        <div class="vc-thumb"><div class="vc-thumb-inner g1">
-          <span>?</span><div class="vc-play">▶</div>
+        <div class="vc-thumb"><div class="vc-thumb-inner g2">
+          <span>START PACK<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">GUIDE 02</span><span class="vc-new">제작 중</span></div>
+          <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 02</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">스타트팩 알아보기</div>
-          <div class="vc-desc">신규 회원 전용 패키지로 제품 경험과 사업의 출발점</div>
-          <div class="vc-meta">? —</div>
+          <div class="vc-desc">앨트웰 신규 회원 전용 특별 할인 패키지 '누벨마리', '시그니처' 스타트팩의 혜택에 대해 알아보세요.</div>
+          <div class="vc-meta">4분 40초</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
       
       <div class="vcard" onclick="location.href='guide03_smartguide.asp?from=guide'">
-        <div class="vc-thumb"><div class="vc-thumb-inner g4">
-          <span>?</span><div class="vc-play">▶</div>
+        <div class="vc-thumb"><div class="vc-thumb-inner g3">
+          <span>BASE<br>BUSINESS<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
         <div class="vc-body">
-          <div class="vc-top"><span class="vc-step">GUIDE 03</span><span class="vc-new">제작 중</span></div>
+          <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 03</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">BASE사업자 이해하기</div>
-          <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자</div>
-          <div class="vc-meta">? 3분</div>
+          <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자 조건과 비즈니스 활용 방법에 대해 알아보세요.</div>
+          <div class="vc-meta">5분 29초</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
