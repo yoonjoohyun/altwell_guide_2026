@@ -38,9 +38,9 @@ NavShowMypage = False
           </div>
         </div>
       </div>
-      <div class="sc-card disabled">
+      <div class="sc-card" onclick="location.href='guide02_simulator.asp'">
         <div class="sc-thumb t2">
-          <div class="sc-thumb-glow"></div>
+          <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(142,61,76,.4),transparent 70%)"></div>
           <div class="sc-thumb-icon">START PACK<br>QUIZ</div>
         </div>
         <div class="sc-body">
@@ -48,8 +48,8 @@ NavShowMypage = False
           <div class="sc-title">스타트팩 알아보기</div>
           <div class="sc-desc">'누벨마리', '시그니처'스타트팩의 핵심 내용을 질문으로 복습하는 실습 콘텐츠입니다.</div>
           <div class="sc-footer">
-            <span class="sc-meta">준비 중</span>
-            <button type="button" class="sc-go off" disabled>준비 중</button>
+            <span class="sc-meta">핵심 퀴즈</span>
+            <button class="sc-go">▶ 시작하기</button>
           </div>
         </div>
       </div>

@@ -41,7 +41,8 @@ function setupGuide02Scene09(canvas){
     title: '스타트팩 알아보기',
     zoneWrap: false,
     hidden: true,
-    titleOpen: false
+    titleOpen: false,
+    simulatorHref: (window.GUIDE_ROOT || '') + '/guide02_simulator.asp'
   });
   stack.appendChild(inner);
   canvas.appendChild(stack);

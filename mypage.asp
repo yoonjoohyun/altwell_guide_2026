@@ -99,6 +99,22 @@
         ]
       },
       {
+        title: '스타트팩 알아보기',
+        href: 'guide02_simulator.asp',
+        tone: 'tone-b',
+        doneLabel: '복습 완료',
+        scenes: [
+          { title: '스타트팩이란?', done: false },
+          { title: '누가, 언제 구매할 수 있나요?', done: false },
+          { title: '스타트팩은 두 종류 입니다.', done: false },
+          { title: '스타트팩의 가장 큰 혜택', done: false },
+          { title: '추천인에게는 어떤 혜택이 있나요?', done: false },
+          { title: '스타트팩과 초기 승급', done: false },
+          { title: '왜 스타트팩을 운영할까요?', done: false },
+          { title: '스타트팩 핵심 내용', done: false }
+        ]
+      },
+      {
         title: 'BASE사업자 이해하기',
         href: '01_base_business_simulator.asp',
         tone: 'tone-s',
