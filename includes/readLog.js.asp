@@ -8,7 +8,8 @@ var ReadLog = (function(){
     guide03: { id: 3, title: 'basebusiness_guide' }
   };
   var SIM = {
-    guide01: { id: 4, title: 'autoship_quiz' }
+    guide01: { id: 4, title: 'autoship_quiz' },
+    guide02: { id: 5, title: 'startpack_quiz' }
   };
   var sent = {};
 
