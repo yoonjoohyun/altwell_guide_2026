@@ -33,7 +33,7 @@ function setupGuide02Scene02(canvas){
   var inner = document.createElement('div');
   var stage = document.createElement('div');
   var top = document.createElement('div');
-  var balance = document.createElement('div');
+  var bundle = document.createElement('div');
   var aside = document.createElement('div');
   var box = document.createElement('div');
   var title = document.createElement('div');
@@ -55,7 +55,7 @@ function setupGuide02Scene02(canvas){
   inner.className = 'g02-stack-inner';
   stage.className = 'g02-s02';
   top.className = 'g02-s02-top';
-  balance.className = 'g02-s02-balance';
+  bundle.className = 'g02-s02-bundle';
   aside.className = 'g02-s02-aside';
 
   var member = slot('member_icon', 'g02-s02-member');
@@ -92,9 +92,9 @@ function setupGuide02Scene02(canvas){
   box.appendChild(row);
   aside.appendChild(exclusive);
   aside.appendChild(span);
-  top.appendChild(balance);
-  top.appendChild(member);
-  top.appendChild(aside);
+  bundle.appendChild(member);
+  bundle.appendChild(aside);
+  top.appendChild(bundle);
   stage.appendChild(top);
   stage.appendChild(box);
   inner.appendChild(stage);

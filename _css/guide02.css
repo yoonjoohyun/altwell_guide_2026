@@ -30,9 +30,15 @@
   gap:16px;
 }
 .g02-canvas .g02-s02-top{
-  display:grid;
-  grid-template-columns:1fr auto 1fr;
-  align-items:start;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  width:100%;
+}
+.g02-canvas .g02-s02-bundle{
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
 }
 .g02-canvas .g02-s02-aside{
   display:flex;
@@ -41,8 +47,16 @@
   gap:10px;
   width:max-content;
   padding-top:18px;
-  padding-left:16px;
-  justify-self:start;
+}
+.g02-scene02-canvas .g02-s02-aside > .g02-slot.is-hidden{
+  display:block;
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+}
+.g02-scene02-canvas #g02-s02-member .member_icon.g02-member{
+  --size:158.4px;
+  display:block;
 }
 .g02-canvas #g02-s02-exclusive{width:max-content}
 .g02-canvas #g02-s02-span{width:100%;min-width:0}
