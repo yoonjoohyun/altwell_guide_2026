@@ -33,6 +33,19 @@ var Guide02 = (function(){
     if(typeof ScenePanel !== 'undefined' && ScenePanel.reset) ScenePanel.reset();
   }
 
+  function fitGroup(canvas, inner, box){
+    var w;
+    var h;
+    var fit;
+    if(!canvas || !inner || !box) return;
+    w = box.offsetWidth || 0;
+    h = box.offsetHeight || 0;
+    if(w < 2 || h < 2 || !canvas.clientWidth || !canvas.clientHeight) return;
+    fit = Math.min((canvas.clientWidth * 0.85) / w, (canvas.clientHeight * 0.85) / h);
+    if(!(fit > 0)) return;
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+  }
+
   function mountStage(canvas, extraCls){
     if(!canvas) return;
     canvas.classList.add('g02-canvas');
@@ -94,6 +107,7 @@ var Guide02 = (function(){
   return {
     timeline: timeline,
     resetScene: resetScene,
+    fitGroup: fitGroup,
     mountStage: mountStage,
     cloneTemplate: cloneTemplate,
     placeAtZone: placeAtZone,

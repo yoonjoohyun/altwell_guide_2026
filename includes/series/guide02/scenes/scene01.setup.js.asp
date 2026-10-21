@@ -4,16 +4,8 @@ var Guide02Scene01Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var cluster = _ctx && _ctx.cluster;
-    var fit = 1;
-    if(!canvas || !inner || !cluster) return;
-    var w = cluster.offsetWidth || 1;
-    var h = cluster.offsetHeight || 1;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.45) fit = 0.45;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
+    if(!_ctx) return;
+    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.cluster);
   }
 
   function schedule(){

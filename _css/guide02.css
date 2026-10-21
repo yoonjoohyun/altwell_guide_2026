@@ -64,6 +64,9 @@
 
 .g02-canvas.g02-scene01-canvas .g02-member,
 .g02-canvas.g02-scene02-canvas .g02-member{--size:158.4px}
+.g02-canvas.g02-scene01-canvas #g02-s01-badge{margin-top:-20px}
+.g02-canvas.g02-scene01-canvas #g02-s01-nouvel,
+.g02-canvas.g02-scene01-canvas #g02-s01-signature{margin-top:100px}
 .g02-canvas .g02-enter{animation:g02-enter 420ms cubic-bezier(.22,1,.36,1) both}
 .g02-canvas .g02-idle{animation:g02-idle 3.2s ease-in-out infinite}
 
@@ -73,7 +76,12 @@
 }
 @keyframes g02-idle{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-3px)}
+  50%{transform:translateY(-1.5px)}
+}
+.g02-canvas .g-close.is-idle{animation:g02-close-idle 3.2s ease-in-out infinite}
+@keyframes g02-close-idle{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-1.5px)}
 }
 
 /* 스타트팩 뱃지 — 와인 버건디. 파랑(오토십)·초록(베이스)·골드(추천보너스)와 구분 */
@@ -458,7 +466,7 @@
 }
 @keyframes g02-s04-idle{
   0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-3px)}
+  50%{transform:translateY(-1.5px)}
 }
 .g02-canvas .g02-s04{
   display:flex;

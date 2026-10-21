@@ -4,19 +4,8 @@ var Guide02Scene09Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    var w;
-    var h;
-    if(!canvas || !inner || !stage) return;
-    w = stage.offsetWidth || 1;
-    h = stage.offsetHeight || 1;
-    if(w < 2 || h < 2) return;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.42) fit = 0.42;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1.2 * 1000) / 1000));
+    if(!_ctx) return;
+    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage);
   }
 
   function schedule(){
