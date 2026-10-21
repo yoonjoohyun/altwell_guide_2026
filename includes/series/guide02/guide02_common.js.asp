@@ -33,15 +33,17 @@ var Guide02 = (function(){
     if(typeof ScenePanel !== 'undefined' && ScenePanel.reset) ScenePanel.reset();
   }
 
-  function fitGroup(canvas, inner, box){
+  function fitGroup(canvas, inner, box, inset){
     var w;
     var h;
     var fit;
+    var ratio;
     if(!canvas || !inner || !box) return;
     w = box.offsetWidth || 0;
     h = box.offsetHeight || 0;
     if(w < 2 || h < 2 || !canvas.clientWidth || !canvas.clientHeight) return;
-    fit = Math.min((canvas.clientWidth * 0.85) / w, (canvas.clientHeight * 0.85) / h);
+    ratio = (inset != null && inset > 0 && inset <= 1) ? inset : 0.85;
+    fit = Math.min((canvas.clientWidth * ratio) / w, (canvas.clientHeight * ratio) / h);
     if(!(fit > 0)) return;
     inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
   }

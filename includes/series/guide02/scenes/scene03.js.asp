@@ -44,14 +44,24 @@ function guide02Scene03Cancelled(ctx){
   return ctx && ctx.isCancelled && ctx.isCancelled();
 }
 
-async function guide02Scene03Reveal(el){
+async function guide02Scene03Reveal(el, opts){
+  var useIdle = !opts || opts.idle !== false;
   if(!el) return;
   showElement(el);
   el.classList.add('g02-enter');
   if(typeof Guide02Scene03Layout !== 'undefined') Guide02Scene03Layout.schedule();
   await wait(420);
   el.classList.remove('g02-enter');
-  el.classList.add('g02-idle');
+  if(useIdle) el.classList.add('g02-idle');
+}
+
+async function guide02Scene03RevealPackIcon(img){
+  if(!img) return;
+  showElement(img);
+  img.classList.add('g02-enter');
+  if(typeof Guide02Scene03Layout !== 'undefined') Guide02Scene03Layout.schedule();
+  await wait(420);
+  img.classList.remove('g02-enter');
 }
 
 async function runGuide02Scene03(tl, assets, ctx){
@@ -59,6 +69,7 @@ async function runGuide02Scene03(tl, assets, ctx){
 
   await tl.wait(T.badge);
   if(guide02Scene03Cancelled(ctx)) return;
+  if(typeof Guide02Scene03Layout !== 'undefined') Guide02Scene03Layout.setFloatActive(true);
   await guide02Scene03Reveal(assets.badge);
 
   await tl.wait(guide02Scene03AtMain(T.nouvel, ctx));
@@ -67,7 +78,7 @@ async function runGuide02Scene03(tl, assets, ctx){
 
   await tl.wait(guide02Scene03AtMain(T.nouvelIcon, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
-  await guide02Scene03Reveal(assets.nouvelIcon);
+  await guide02Scene03RevealPackIcon(assets.nouvelIcon);
 
   await tl.wait(guide02Scene03AtMain(T.signature, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
@@ -75,7 +86,7 @@ async function runGuide02Scene03(tl, assets, ctx){
 
   await tl.wait(guide02Scene03AtMain(T.signatureIcon, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
-  await guide02Scene03Reveal(assets.signatureIcon);
+  await guide02Scene03RevealPackIcon(assets.signatureIcon);
 
   await tl.wait(guide02Scene03AtMain(T.once, ctx));
   if(guide02Scene03Cancelled(ctx)) return;

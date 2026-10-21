@@ -43,7 +43,11 @@ var Guide02Scene04Config = {
     ep: 21000
   },
 
-  layout: { anchorZone: 'd4' }
+  layout: {
+    anchorZone: 'd4',
+    fitInset: 0.85,
+    fitInsetFloat: 0.68
+  }
 };
 
 function guide02Scene04PanelFlashes(){

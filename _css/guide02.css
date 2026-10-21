@@ -443,6 +443,19 @@
   align-items:center;
   gap:8px;
 }
+.g02-scene03-canvas .g02-stack-inner{
+  transition:transform 720ms ease-in-out;
+}
+.g02-scene03-canvas #g02-s03-nouvel.g02-idle,
+.g02-scene03-canvas #g02-s03-signature.g02-idle{
+  animation:g02-idle 3.2s ease-in-out infinite;
+}
+.g02-scene03-canvas #g02-s03-nouvel .g02_pack_card.g02-idle,
+.g02-scene03-canvas #g02-s03-signature .g02_pack_card.g02-idle,
+.g02-scene03-canvas #g02-s03-nouvel .g02_pack_visual img.g02-idle,
+.g02-scene03-canvas #g02-s03-signature .g02_pack_visual img.g02-idle{
+  animation:none !important;
+}
 .g02_once{
   display:inline-flex;
   align-items:center;
@@ -473,21 +486,29 @@
   white-space:nowrap;
 }
 
+.g02-scene04-canvas .g02-stack-inner{
+  transition:transform 720ms ease-in-out;
+}
 .g02-scene04-canvas .g02-enter{animation:g02-s04-enter 760ms ease-in-out both}
-.g02-scene04-canvas .g02-idle{animation:g02-s04-idle 3.8s ease-in-out infinite}
+.g02-scene04-canvas .g02-idle{animation:none}
 @keyframes g02-s04-enter{
   from{opacity:0;transform:translateY(8px)}
   to{opacity:1;transform:translateY(0)}
-}
-@keyframes g02-s04-idle{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-1.5px)}
 }
 .g02-canvas .g02-s04{
   display:flex;
   flex-direction:column;
   align-items:center;
   gap:12px;
+}
+.g02-scene04-canvas #g02-s04-badge{
+  position:relative;
+  z-index:2;
+}
+.g02-scene04-canvas #g02-s04-summary{
+  position:relative;
+  z-index:1;
+  margin-top:-22px;
 }
 .g02-scene04-canvas .g02_startpack_badge{
   overflow:hidden;
@@ -591,6 +612,33 @@
   transform:translateY(0);
 }
 .g02_bundle_value.is-visible{margin-top:6px}
+.g02-scene04-canvas .g02_bundle_value{
+  color:transparent;
+  background-image:linear-gradient(180deg, #ffdd62, #F0C14B 42%, #C8962A);
+  -webkit-background-clip:text;
+  background-clip:text;
+  font-size:24px;
+  font-weight:900;
+  letter-spacing:-.02em;
+  filter:drop-shadow(0 1px 0 rgba(110,36,52,.12));
+}
+.g02-scene04-canvas .g02_bundle_kicker{
+  color:#8A4B38;
+}
+.g02-scene04-canvas .g02_ep_emphasis{
+  width:270px;
+  min-height:52px;
+  padding:16px 14px;
+  border-radius:14px;
+  box-sizing:border-box;
+  background:linear-gradient(120deg, #8E3D4C, #6E2434);
+  box-shadow:inset 0 0 0 2px #3A1018, 0 6px 16px rgba(78,24,38,.28);
+  gap:10px;
+}
+.g02-scene04-canvas .g02_ep_coins{
+  width:200px;
+  height:84px;
+}
 .g02_ep_emphasis{
   display:flex;
   flex-direction:column;

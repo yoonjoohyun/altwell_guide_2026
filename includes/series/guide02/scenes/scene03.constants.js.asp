@@ -41,7 +41,11 @@ var Guide02Scene03Config = {
     once: 14000
   },
 
-  layout: { anchorZone: 'd4' }
+  layout: {
+    anchorZone: 'd4',
+    fitInset: 0.85,
+    floatScale: 0.75
+  }
 };
 
 function guide02Scene03TitleMs(ctx){

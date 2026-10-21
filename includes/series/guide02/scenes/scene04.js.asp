@@ -51,7 +51,6 @@ async function guide02Scene04Reveal(el){
   if(typeof Guide02Scene04Layout !== 'undefined') Guide02Scene04Layout.schedule();
   await wait(760);
   el.classList.remove('g02-enter');
-  el.classList.add('g02-idle');
 }
 
 async function runGuide02Scene04(tl, assets, ctx){
@@ -60,10 +59,13 @@ async function runGuide02Scene04(tl, assets, ctx){
 
   await tl.wait(T.badge);
   if(guide02Scene04Cancelled(ctx)) return;
+  if(typeof Guide02Scene04Layout !== 'undefined') Guide02Scene04Layout.setFloatActive(true);
   await guide02Scene04Reveal(assets.badge);
+  if(assets.badge) assets.badge.classList.add('is-badge-intro');
 
   await tl.wait(T.fold);
   if(guide02Scene04Cancelled(ctx)) return;
+  if(assets.badge) assets.badge.classList.remove('is-badge-intro');
   if(assets.badgeRoot){
     var badge = assets.badgeRoot;
     badge.style.width = badge.offsetWidth + 'px';

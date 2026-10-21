@@ -2,10 +2,24 @@
 var Guide02Scene03Layout = (function(){
   var _ctx = null;
   var _resizeBound = false;
+  var _floatActive = false;
+
+  function fitInset(){
+    var L = Guide02Scene03Config.layout || {};
+    var base = L.fitInset != null ? L.fitInset : 0.85;
+    if(!_floatActive) return base;
+    var mul = L.floatScale != null ? L.floatScale : 0.75;
+    return base * mul;
+  }
 
   function applyFit(){
     if(!_ctx) return;
-    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage);
+    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, fitInset());
+  }
+
+  function setFloatActive(on){
+    _floatActive = !!on;
+    schedule();
   }
 
   function schedule(){
@@ -21,10 +35,11 @@ var Guide02Scene03Layout = (function(){
 
   function unbind(){
     _resizeBound = false;
+    _floatActive = false;
     _ctx = null;
   }
 
-  return { schedule: schedule, bind: bind, unbind: unbind };
+  return { schedule: schedule, bind: bind, unbind: unbind, setFloatActive: setFloatActive };
 })();
 
 function setupGuide02Scene03(canvas){
