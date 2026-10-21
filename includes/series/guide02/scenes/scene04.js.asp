@@ -65,6 +65,7 @@ async function runGuide02Scene04(tl, assets, ctx){
 
   await tl.wait(T.fold);
   if(guide02Scene04Cancelled(ctx)) return;
+  if(typeof Guide02Scene04Layout !== 'undefined') Guide02Scene04Layout.setFloatActive(false);
   if(assets.badge) assets.badge.classList.remove('is-badge-intro');
   if(assets.badgeRoot){
     var badge = assets.badgeRoot;

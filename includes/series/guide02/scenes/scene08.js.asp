@@ -51,7 +51,6 @@ async function guide02Scene08Reveal(el){
   if(typeof Guide02Scene08Layout !== 'undefined') Guide02Scene08Layout.schedule();
   await wait(420);
   el.classList.remove('g02-enter');
-  el.classList.add('g02-idle');
 }
 
 function guide02Scene08EaseRow(row, mutate){
@@ -62,7 +61,7 @@ function guide02Scene08EaseRow(row, mutate){
   });
   mutate();
   nodes.forEach(function(n, i){
-    if(!before[i].hidden) n.classList.remove('g02-idle', 'g02-enter');
+    if(!before[i].hidden) n.classList.remove('g02-enter');
   });
   if(typeof Guide02Scene08Layout !== 'undefined') Guide02Scene08Layout.flush();
   var inner = row.closest ? row.closest('.g02-stack-inner') : null;
@@ -91,7 +90,6 @@ function guide02Scene08EaseRow(row, mutate){
       if(!n.isConnected) return;
       n.style.transition = '';
       n.style.transform = '';
-      n.classList.add('g02-idle');
     });
   });
 }
@@ -106,11 +104,16 @@ async function runGuide02Scene08(tl, assets, ctx){
 
   await tl.wait(at(T.panel));
   if(guide02Scene08Cancelled(ctx)) return;
+  showElement(assets.period);
+  assets.period.classList.add('is-reserved');
   await guide02Scene08Reveal(assets.panel);
 
   await tl.wait(at(T.period));
   if(guide02Scene08Cancelled(ctx)) return;
-  await guide02Scene08Reveal(assets.period);
+  assets.period.classList.remove('is-reserved');
+  assets.period.classList.add('g02-enter');
+  await wait(420);
+  assets.period.classList.remove('g02-enter');
 
   await tl.wait(at(T.nouvel));
   if(guide02Scene08Cancelled(ctx)) return;

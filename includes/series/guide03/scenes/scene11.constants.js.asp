@@ -18,7 +18,7 @@ var Guide03Scene11Config = {
 
   panel: {
     title: '［&nbsp;BASE사업자 이해하기&nbsp;］<br>&nbsp;&nbsp;&nbsp;수강 완료.',
-    bullets: ['시뮬레이션 또는 다시보기로 복습하실 수 있습니다.'],
+    bullets: ['문제 풀이 또는 다시보기로 복습하실 수 있습니다.'],
     flashes: []
   },
 

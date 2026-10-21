@@ -74,6 +74,7 @@ async function runGuide02Scene03(tl, assets, ctx){
 
   await tl.wait(guide02Scene03AtMain(T.nouvel, ctx));
   if(guide02Scene03Cancelled(ctx)) return;
+  if(typeof Guide02Scene03Layout !== 'undefined') Guide02Scene03Layout.setFloatActive(false);
   await guide02Scene03Reveal(assets.nouvel);
 
   await tl.wait(guide02Scene03AtMain(T.nouvelIcon, ctx));

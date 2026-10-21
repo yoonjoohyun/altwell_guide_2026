@@ -3,9 +3,39 @@ var Guide02Scene08Layout = (function(){
   var _ctx = null;
   var _resizeBound = false;
 
+  function badgeOnly(){
+    var nodes;
+    var i;
+    var shown = 0;
+    if(!_ctx || !_ctx.stage || !_ctx.badge) return false;
+    if(_ctx.badge.classList.contains('is-hidden')) return false;
+    nodes = _ctx.stage.children;
+    for(i = 0; i < nodes.length; i++){
+      if(!nodes[i].classList.contains('is-hidden')) shown++;
+    }
+    return shown <= 1;
+  }
+
+  function fitHero(canvas, inner, hero){
+    var w = hero.offsetWidth || 0;
+    var h = hero.offsetHeight || 0;
+    var fit;
+    if(w < 2 || h < 2 || !canvas.clientWidth || !canvas.clientHeight) return;
+    fit = Math.min((canvas.clientWidth * 0.42) / w, (canvas.clientHeight * 0.28) / h);
+    if(!(fit > 0)) return;
+    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+  }
+
   function applyFit(){
     if(!_ctx) return;
-    Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage);
+    if(!_ctx.fitted) _ctx.inner.style.transition = 'none';
+    if(badgeOnly()) fitHero(_ctx.canvas, _ctx.inner, _ctx.badge);
+    else Guide02.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, 0.88);
+    if(!_ctx.fitted){
+      void _ctx.inner.offsetWidth;
+      _ctx.inner.style.transition = '';
+      _ctx.fitted = true;
+    }
   }
 
   function schedule(){
@@ -60,7 +90,7 @@ function setupGuide02Scene08(canvas){
   var period = document.createElement('div');
   period.id = 'g02-s08-period';
   period.className = 'g02-s08-period g02-slot is-hidden';
-  period.textContent = '가입월 포함 3개월이내 구매 가능';
+  period.textContent = '가입월 포함 3개월 이내 구매 가능';
   panel.appendChild(period);
 
   var row = document.createElement('div');
@@ -74,24 +104,35 @@ function setupGuide02Scene08(canvas){
   row.appendChild(nouvel);
   row.appendChild(signature);
 
-  var once = textSlot('g02-s08-once', 'g02-s08-once', '각각 1회 구매 가능');
-  var price = textSlot('g02-s08-price', 'g02-s08-line', '파격적인 할인가 제공');
-  var ep = textSlot('g02-s08-ep', 'g02-s08-line', '각각 50만 승급EP 혜택');
-  var points = slot('g02-s08-points', 'g02-s08-points');
-  points.innerHTML = '추천 포인트<br>5Point';
+  var once = textSlot('g02-s08-once', 'g02-s08-line', '· 각각 1회 구매 가능');
+  var price = textSlot('g02-s08-price', 'g02-s08-line', '· 파격적인 50% 할인가 제공');
+  var ep = textSlot('g02-s08-ep', 'g02-s08-line', '· 각각 50만 승급EP 혜택');
+  var points = slot('g02-s08-points');
+  var pointsNode = Guide02.cloneTemplate('startpack_recommend_points');
+  var pointsTitle;
+  var pointsValue;
+  if(pointsNode){
+    pointsTitle = pointsNode.querySelector('.recommend_bonus_text_1');
+    pointsValue = pointsNode.querySelector('.recommend_bonus_text_2');
+    if(pointsTitle) pointsTitle.textContent = '추천 포인트';
+    if(pointsValue) pointsValue.textContent = '최초 1회 5Point';
+    pointsNode.setAttribute('aria-label', '추천 포인트 최초 1회 5Point');
+    points.appendChild(pointsNode);
+  }
+
+  panel.appendChild(row);
+  panel.appendChild(once);
+  panel.appendChild(price);
+  panel.appendChild(ep);
+  panel.appendChild(points);
 
   stage.appendChild(badge);
   stage.appendChild(panel);
-  stage.appendChild(row);
-  stage.appendChild(once);
-  stage.appendChild(price);
-  stage.appendChild(ep);
-  stage.appendChild(points);
   inner.appendChild(stage);
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
-  Guide02Scene08Layout.bind({ canvas: canvas, inner: inner, stage: stage });
+  Guide02Scene08Layout.bind({ canvas: canvas, inner: inner, stage: stage, badge: badge });
   Guide02Scene08Layout.schedule();
 
   return {

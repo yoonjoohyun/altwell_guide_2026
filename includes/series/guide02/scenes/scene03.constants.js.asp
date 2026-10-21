@@ -44,7 +44,7 @@ var Guide02Scene03Config = {
   layout: {
     anchorZone: 'd4',
     fitInset: 0.85,
-    floatScale: 0.75
+    fitInsetFloat: 0.4
   }
 };
 

@@ -6,7 +6,7 @@ var Guide02Scene04Layout = (function(){
 
   function fitInset(){
     var L = Guide02Scene04Config.layout || {};
-    if(_floatActive) return L.fitInsetFloat != null ? L.fitInsetFloat : 0.68;
+    if(_floatActive) return L.fitInsetFloat != null ? L.fitInsetFloat : 0.4;
     return L.fitInset != null ? L.fitInset : 0.85;
   }
 

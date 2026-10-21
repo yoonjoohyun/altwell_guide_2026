@@ -27,7 +27,7 @@ var Guide02Scene08Config = {
       '추천인에게 최초 1회 5추천포인트 발생'
     ],
     flashes: [
-      { at: 4000, index: 0 },
+      { at: 3000, index: 0 },
       { at: 13000, index: 1 },
       { at: 18000, index: 2 },
       { at: 23000, index: 3 }
@@ -37,12 +37,12 @@ var Guide02Scene08Config = {
   T: {
     badge: 0,
     panel: 2000,
-    period: 3500,
+    period: 2800,
     nouvel: 8000,
-    signature: 10000,
+    signature: 10500,
     once: 13000,
     price: 16000,
-    ep: 19000,
+    ep: 18000,
     points: 22000
   },
 

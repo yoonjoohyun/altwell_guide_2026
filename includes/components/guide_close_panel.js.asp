@@ -44,7 +44,7 @@ var GuideClosePanel = (function(){
 
     sim.type = 'button';
     sim.className = 'g-close-btn' + (opts.buttonClass ? ' ' + opts.buttonClass : '');
-    sim.textContent = '시뮬레이션으로 복습하기';
+    sim.textContent = 'Q 퀴즈 가이드로 복습하기';
     sim.addEventListener('click', function(){
       location.href = opts.simulatorHref || simulatorHref();
     });

@@ -18,7 +18,7 @@ var Guide02Scene09Config = {
 
   panel: {
     title: '［&nbsp;스타트팩 알아보기&nbsp;］<br>&nbsp;&nbsp;&nbsp;수강 완료.',
-    bullets: ['시뮬레이션 또는 다시보기로 복습하실 수 있습니다.'],
+    bullets: ['문제 풀이 또는 다시보기로 복습하실 수 있습니다.'],
     flashes: []
   },
 

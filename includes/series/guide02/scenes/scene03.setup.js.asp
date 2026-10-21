@@ -6,10 +6,10 @@ var Guide02Scene03Layout = (function(){
 
   function fitInset(){
     var L = Guide02Scene03Config.layout || {};
-    var base = L.fitInset != null ? L.fitInset : 0.85;
-    if(!_floatActive) return base;
-    var mul = L.floatScale != null ? L.floatScale : 0.75;
-    return base * mul;
+    if(_floatActive){
+      return L.fitInsetFloat != null ? L.fitInsetFloat : 0.4;
+    }
+    return L.fitInset != null ? L.fitInset : 0.85;
   }
 
   function applyFit(){
