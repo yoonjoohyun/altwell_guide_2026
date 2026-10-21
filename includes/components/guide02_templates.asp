@@ -18,6 +18,7 @@
   <div data-template="startpack_bundle_benefit"><!--#include file="startpack_bundle_benefit.asp"--></div>
   <div data-template="startpack_ep_emphasis"><!--#include file="startpack_ep_emphasis.asp"--></div>
   <div data-template="startpack_ep_coins"><!--#include file="startpack_ep_coins.asp"--></div>
+  <div data-template="startpack_recommend_points"><!--#include file="startpack_recommend_points.asp"--></div>
   <div data-template="lev_sp"><!--#include file="lev_sp.asp"--></div>
   <div data-template="lev_d"><!--#include file="lev_d.asp"--></div>
   <div data-template="lev_p"><!--#include file="lev_p.asp"--></div>

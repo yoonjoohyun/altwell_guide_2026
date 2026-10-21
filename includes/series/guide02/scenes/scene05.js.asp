@@ -117,6 +117,8 @@ async function runGuide02Scene05(tl, assets, ctx){
   if(guide02Scene05Cancelled(ctx)) return;
   await guide02Scene05FlyCoin(assets, assets.leftNouvel, assets.sp);
   if(guide02Scene05Cancelled(ctx)) return;
+  if(assets.spCol) assets.spCol.classList.add('is-points-live');
+  if(typeof Guide02Scene05Layout !== 'undefined') Guide02Scene05Layout.schedule();
   await guide02Scene05Reveal(assets.points);
 
   await tl.wait(T.rightPack);

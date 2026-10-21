@@ -104,9 +104,10 @@ function setupGuide02Scene05(canvas){
   var dLeft = member('g02-s05-d-left', 'lev_d');
   var dRight = member('g02-s05-d-right', 'lev_d');
   var points = document.createElement('div');
+  var pointsBadge = Guide02.cloneTemplate('startpack_recommend_points');
   points.id = 'g02-s05-points';
-  points.className = 'g02_ref_points g02-slot is-hidden';
-  points.innerHTML = '<span class="g02_ref_points_num">5</span> 추천 포인트';
+  points.className = 'g02-slot is-hidden';
+  if(pointsBadge) points.appendChild(pointsBadge);
 
   var leftNouvel = packCol('startpack_nouvel_card', '5포인트 발생', '');
   var leftSignature = packCol('startpack_signature_card', '0포인트', 'is-zero');
@@ -139,12 +140,15 @@ function setupGuide02Scene05(canvas){
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
+  syncGuide02Scene05PointsReserve(spCol, points);
+
   Guide02Scene05Layout.bind({ canvas: canvas, inner: inner, stage: stage });
   Guide02Scene05Layout.schedule();
 
   return {
     inner: inner,
     stage: stage,
+    spCol: spCol,
     sp: sp,
     dLeft: dLeft,
     dRight: dRight,
@@ -160,5 +164,16 @@ function setupGuide02Scene05(canvas){
     tagZero: leftSignature.tag,
     coin: coin
   };
+}
+
+function syncGuide02Scene05PointsReserve(spCol, points){
+  var h;
+  if(!spCol || !points) return;
+  points.classList.remove('is-hidden');
+  points.style.visibility = 'hidden';
+  h = Math.max(points.offsetHeight || 0, 44);
+  points.style.visibility = '';
+  points.classList.add('is-hidden');
+  spCol.style.setProperty('--g02-s05-points-offset', h + 'px');
 }
 </script>
