@@ -147,6 +147,7 @@ var Guide03Simulator = (function(){
   var solved = [];
   var saved = [];
   var board = null;
+  var currentAssets = null;
 
   function copyState(state){
     return {
@@ -192,30 +193,106 @@ var Guide03Simulator = (function(){
     }
   }
 
+  function setShown(el, on){
+    if(!el) return;
+    if(on){
+      if(!el.classList.contains('is-hidden')) return;
+      el.classList.remove('is-hidden');
+      el.classList.remove('g03-enter');
+      void el.offsetWidth;
+      el.classList.add('g03-enter');
+      return;
+    }
+    el.classList.add('is-hidden');
+    el.classList.remove('g03-enter');
+  }
+
   function launchMotion(stepIndex, token){
     var step = STEPS[stepIndex];
     var canvas = canvasEl();
-    var ctx;
-    var tl;
-    var assets;
-    var job;
     releaseScenes();
+    currentAssets = null;
     if(token !== motionToken || !canvas || !step) return;
-    ctx = {
-      canvas: canvas,
-      sceneDuration: step.config.duration || 0,
-      mediaTitleMs: (step.config.media && step.config.media.titleMs) || 0,
-      sceneIndex: 0,
-      isFollowUp: false,
-      isCancelled: function(){ return token !== motionToken; },
-      reportProgress: function(){}
-    };
-    tl = Guide03.timeline(ctx);
     Guide03.resetScene(step.config.canvasCls);
     Guide03.mountStage(canvas, step.config.canvasCls);
-    assets = step.setup(canvas);
-    job = step.run(tl, assets, ctx);
-    if(job && job.catch) job.catch(function(){});
+    currentAssets = step.setup(canvas);
+  }
+
+  function syncMotion(){
+    var step = STEPS[index];
+    var assets = currentAssets;
+    var state = board;
+    var id;
+    var full;
+    if(!step || !assets || !state) return;
+    id = step.config.id;
+    if(id === 'guide03-scene-03'){
+      setShown(assets.member, true);
+      setShown(assets.badge, true);
+      setShown(assets.sep, state.self.sep);
+      setShown(assets.autoship, state.self.auto);
+      setShown(assets.sliceLabel, state.self.auto && state.self.sep);
+      if(assets.sep) assets.sep.classList.toggle('is-slice', !!(state.self.auto && state.self.sep));
+      Guide03Scene03Layout.schedule();
+      return;
+    }
+    if(id === 'guide03-scene-05'){
+      setShown(assets.partners[0], true);
+      setShown(assets.partners[1], true);
+      setShown(assets.autos[0], state.a.auto);
+      setShown(assets.autos[1], state.b.auto);
+      Guide03Scene05Layout.schedule();
+      return;
+    }
+    if(id === 'guide03-scene-06'){
+      setShown(assets.board, true);
+      assets.members[0].slot.classList.add('is-open');
+      assets.members[1].slot.classList.add('is-open');
+      assets.members[2].slot.classList.add('is-open');
+      setShown(assets.seps[0], state.a.sep);
+      setShown(assets.seps[1], state.b.sep);
+      setShown(assets.sum, state.total >= 100);
+      Guide03Scene06Layout.schedule();
+      window.requestAnimationFrame(function(){
+        if(!currentAssets || currentAssets !== assets) return;
+        if(typeof guide03Scene01DrawLines === 'function') guide03Scene01DrawLines(assets, false);
+      });
+      return;
+    }
+    if(id === 'guide03-scene-07'){
+      setShown(assets.badge, true);
+      setShown(assets.mixed.card, true);
+      setShown(assets.mixed.board, true);
+      setShown(assets.mixed.left.wrap, true);
+      setShown(assets.mixed.right.wrap, true);
+      setShown(assets.mixed.left.chips.auto, true);
+      setShown(assets.mixed.right.chips.sep, true);
+      setShown(assets.mixed.right.chips.auto, false);
+      setShown(assets.mixed.ban, true);
+      Guide03Scene07Layout.schedule();
+      return;
+    }
+    if(id === 'guide03-scene-10'){
+      setShown(assets.card, true);
+      assets.card.classList.add('is-on');
+      setShown(assets.self.host, true);
+      setShown(assets.partners[0].host, true);
+      setShown(assets.partners[1].host, true);
+      setShown(assets.selfAuto, state.self.auto);
+      setShown(assets.selfSep, state.self.sep);
+      setShown(assets.partnerAuto, state.a.auto || state.b.auto);
+      setShown(assets.partnerSep, state.a.sep || state.b.sep);
+      setShown(assets.or, state.a.auto || state.b.auto || state.a.sep || state.b.sep);
+      setShown(assets.caption, state.total >= 100);
+      full = selfOk(state) && partnersOk(state) && totalOk(state);
+      setShown(assets.orbWrap, full);
+      setShown(assets.orbs[0], full);
+      setShown(assets.orbs[1], full);
+      setShown(assets.orbs[2], full);
+      setShown(assets.orbSeps[0], full);
+      setShown(assets.orbSeps[1], full);
+      Guide03Scene10Layout.schedule();
+    }
   }
 
   function setText(id, text){
@@ -318,6 +395,7 @@ var Guide03Simulator = (function(){
       board[who][key] = !board[who][key];
       btn.classList.toggle('is-on', board[who][key]);
       btn.setAttribute('aria-pressed', board[who][key] ? 'true' : 'false');
+      syncMotion();
     });
     return btn;
   }
@@ -376,6 +454,7 @@ var Guide03Simulator = (function(){
         for(n = 0; n < buttons.length; n++){
           buttons[n].classList.toggle('is-on', Number(buttons[n].getAttribute('data-total')) === value);
         }
+        syncMotion();
       });
       row.appendChild(btn);
     }
@@ -465,6 +544,7 @@ var Guide03Simulator = (function(){
     if(step.showTotal) host.appendChild(renderTotal(step));
     host.appendChild(renderActions(step));
     hideNext();
+    syncMotion();
     if(solved[index]){
       if(step.mode === 'verdict'){
         var picked = document.querySelector('.sim-verdict-btn[data-pass="' + (step.verdict ? '1' : '0') + '"]');
