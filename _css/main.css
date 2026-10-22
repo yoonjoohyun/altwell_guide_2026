@@ -69,17 +69,6 @@ body.d2 #nav{
   -webkit-backdrop-filter:blur(14px);
   border-bottom:1px solid var(--border);
 }
-.nav-back{
-  width:34px;height:34px;border-radius:50%;
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);
-  color:#fff;font-size:16px;line-height:1;
-  display:none;align-items:center;justify-content:center;
-  transition:background .15s;flex-shrink:0;
-}
-body.d2 .nav-back{
-  display:flex;background:var(--muted);border-color:var(--border);color:var(--fg);
-}
-.nav-back:hover{opacity:.8}
 .nav-logo{
   font-size:16px;font-weight:900;letter-spacing:-.01em;
   white-space:nowrap;flex-shrink:0;
@@ -131,7 +120,9 @@ body.d2 .nav-logo:not(.nav-logo--img) span{color:var(--fg)}
 
 body.page-home{overflow:hidden}
 body.page-home #home-page{
-  position:fixed;inset:0;display:block;overflow:hidden;
+  position:fixed;inset:0;display:block;
+  overflow-x:hidden;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 }
 
 body.page-list{overflow:hidden}
@@ -140,7 +131,11 @@ body.page-list .list-page{
   overflow-y:auto;overflow-x:hidden;
   padding-top:var(--nav);
   background:var(--bg);
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
 }
+body.page-list .list-page > .list-wrap{flex:1 0 auto}
 
 body.page-video{overflow:hidden;background:#0C1016}
 body.page-video #overlay{
@@ -156,10 +151,167 @@ body.page-layout #layout-ov{
 
 /* ── List layout (guide · sim 공통) ── */
 .list-wrap{max-width:1060px;margin:0 auto;padding:32px 22px 60px;}
-.lp-head{margin-bottom:38px}
-.lp-title{font-size:42px;font-weight:900;letter-spacing:-.025em;margin-bottom:0px;word-break:keep-all;}
-.lp-desc{font-size:24px;font-weight:300;color:var(--sub);word-break:keep-all;}
+.list-wrap:has(.lp-panel){
+  display:flex;
+  flex-direction:column;
+  max-width:none;
+  margin:0;
+  padding:clamp(22px,3vw,32px) 0 0;
+  min-height:calc(100dvh - var(--nav));
+  box-sizing:border-box;
+}
+.list-wrap:has(.lp-panel) .lp-head{
+  flex-shrink:0;
+  width:100%;
+  max-width:1060px;
+  margin-left:auto;
+  margin-right:auto;
+  margin-bottom:clamp(20px,3.5vw,36px);
+  padding-left:33px;
+  padding-right:33px;
+  box-sizing:border-box;
+}
+.lp-head{margin-bottom:clamp(20px,4vw,38px)}
+.lp-title{
+  font-size:clamp(26px,5.2vw,42px);
+  font-weight:900;letter-spacing:-.025em;
+  line-height:1.18;
+  margin-bottom:clamp(8px,1.4vw,14px);
+  word-break:keep-all;
+  color:rgba(17,24,39,0.9);
+}
+.lp-desc{
+  font-size:clamp(15px,2.15vw,24px);
+  font-weight:300;
+  line-height:1.55;
+  color:var(--sub);
+  word-break:keep-all;
+  max-width:42em;
+}
+.lp-panel{
+  --lp-panel-pad-x:clamp(24px,3.3vw,36px);
+  position:relative;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  width:100%;
+  min-height:0;
+  background:var(--card);
+  border-top:1px solid var(--border);
+  border-radius:0;
+  padding:clamp(18px,2.5vw,26px) var(--lp-panel-pad-x) clamp(66px,9vw,96px);
+  box-sizing:border-box;
+}
+.list-wrap:has(.lp-panel) .lp-section-tabs{
+  flex-shrink:0;
+  align-self:center;
+  margin-bottom:clamp(14px,2.4vw,22px);
+}
+.lp-section-tabs{
+  display:inline-grid;
+  grid-template-columns:auto auto;
+  gap:4px;
+  width:max-content;
+  max-width:calc(100% - 32px);
+  margin-left:auto;
+  margin-right:auto;
+  padding:4px;
+  border-radius:14px;
+  background:#f0f1f4;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.04);
+}
+.lp-st{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:0;
+  padding:11px 17px;
+  white-space:nowrap;
+  border:none;
+  border-radius:11px;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-.02em;
+  text-decoration:none;
+  color:#6b7280;
+  background:transparent;
+  transition:color .16s,background .16s,box-shadow .16s;
+}
+.lp-st:hover:not(.on){
+  color:var(--fg);
+}
+.lp-st.on{
+  color:var(--fg);
+  background:#fff;
+  box-shadow:0 1px 4px rgba(15,23,42,.1),0 0 0 1px rgba(0,0,0,.04);
+  pointer-events:none;
+}
+.lp-panel-top{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px 20px;
+  margin-bottom:22px;
+}
+.lp-panel-top .view-tabs{margin-bottom:0}
 
+@media(max-width:768px){
+  #nav-page-title{display:none}
+  .list-wrap:not(:has(.lp-panel)){padding:26px 18px 52px}
+  .list-wrap:has(.lp-panel){padding-top:26px}
+  .list-wrap:has(.lp-panel) .lp-head{padding-left:27px;padding-right:27px}
+}
 @media(max-width:480px){
-  .nav-logo{font-size:12px}
+  .list-wrap:not(:has(.lp-panel)){padding:22px 14px 44px}
+  .list-wrap:has(.lp-panel){padding-top:22px}
+  .list-wrap:has(.lp-panel) .lp-head{padding-left:21px;padding-right:21px}
+  .list-wrap:has(.lp-panel) .lp-head{margin-bottom:28px}
+  .lp-head{margin-bottom:18px}
+  .lp-title{letter-spacing:-.02em}
+  .lp-desc{line-height:1.5}
+  .lp-panel{
+    --lp-panel-pad-x:21px;
+    padding:16px var(--lp-panel-pad-x) 60px;
+  }
+}
+
+/* guide.asp · sim.asp — 스크롤 하단 푸터 */
+.list-page-footer{
+  flex-shrink:0;
+  background:#333;
+  color:rgba(255,255,255,.88);
+  text-align:center;
+  padding:clamp(28px,4vw,40px) clamp(24px,3.3vw,36px) clamp(32px,5vw,48px);
+}
+.list-page-footer__home{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:clamp(18px,2.5vw,24px);
+  padding:8px 16px;
+  border-radius:5px;
+  font-size:clamp(13px,1.8vw,14px);
+  font-weight:500;
+  color:#ffffffd2;
+  text-decoration:none;
+  background:rgba(255, 255, 255, 0);
+  border:1px solid rgba(255, 255, 255, 0.151);
+  transition:background .15s,border-color .15s;
+}
+.list-page-footer__home:hover{
+  background:rgba(255,255,255,.2);
+  border-color:rgba(255,255,255,.35);
+}
+.list-page-footer__home--m{display:none}
+@media(max-width:768px){
+  .list-page-footer__home--pc{display:none}
+  .list-page-footer__home--m{display:inline-flex}
+}
+.list-page-footer__copy{
+  font-size:clamp(12px,1.5vw,13px);
+  font-weight:400;
+  line-height:1.65;
+  color:rgba(255,255,255,.55);
+  margin:0;
 }

@@ -18,12 +18,19 @@ NavShowMypage = False
 <div class="list-page" id="guide-page">
   <div class="list-wrap">
     <div class="lp-head">
-      <div class="lp-title">스마트 가이드</div>
+      <div class="lp-title">Guide Videos</div>
       <div class="lp-desc">앨트웰의 성공적인 비즈니스를 위해 필요한 모든 것들을 영상을 통해 알아보세요.</div>
     </div>
+<%
+ListSectionActive = "guide"
+%>
+<!--#include file="includes/list_section_tabs.asp"-->
+    <div class="lp-panel">
+    <div class="lp-panel-top">
     <div class="view-tabs">
-      <button class="vt on" onclick="setView('grid',this)">단계별</button>
+      <button class="vt on" onclick="setView('grid',this)">썸네일</button>
       <button class="vt" onclick="setView('list',this)">리스트</button>
+    </div>
     </div>
     <div class="cards-grid" id="vcards">
       <div class="vcard" onclick="location.href='frame_layout.asp'" style="display:none;">
@@ -47,7 +54,10 @@ NavShowMypage = False
           <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 01</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">스마트 오토십 알아보기</div>
           <div class="vc-desc">3개월 단위 정기 구독 서비스의 혜택과 이용 방법 및 활용도에 대해 알아보세요.</div>
-          <div class="vc-meta">4분 37초</div>
+          <div class="vc-meta">
+            <span class="vc-meta-grid">4분 37초</span>
+            <span class="vc-meta-list">4분 37초 (7/7)</span>
+          </div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
@@ -60,7 +70,10 @@ NavShowMypage = False
           <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 02</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">스타트팩 알아보기</div>
           <div class="vc-desc">앨트웰 신규 회원 전용 특별 할인 패키지 '누벨마리', '시그니처' 스타트팩의 혜택에 대해 알아보세요.</div>
-          <div class="vc-meta">4분 40초</div>
+          <div class="vc-meta">
+            <span class="vc-meta-grid">4분 40초</span>
+            <span class="vc-meta-list">4분 40초 (8/8)</span>
+          </div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
@@ -73,7 +86,10 @@ NavShowMypage = False
           <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 03</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">BASE사업자 이해하기</div>
           <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자 조건과 비즈니스 활용 방법에 대해 알아보세요.</div>
-          <div class="vc-meta">5분 28초</div>
+          <div class="vc-meta">
+            <span class="vc-meta-grid">5분 28초</span>
+            <span class="vc-meta-list">5분 28초 (10/10)</span>
+          </div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
@@ -102,7 +118,9 @@ NavShowMypage = False
         </div>
       </div>
     </div>
+    </div>
   </div>
+<!--#include file="includes/list_footer.asp"-->
 </div><script>
 function setView(mode,btn){
   var vc=document.getElementById('vcards');

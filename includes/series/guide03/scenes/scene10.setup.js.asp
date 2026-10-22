@@ -158,6 +158,7 @@ function setupGuide03Scene10(canvas){
     partnerAuto: partnerAuto,
     or: or,
     partnerSep: partnerSep,
+    orbWrap: orbs,
     orbs: orbNodes,
     orbSeps: orbSeps
   };

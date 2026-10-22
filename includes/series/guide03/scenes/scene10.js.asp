@@ -168,7 +168,7 @@ async function runGuide03Scene10(tl, assets, ctx){
 
   await tl.wait(at(T.orb1));
   if(guide03Scene10Cancelled(ctx)) return;
-  showElement(assets.orbs);
+  showElement(assets.orbWrap);
   guide03Scene10Fit();
   await guide03Scene10Place(assets.stage, assets.orbs[0], assets.orbs[0]);
 

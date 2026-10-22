@@ -7,7 +7,7 @@
 <title>ALTWELL SMART GUIDE</title>
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
-<link rel="stylesheet" href="_css/index.css"/>
+<link rel="stylesheet" href="_css/index.css?v=20261023home2"/>
 </head>
 <body class="d1 page-home">
 <%
@@ -46,7 +46,7 @@ NavShowMypage = True
             <line x1="33" y1="29" x2="45" y2="34" stroke="rgba(255,255,255,.35)" stroke-width="1.2" stroke-linecap="round"/>
           </svg>
         </span>
-        <span class="hcta-label">가이드 영상으로<br>학습하기</span>
+        <span class="hcta-label">가이드 영상<br>학습하기</span>
       </button>
       <button class="hcta s" onclick="location.href='sim.asp'">
         <span class="hcta-icon">
