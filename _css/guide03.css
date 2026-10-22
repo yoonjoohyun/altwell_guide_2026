@@ -723,7 +723,7 @@
   align-items:center;
   gap:12px;
 }
-.g03-s08-hold{position:relative}
+.g03-s08-hold{position:relative;margin-top:-8px;}
 .g03-s08-hold.is-orb{
   width:232px;
   height:232px;
