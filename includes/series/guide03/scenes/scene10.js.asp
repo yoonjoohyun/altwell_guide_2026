@@ -44,6 +44,10 @@ function guide03Scene10Cancelled(ctx){
   return ctx && ctx.isCancelled && ctx.isCancelled();
 }
 
+function guide03Scene10Fit(){
+  if(typeof Guide03Scene10Layout !== 'undefined') Guide03Scene10Layout.schedule();
+}
+
 async function guide03Scene10Place(root, host, floater, mutate){
   var inner = root && root.closest ? root.closest('.g03-stack-inner') : null;
   var nodes = root ? root.querySelectorAll('.g03-s10-shift') : [];
@@ -124,6 +128,8 @@ async function runGuide03Scene10(tl, assets, ctx){
 
   await tl.wait(at(T.self));
   if(guide03Scene10Cancelled(ctx)) return;
+  showElement(assets.card);
+  guide03Scene10Fit();
   await guide03Scene10Place(assets.stage, assets.self.host, assets.self.icon);
 
   await tl.wait(at(T.selfAuto));
@@ -162,6 +168,8 @@ async function runGuide03Scene10(tl, assets, ctx){
 
   await tl.wait(at(T.orb1));
   if(guide03Scene10Cancelled(ctx)) return;
+  showElement(assets.orbs);
+  guide03Scene10Fit();
   await guide03Scene10Place(assets.stage, assets.orbs[0], assets.orbs[0]);
 
   await tl.wait(at(T.orb2));

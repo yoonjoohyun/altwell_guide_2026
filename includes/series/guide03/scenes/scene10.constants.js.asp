@@ -54,7 +54,7 @@ var Guide03Scene10Config = {
     orb3: 34000
   },
 
-  layout: { anchorZone: 'd4' }
+  layout: { anchorZone: 'd4', badgeAloneScale: 0.7 }
 };
 
 function guide03Scene10TitleMs(ctx){

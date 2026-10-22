@@ -125,11 +125,16 @@ async function runGuide03Scene08(tl, assets, ctx){
   await tl.wait(at(T.gather));
   if(guide03Scene08Cancelled(ctx)) return;
   await guide03Scene08Gather(assets);
-  showElement(assets.orb);
-  assets.orb.classList.add('is-in');
+  if(assets.orb){
+    showElement(assets.orb);
+    assets.orb.classList.remove('is-in');
+    if(assets.orbText) assets.orbText.classList.remove('is-on');
+    void assets.orb.offsetWidth;
+    assets.orb.classList.add('is-in');
+  }
   guide03Scene08Fit();
-  await wait(620);
+  await wait(980);
   if(assets.orbText) assets.orbText.classList.add('is-on');
-  await wait(460);
+  await wait(680);
 }
 </script>

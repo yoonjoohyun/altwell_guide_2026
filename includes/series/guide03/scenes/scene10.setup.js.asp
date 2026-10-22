@@ -91,8 +91,8 @@ function setupGuide03Scene10(canvas){
   partnerRow.className = 'g03-s10-partners';
   lower.className = 'g03-s10-lower';
   people.className = 'g03-s10-people';
-  card.className = 'g03-s10-card';
-  orbs.className = 'g03-s10-orbs';
+  card.className = 'g03-s10-card g03-slot is-hidden';
+  orbs.className = 'g03-s10-orbs g03-slot is-hidden';
 
   selfCol.appendChild(self.host);
   selfCol.appendChild(selfAuto);
@@ -140,6 +140,9 @@ function setupGuide03Scene10(canvas){
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
+  if(Guide03Scene10Config.layout && Guide03Scene10Config.layout.badgeAloneScale > 0){
+    stage._g03BadgeAloneScale = Guide03Scene10Config.layout.badgeAloneScale;
+  }
   Guide03Scene10Layout.bind({ canvas: canvas, inner: inner, stage: stage, badge: badgeWrap });
   Guide03Scene10Layout.schedule();
 

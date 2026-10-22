@@ -82,6 +82,9 @@ var Guide03 = (function(){
     if(w >= 2 && h >= 2 && canvas.clientWidth && canvas.clientHeight){
       ratio = badgeAlone(stage, badge) ? 0.4 : (groupInset != null && groupInset > 0 ? groupInset : 0.8);
       fit = Math.min((canvas.clientWidth * ratio) / w, (canvas.clientHeight * ratio) / h);
+      if(badgeAlone(stage, badge) && stage._g03BadgeAloneScale > 0){
+        fit *= stage._g03BadgeAloneScale;
+      }
       if(fit > 0) inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
     }
     if(after) after();
