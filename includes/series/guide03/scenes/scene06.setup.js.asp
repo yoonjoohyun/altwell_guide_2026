@@ -4,16 +4,8 @@ var Guide03Scene06Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    if(!canvas || !inner || !stage) return;
-    var w = stage.offsetWidth || 1;
-    var h = stage.offsetHeight || 1;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.4) fit = 0.4;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge);
   }
 
   function schedule(){ requestAnimationFrame(applyFit); }
@@ -71,7 +63,7 @@ function setupGuide03Scene06(canvas){
   var rightSep = document.createElement('div');
 
   stack.id = 'g03-s06-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   stage.className = 'g03-s06';

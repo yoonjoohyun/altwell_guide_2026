@@ -140,7 +140,7 @@ async function runGuide03Scene04(tl, assets, ctx){
   for(i = 0; i < assets.ranks.length; i++){
     await tl.wait(at(T.ranks[i]));
     if(guide03Scene04Cancelled(ctx)) return;
-    await guide03Scene04Open(assets.ranks[i]);
+    await guide03Scene04Reveal(assets.ranks[i]);
   }
 
   await tl.wait(at(T.gepLine));

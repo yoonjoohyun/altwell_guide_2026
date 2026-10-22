@@ -4,16 +4,8 @@ var Guide03Scene02Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    if(!canvas || !inner || !stage) return;
-    var w = stage.offsetWidth || 1;
-    var h = stage.offsetHeight || 1;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.42) fit = 0.42;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge);
   }
 
   function schedule(){
@@ -60,14 +52,19 @@ function setupGuide03Scene02(canvas){
     var icon = Guide03.cloneTemplate(templateId);
     var wrap = document.createElement('div');
     var check = Guide03.cloneTemplate('status_check_icon');
+    var checkSlot = document.createElement('div');
     var col = document.createElement('div');
     var dock = null;
     wrap.className = 'g03-member';
     col.className = 'g03-s02-col';
     if(icon) wrap.appendChild(icon);
-    if(check) check.classList.add('g03-s02-check');
+    checkSlot.className = 'g03-s02-check-slot g03-slot is-hidden';
+    if(check){
+      check.classList.add('g03-s02-check');
+      checkSlot.appendChild(check);
+    }
     col.appendChild(grow(wrap));
-    col.appendChild(grow(check || document.createElement('div')));
+    col.appendChild(checkSlot);
     if(withDock){
       dock = document.createElement('div');
       dock.className = 'g03-s02-dock';
@@ -77,13 +74,13 @@ function setupGuide03Scene02(canvas){
       col: col,
       member: col.children[0],
       icon: icon,
-      check: col.children[1],
+      check: checkSlot,
       dock: dock
     };
   }
 
   stack.id = 'g03-s02-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   stage.className = 'g03-s02';

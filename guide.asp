@@ -73,7 +73,7 @@ NavShowMypage = False
           <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 03</span><span class="vc-new">NEW</span></div>
           <div class="vc-title">BASE사업자 이해하기</div>
           <div class="vc-desc">권리 소득이 시작되는 첫 번째 전환점, BASE사업자 조건과 비즈니스 활용 방법에 대해 알아보세요.</div>
-          <div class="vc-meta">5분 29초</div>
+          <div class="vc-meta">5분 28초</div>
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>

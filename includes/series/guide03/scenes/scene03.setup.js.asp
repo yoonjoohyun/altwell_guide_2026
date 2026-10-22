@@ -4,16 +4,8 @@ var Guide03Scene03Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    if(!canvas || !inner || !stage) return;
-    var w = stage.offsetWidth || 1;
-    var h = stage.offsetHeight || 1;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.42) fit = 0.42;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge);
   }
 
   function schedule(){
@@ -43,6 +35,7 @@ function setupGuide03Scene03(canvas){
   var memberWrap = document.createElement('div');
   var iconWrap = document.createElement('div');
   var dock = document.createElement('div');
+  var board = document.createElement('div');
   var side = document.createElement('div');
   var sep = document.createElement('div');
   var pie = document.createElement('div');
@@ -50,7 +43,7 @@ function setupGuide03Scene03(canvas){
   var sliceLabel = document.createElement('div');
 
   stack.id = 'g03-s03-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   stage.className = 'g03-s03';
@@ -100,8 +93,10 @@ function setupGuide03Scene03(canvas){
   memberWrap.appendChild(dock);
   side.appendChild(sep);
   side.appendChild(autoWrap);
-  stage.appendChild(memberWrap);
-  stage.appendChild(side);
+  board.className = 'g03-board';
+  board.appendChild(memberWrap);
+  board.appendChild(side);
+  stage.appendChild(board);
   inner.appendChild(stage);
   stack.appendChild(inner);
   canvas.appendChild(stack);

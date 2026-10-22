@@ -39,7 +39,7 @@ var Guide03Scene08Config = {
     gather: 18000
   },
 
-  layout: { anchorZone: 'd4' }
+  layout: { anchorZone: 'd4', groupInset: 0.7 }
 };
 
 function guide03Scene08TitleMs(ctx){

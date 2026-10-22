@@ -32,7 +32,7 @@ var Guide03Scene01Config = {
 
   T: {
     badge: 0,
-    board: 0,
+    board: 2000,
     members: [3000, 4200, 5400],
     self: 8000,
     partners: 10000,

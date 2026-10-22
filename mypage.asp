@@ -23,7 +23,7 @@
     </div>
     <div class="mp-cats" role="tablist" aria-label="카테고리">
       <button type="button" class="mp-cat on" role="tab" aria-selected="true" data-cat="guide">가이드 영상</button>
-      <button type="button" class="mp-cat" role="tab" aria-selected="false" data-cat="sim">시뮬레이션</button>
+      <button type="button" class="mp-cat" role="tab" aria-selected="false" data-cat="sim">실습 콘텐츠</button>
     </div>
     <div id="mp-list"></div>
   </div>

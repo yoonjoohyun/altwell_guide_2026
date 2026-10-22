@@ -4,20 +4,10 @@ var Guide03Scene09Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    var w;
-    var h;
-    if(!canvas || !inner || !stage) return;
-    w = stage.offsetWidth || 1;
-    h = stage.offsetHeight || 1;
-    if(w < 2 || h < 2) return;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.36) fit = 0.36;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
-    if(_ctx.redraw) _ctx.redraw();
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge, function(){
+      if(_ctx && _ctx.redraw) _ctx.redraw();
+    });
   }
 
   function schedule(){
@@ -131,7 +121,7 @@ function setupGuide03Scene09(canvas){
   link(row3[2], row4[3]);
 
   stack.id = 'g03-s09-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   stage.className = 'g03-s09';
@@ -150,6 +140,15 @@ function setupGuide03Scene09(canvas){
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
+  var bannerLayer = document.createElement('div');
+  var banner = document.createElement('div');
+  bannerLayer.id = 'g03-s09-banner-layer';
+  bannerLayer.className = 'g03-s09-banner-layer g01-zone-wrap g03-slot is-hidden';
+  banner.className = 'g03-s09-banner';
+  banner.textContent = '안정적인 조직 확장';
+  bannerLayer.appendChild(banner);
+  canvas.appendChild(bannerLayer);
+
   var assets = {
     stage: stage,
     tree: tree,
@@ -159,7 +158,8 @@ function setupGuide03Scene09(canvas){
     row2: row2,
     row3: row3,
     row4: row4,
-    arrow: arrow
+    arrow: arrow,
+    banner: bannerLayer
   };
 
   Guide03Scene09Layout.bind({

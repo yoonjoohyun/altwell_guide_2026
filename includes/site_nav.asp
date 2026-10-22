@@ -16,6 +16,6 @@ NavSubTitle = Trim(CStr(NavSubTitle))
   <span id="nav-page-title"<% If Len(NavSubTitle) = 0 Then %> class="is-empty"<% End If %>><%=Server.HTMLEncode(NavSubTitle)%></span>
   <div class="nav-spacer"></div>
   <% If NavShowMypage Then %>
-  <button type="button" class="nav-mypage" onclick="location.href='<%=GuideAppRoot()%>/mypage.asp'" style="display:none;">마이페이지</button>
+  <button type="button" class="nav-mypage" onclick="location.href='<%=GuideAppRoot()%>/mypage.asp'" style="display:block;">마이페이지</button>
   <% End If %>
 </nav>

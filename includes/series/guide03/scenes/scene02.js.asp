@@ -73,6 +73,15 @@ async function guide03Scene02FoldBadge(wrap){
   await wait(660);
 }
 
+async function guide03Scene02BoardBorderFlash(board){
+  if(!board) return;
+  board.classList.remove('is-border-green');
+  board.classList.add('is-border-flash');
+  await wait(2100);
+  board.classList.remove('is-border-flash');
+  board.classList.add('is-border-green');
+}
+
 async function guide03Scene02MoveBadge(assets){
   var badge = assets.badge;
   var dock = assets.dock;
@@ -81,34 +90,31 @@ async function guide03Scene02MoveBadge(assets){
   var scale = 1;
   var first;
   var last;
-  var qualFirst;
-  var qualLast;
   if(!badge || !dock) return;
   if(inner && inner.offsetWidth){
     scale = inner.getBoundingClientRect().width / inner.offsetWidth || 1;
   }
   first = badge.getBoundingClientRect();
-  qualFirst = qual ? qual.getBoundingClientRect() : null;
   dock.appendChild(badge);
   badge.classList.add('is-docked');
   last = badge.getBoundingClientRect();
   badge.style.transition = 'none';
   badge.style.transformOrigin = 'left bottom';
   badge.style.transform = 'translate(' + ((first.left - last.left) / scale) + 'px,' + ((first.top - last.top) / scale) + 'px) scale(1)';
-  if(qual && qualFirst){
-    qualLast = qual.getBoundingClientRect();
-    qual.style.transition = 'none';
-    qual.style.transform = 'translate(' + ((qualFirst.left - qualLast.left) / scale) + 'px,' + ((qualFirst.top - qualLast.top) / scale) + 'px)';
+  if(qual){
+    qual.classList.add('is-fade-out');
   }
   badge.getBoundingClientRect();
   await wait(40);
   badge.style.transition = 'transform 780ms cubic-bezier(.16,1,.3,1)';
   badge.style.transform = 'translate(0,0) scale(0.82)';
-  if(qual){
-    qual.style.transition = 'transform 780ms cubic-bezier(.16,1,.3,1)';
-    qual.style.transform = 'translate(0,0)';
-  }
   await wait(800);
+  if(qual){
+    hideElement(qual);
+    qual.classList.remove('is-fade-out');
+    qual.style.transform = '';
+    qual.style.opacity = '';
+  }
   if(typeof Guide03Scene02Layout !== 'undefined') Guide03Scene02Layout.schedule();
 }
 
@@ -148,13 +154,13 @@ async function runGuide03Scene02(tl, assets, ctx){
   for(i = 1; i < assets.members.length; i++){
     await tl.wait(at(T.checks[i - 1]));
     if(guide03Scene02Cancelled(ctx)) return;
-    await guide03Scene02Open(assets.members[i].check);
+    await guide03Scene02Reveal(assets.members[i].check);
     guide03Scene01DrawLines(assets, false);
   }
 
   await tl.wait(at(T.selfCheck));
   if(guide03Scene02Cancelled(ctx)) return;
-  await guide03Scene02Open(assets.members[0].check);
+  await guide03Scene02Reveal(assets.members[0].check);
   guide03Scene01DrawLines(assets, false);
 
   await tl.wait(at(T.move));
@@ -164,5 +170,7 @@ async function runGuide03Scene02(tl, assets, ctx){
   await tl.wait(at(T.month));
   if(guide03Scene02Cancelled(ctx)) return;
   await guide03Scene02Reveal(assets.month);
+  if(guide03Scene02Cancelled(ctx)) return;
+  await guide03Scene02BoardBorderFlash(assets.board);
 }
 </script>

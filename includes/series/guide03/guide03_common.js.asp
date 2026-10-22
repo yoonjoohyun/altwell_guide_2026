@@ -52,6 +52,51 @@ var Guide03 = (function(){
     return el;
   }
 
+  function badgeAlone(stage, badge){
+    var nodes;
+    var i;
+    var shown = 0;
+    var only = null;
+    if(!stage || !badge || badge.classList.contains('is-hidden')) return false;
+    nodes = stage.children;
+    for(i = 0; i < nodes.length; i++){
+      if(nodes[i].classList.contains('is-hidden')) continue;
+      if((nodes[i].offsetWidth || 0) < 2 && (nodes[i].offsetHeight || 0) < 2) continue;
+      shown++;
+      only = nodes[i];
+    }
+    return shown === 1 && only === badge;
+  }
+
+  function fitGroup(canvas, inner, stage, badge, after, groupInset){
+    var w;
+    var h;
+    var ratio;
+    var fit;
+    var ro;
+    if(!canvas || !inner || !stage) return;
+    if(groupInset != null && groupInset > 0) stage._g03GroupInset = groupInset;
+    else if(stage._g03GroupInset != null) groupInset = stage._g03GroupInset;
+    w = stage.offsetWidth || 0;
+    h = stage.offsetHeight || 0;
+    if(w >= 2 && h >= 2 && canvas.clientWidth && canvas.clientHeight){
+      ratio = badgeAlone(stage, badge) ? 0.4 : (groupInset != null && groupInset > 0 ? groupInset : 0.8);
+      fit = Math.min((canvas.clientWidth * ratio) / w, (canvas.clientHeight * ratio) / h);
+      if(fit > 0) inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    }
+    if(after) after();
+    if(stage._g03Watch || typeof ResizeObserver === 'undefined') return;
+    stage._g03Watch = true;
+    ro = new ResizeObserver(function(){
+      if(!stage.isConnected){
+        ro.disconnect();
+        return;
+      }
+      fitGroup(canvas, inner, stage, badge, after);
+    });
+    ro.observe(stage);
+  }
+
   function panelInitBullets(items){
     setSceneBullets(items);
     if(!items || !items.length){
@@ -102,6 +147,7 @@ var Guide03 = (function(){
     mountStage: mountStage,
     cloneTemplate: cloneTemplate,
     placeAtZone: placeAtZone,
+    fitGroup: fitGroup,
     panelBulletTimeline: panelBulletTimeline,
     finishSceneHold: finishSceneHold
   };

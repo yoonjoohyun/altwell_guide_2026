@@ -4,19 +4,8 @@ var Guide03Scene10Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    var w;
-    var h;
-    if(!canvas || !inner || !stage) return;
-    w = stage.offsetWidth || 1;
-    h = stage.offsetHeight || 1;
-    if(w < 2 || h < 2) return;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.34) fit = 0.34;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge);
   }
 
   function schedule(){ requestAnimationFrame(applyFit); }
@@ -118,12 +107,23 @@ function setupGuide03Scene10(canvas){
   people.appendChild(selfCol);
   people.appendChild(partnerCol);
 
+  function orbSep(){
+    var el = hidden('g03-s10-orb-sep g03-s10-shift');
+    el.setAttribute('aria-hidden', 'true');
+    return el;
+  }
+
   var orbNodes = [
     orb('본인 + 파트너2명<br>비즈니스 기본 단위'),
     orb('각종 보너스 보상<br>&<br>승급 조건에 활용'),
     orb('안정적인 조직 확장<br>출발점')
   ];
-  orbNodes.forEach(function(node){ orbs.appendChild(node); });
+  var orbSeps = [orbSep(), orbSep()];
+  orbs.appendChild(orbNodes[0]);
+  orbs.appendChild(orbSeps[0]);
+  orbs.appendChild(orbNodes[1]);
+  orbs.appendChild(orbSeps[1]);
+  orbs.appendChild(orbNodes[2]);
 
   card.appendChild(caption);
   card.appendChild(people);
@@ -133,14 +133,14 @@ function setupGuide03Scene10(canvas){
   stage.appendChild(orbs);
 
   stack.id = 'g03-s10-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   inner.appendChild(stage);
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
-  Guide03Scene10Layout.bind({ canvas: canvas, inner: inner, stage: stage });
+  Guide03Scene10Layout.bind({ canvas: canvas, inner: inner, stage: stage, badge: badgeWrap });
   Guide03Scene10Layout.schedule();
 
   return {
@@ -155,7 +155,8 @@ function setupGuide03Scene10(canvas){
     partnerAuto: partnerAuto,
     or: or,
     partnerSep: partnerSep,
-    orbs: orbNodes
+    orbs: orbNodes,
+    orbSeps: orbSeps
   };
 }
 </script>

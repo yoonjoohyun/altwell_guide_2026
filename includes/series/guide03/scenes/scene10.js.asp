@@ -87,6 +87,14 @@ async function guide03Scene10Place(root, host, floater, mutate){
   if(floater) floater.classList.remove('g03-enter');
 }
 
+function guide03Scene10MuteOrbs(assets, count){
+  var i;
+  if(!assets || !assets.orbs) return;
+  for(i = 0; i < count && i < assets.orbs.length; i++){
+    assets.orbs[i].classList.add('is-past');
+  }
+}
+
 async function guide03Scene10HideBadge(wrap){
   if(typeof guide03Scene02FoldBadge === 'function') await guide03Scene02FoldBadge(wrap);
   if(!wrap) return;
@@ -158,10 +166,16 @@ async function runGuide03Scene10(tl, assets, ctx){
 
   await tl.wait(at(T.orb2));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.orbs[1], assets.orbs[1]);
+  guide03Scene10MuteOrbs(assets, 1);
+  await guide03Scene10Place(assets.stage, assets.orbs[1], assets.orbs[1], function(){
+    showElement(assets.orbSeps[0]);
+  });
 
   await tl.wait(at(T.orb3));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.orbs[2], assets.orbs[2]);
+  guide03Scene10MuteOrbs(assets, 2);
+  await guide03Scene10Place(assets.stage, assets.orbs[2], assets.orbs[2], function(){
+    showElement(assets.orbSeps[1]);
+  });
 }
 </script>

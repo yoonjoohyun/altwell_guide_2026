@@ -4,16 +4,13 @@ var Guide03Scene08Layout = (function(){
   var _resizeBound = false;
 
   function applyFit(){
-    var canvas = _ctx && _ctx.canvas;
-    var inner = _ctx && _ctx.inner;
-    var stage = _ctx && _ctx.stage;
-    var fit = 1;
-    if(!canvas || !inner || !stage) return;
-    var w = stage.offsetWidth || 1;
-    var h = stage.offsetHeight || 1;
-    fit = Math.min(1, (canvas.clientWidth - 16) / w, (canvas.clientHeight - 16) / h);
-    if(fit < 0.4) fit = 0.4;
-    inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
+    var inset;
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    inset = _ctx.groupInset;
+    if(inset == null && typeof Guide03Scene08Config !== 'undefined'){
+      inset = Guide03Scene08Config.layout && Guide03Scene08Config.layout.groupInset;
+    }
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, _ctx.badge, null, inset);
   }
 
   function schedule(){ requestAnimationFrame(applyFit); }
@@ -65,6 +62,7 @@ function setupGuide03Scene08(canvas){
   var stage = document.createElement('div');
   var badgeWrap = document.createElement('div');
   var badge = Guide03.cloneTemplate('base_business_icon');
+  var panel = document.createElement('div');
   var hold = document.createElement('div');
   var list = document.createElement('div');
   var recommend = bonus('', '', '');
@@ -76,14 +74,16 @@ function setupGuide03Scene08(canvas){
   var orbText = document.createElement('div');
 
   stack.id = 'g03-s08-stack';
-  stack.className = 'g03-stack lo-zone-place';
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
   Guide03.placeAtZone(stack, zone);
   inner.className = 'g03-stack-inner';
   stage.className = 'g03-s08';
   badgeWrap.className = 'g03-s08-base g03-slot is-hidden';
   if(badge) badgeWrap.appendChild(badge);
-  hold.className = 'g03-s08-hold';
-  list.className = 'g03-s08-list g03-slot';
+  panel.id = 'g03-s08-panel';
+  panel.className = 'g03-board g03-s08-panel g03-slot is-hidden';
+  hold.className = 'g03-s08-hold g03-slot is-hidden';
+  list.className = 'g03-s08-list';
   track.className = 'g03-s08-track';
   track.textContent = '2TRACK 승급 조건';
   trackWrap = piece(track, '');
@@ -95,19 +95,21 @@ function setupGuide03Scene08(canvas){
   orbText.className = 'g03-s08-orb-text';
   orbText.innerHTML = '보상과 승급<br>&<br>비즈니스 핵심';
   orb.appendChild(orbText);
-  hold.appendChild(list);
+  panel.appendChild(list);
   hold.appendChild(orb);
   stage.appendChild(badgeWrap);
+  stage.appendChild(panel);
   stage.appendChild(hold);
   inner.appendChild(stage);
   stack.appendChild(inner);
   canvas.appendChild(stack);
 
-  Guide03Scene08Layout.bind({ canvas: canvas, inner: inner, stage: stage });
+  Guide03Scene08Layout.bind({ canvas: canvas, inner: inner, stage: stage, badge: badgeWrap });
   Guide03Scene08Layout.schedule();
 
   return {
     badge: badgeWrap,
+    panel: panel,
     pieces: [recommend, matching, support, trackWrap],
     hold: hold,
     list: list,

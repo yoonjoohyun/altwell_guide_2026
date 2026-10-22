@@ -75,9 +75,21 @@ async function guide03Scene08Gather(assets){
     items[i].style.transform = 'translateY(' + dy + 'px) rotate(' + turn + 'deg) scale(.28)';
     items[i].style.opacity = '0';
   }
+  if(assets.panel){
+    assets.panel.style.transition = 'opacity 720ms cubic-bezier(.45,0,.2,1)';
+    assets.panel.style.opacity = '0';
+  }
   await wait(740);
   hideElement(assets.list);
-  if(assets.hold) assets.hold.classList.add('is-orb');
+  if(assets.panel){
+    hideElement(assets.panel);
+    assets.panel.style.transition = '';
+    assets.panel.style.opacity = '';
+  }
+  if(assets.hold){
+    showElement(assets.hold);
+    assets.hold.classList.add('is-orb');
+  }
 }
 
 async function runGuide03Scene08(tl, assets, ctx){
@@ -92,7 +104,14 @@ async function runGuide03Scene08(tl, assets, ctx){
   for(i = 0; i < T.bonuses.length; i++){
     await tl.wait(at(T.bonuses[i]));
     if(guide03Scene08Cancelled(ctx)) return;
+    if(i === 0 && assets.panel){
+      showElement(assets.panel);
+      assets.panel.classList.add('g03-enter');
+      guide03Scene08Fit();
+      await wait(40);
+    }
     await guide03Scene08Unfold(assets.pieces[i]);
+    if(i === 0 && assets.panel) assets.panel.classList.remove('g03-enter');
   }
 
   await tl.wait(at(T.track));

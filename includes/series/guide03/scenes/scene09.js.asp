@@ -189,6 +189,14 @@ function guide03Scene09ShowLinks(assets, pairs){
   guide03Scene09Draw(assets, true);
 }
 
+async function guide03Scene09RevealBanner(el){
+  if(!el) return;
+  showElement(el);
+  el.classList.add('g03-enter');
+  await wait(760);
+  el.classList.remove('g03-enter');
+}
+
 async function runGuide03Scene09(tl, assets, ctx){
   var T = Guide03Scene09Config.T;
   var at = function(ms){ return guide03Scene09AtMain(ms, ctx); };
@@ -247,5 +255,8 @@ async function runGuide03Scene09(tl, assets, ctx){
   if(guide03Scene09Cancelled(ctx)) return;
   assets.arrow.classList.add('is-up');
   if(typeof Guide03Scene09Layout !== 'undefined') Guide03Scene09Layout.schedule();
+  await wait(1100);
+  if(guide03Scene09Cancelled(ctx)) return;
+  await guide03Scene09RevealBanner(assets.banner);
 }
 </script>
