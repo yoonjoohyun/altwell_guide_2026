@@ -55,9 +55,9 @@ async function guide03Scene02Reveal(el){
 
 async function guide03Scene02Open(slot){
   if(!slot) return;
-  slot.classList.add('is-open');
+  var done = guide03EaseOpen(slot);
   if(typeof Guide03Scene02Layout !== 'undefined') Guide03Scene02Layout.schedule();
-  await wait(740);
+  await done;
 }
 
 async function guide03Scene02FoldBadge(wrap){

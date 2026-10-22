@@ -246,9 +246,9 @@ var Guide03Simulator = (function(){
     }
     if(id === 'guide03-scene-06'){
       setShown(assets.board, true);
-      assets.members[0].slot.classList.add('is-open');
-      assets.members[1].slot.classList.add('is-open');
-      assets.members[2].slot.classList.add('is-open');
+      assets.members[0].slot.classList.add('is-open', 'is-settled');
+      assets.members[1].slot.classList.add('is-open', 'is-settled');
+      assets.members[2].slot.classList.add('is-open', 'is-settled');
       setShown(assets.seps[0], state.a.sep);
       setShown(assets.seps[1], state.b.sep);
       setShown(assets.sum, state.total >= 100);

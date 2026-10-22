@@ -155,4 +155,32 @@ var Guide03 = (function(){
     finishSceneHold: finishSceneHold
   };
 })();
+
+function guide03EaseOpen(slot){
+  var h;
+  var w;
+  var anim;
+  if(!slot) return Promise.resolve();
+  slot.style.transition = 'none';
+  slot.classList.add('is-open', 'is-settled');
+  h = slot.offsetHeight;
+  w = slot.offsetWidth;
+  if(h < 1 && w < 1){
+    slot.style.transition = '';
+    return Promise.resolve();
+  }
+  slot.style.overflow = 'hidden';
+  anim = slot.animate([
+    { height: '0px', width: '0px', opacity: 0 },
+    { height: h + 'px', width: w + 'px', opacity: 1 }
+  ], { duration: 740, easing: 'ease-in-out', fill: 'both' });
+  return anim.finished.then(function(){
+    anim.cancel();
+    slot.style.overflow = '';
+    slot.style.transition = '';
+  }, function(){
+    slot.style.overflow = '';
+    slot.style.transition = '';
+  });
+}
 </script>
