@@ -116,13 +116,16 @@
       },
       {
         title: 'BASE사업자 이해하기',
-        href: '01_base_business_simulator.asp',
+        href: 'guide03_simulator.asp',
         tone: 'tone-s',
         doneLabel: '복습 완료',
         scenes: [
-          { title: 'BASE사업자는 지위가 아닌 권리 자격', done: false },
-          { title: '혜택을 공유하고 오토십 이용자 2명을 확보', done: false },
-          { title: '소비자에서 권리 소득을 만드는 사업자로 전환', done: false }
+          { title: '본인 조건 맞추기', done: false },
+          { title: '오토십 경로로 파트너 맞추기', done: false },
+          { title: 'SEP 경로로 파트너 맞추기', done: false },
+          { title: '섞인 파트너 판정', done: false },
+          { title: '합산 SEP 판정', done: false },
+          { title: '이번 달 BASE 자격 만들기', done: false }
         ]
       }
     ]

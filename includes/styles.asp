@@ -1607,11 +1607,11 @@ body.page-layout #layout-ov{display:flex}
   }
   #lo-panel .sim-step-label,
   .sim-step-label{
-    font-size:clamp(36px,1vw,38px);
+    font-size:calc(clamp(36px,1vw,38px) * 0.6);
   }
   #lo-panel .sim-question,
   .sim-question{
-    font-size:clamp(30px,1.5vw,34px);
+    font-size:calc(clamp(30px,1.5vw,34px) * 0.85);
   }
   #lo-panel .sim-choice-key,
   .sim-choice-key{
@@ -1762,7 +1762,7 @@ body.page-layout #layout-ov{display:flex}
 #sim-question-panel.is-hidden,
 #sim-result-panel.is-hidden{display:none!important}
 .sim-step-label{
-  font-size:clamp(24px,1vw,26px);font-weight:800;
+  font-size:calc(clamp(24px,1vw,26px) * 0.6);font-weight:800;
   letter-spacing:.14em;text-transform:uppercase;
   color:#64748b;margin:0 0 8px 0;
   line-height:1.26;
@@ -1770,12 +1770,25 @@ body.page-layout #layout-ov{display:flex}
   overflow-wrap:break-word;
 }
 .sim-question{
-  font-size:clamp(20px,1.5vw,22px);font-weight:600;
+  font-size:calc(clamp(20px,1.5vw,22px) * 0.85);font-weight:600;
   color:#334155;line-height:1.32;
   word-break:keep-all;
   overflow-wrap:break-word;
   margin:0 0 clamp(16px,2.2%,24px) 0;
   white-space:pre-line;
+}
+#layout-ov.layout-simulator #lo-panel .scene-title{
+  font-size:calc(clamp(24px,2.1vw,34px) * 0.85);
+}
+@media(min-width:961px){
+  #layout-ov.layout-simulator #lo-panel .scene-title{
+    font-size:calc(clamp(36px,2.1vw,42px) * 0.85);
+  }
+}
+@media(max-width:900px){
+  #layout-ov.layout-simulator #lo-panel .scene-title{
+    font-size:calc(clamp(24px,4.6vw,28px) * 0.85);
+  }
 }
 .sim-choices{
   display:flex;flex-direction:column;

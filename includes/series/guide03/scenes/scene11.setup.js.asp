@@ -39,7 +39,8 @@ function setupGuide03Scene11(canvas){
     title: 'BASE사업자 이해하기',
     zoneWrap: false,
     hidden: true,
-    titleOpen: false
+    titleOpen: false,
+    simulatorHref: (window.GUIDE_ROOT || '') + '/guide03_simulator.asp'
   });
   stack.appendChild(inner);
   canvas.appendChild(stack);

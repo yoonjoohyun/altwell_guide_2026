@@ -9,7 +9,8 @@ var ReadLog = (function(){
   };
   var SIM = {
     guide01: { id: 4, title: 'autoship_quiz' },
-    guide02: { id: 5, title: 'startpack_quiz' }
+    guide02: { id: 5, title: 'startpack_quiz' },
+    guide03: { id: 6, title: 'basebusiness_sim' }
   };
   var sent = {};
 

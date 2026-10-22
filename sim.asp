@@ -66,19 +66,19 @@ ListSectionActive = "sim"
           </div>
         </div>
       </div>
-      <div class="sc-card disabled">
+      <div class="sc-card" onclick="location.href='guide03_simulator.asp'">
         <div class="sc-thumb t3">
           <div class="sc-thumb-glow"></div>
-          <div class="sc-thumb-icon">BASE<br>BUSINESS<br>QUIZ</div>
+          <div class="sc-thumb-icon">BASE<br>BUSINESS<br>SIM</div>
         </div>
         <div class="sc-body">
           <div class="sc-label">Interactive Content</div>
           <div class="sc-title">BASE사업자 이해하기</div>
-          <div class="sc-desc">BASE사업자 조건과 활용법에 대한 핵심 내용을 질문으로 복습하는 실습 콘텐츠입니다.</div>
-          <div class="sc-meta-list">챕터 10개</div>
+          <div class="sc-desc">본인·파트너·합산 SEP를 맞추고 이번 달 BASE 자격 달성 여부를 판정하는 실습 콘텐츠입니다.</div>
+          <div class="sc-meta-list">챕터 6개</div>
           <div class="sc-footer">
-            <span class="sc-meta">준비 중</span>
-            <button type="button" class="sc-go off" disabled>준비 중</button>
+            <span class="sc-meta">조건 판정</span>
+            <button type="button" class="sc-go">▶ 시작하기</button>
           </div>
         </div>
       </div>
