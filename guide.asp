@@ -7,7 +7,7 @@
 <title>가이드 영상 - ALTWELL SMART GUIDE</title>
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
-<link rel="stylesheet" href="_css/guide.css?v=20261023title"/>
+<link rel="stylesheet" href="_css/guide.css?v=20261024cardfoot"/>
 <link rel="stylesheet" href="_css/page_loading.css?v=20261023load7"/>
 </head>
 <body class="d2 page-list">

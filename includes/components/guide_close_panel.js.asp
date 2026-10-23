@@ -25,10 +25,10 @@ var GuideClosePanel = (function(){
     var card = document.createElement('div');
     var titleSlot = makeSlot('title');
     var title = document.createElement('div');
-    var simSlot = makeSlot('sim');
-    var sim = document.createElement('button');
-    var replaySlot = makeSlot('replay');
-    var replay = document.createElement('button');
+    var simSlot = null;
+    var sim = null;
+    var replaySlot = null;
+    var replay = null;
 
     root.className = 'g-close' + (opts.className ? ' ' + opts.className : '');
     if(opts.zoneWrap !== false) root.classList.add('g01-zone-wrap');
@@ -42,28 +42,46 @@ var GuideClosePanel = (function(){
     titleSlot.appendChild(title);
     if(opts.titleOpen) titleSlot.classList.add('is-open');
 
-    sim.type = 'button';
-    sim.className = 'g-close-btn' + (opts.buttonClass ? ' ' + opts.buttonClass : '');
-    sim.textContent = 'Q 퀴즈 가이드로 복습하기';
-    sim.addEventListener('click', function(){
-      location.href = opts.simulatorHref || simulatorHref();
-    });
-    simSlot.appendChild(sim);
-
-    replay.type = 'button';
-    replay.className = 'g-close-btn g-close-btn-ghost' + (opts.buttonClass ? ' ' + opts.buttonClass : '');
-    replay.textContent = '가이드 영상 다시보기';
-    replay.addEventListener('click', function(){
-      if(typeof SceneRunner === 'undefined') return;
-      if(SceneRunner.pauseLesson) SceneRunner.pauseLesson();
-      if(SceneRunner.restartLesson) SceneRunner.restartLesson();
-      if(SceneRunner.playLesson) SceneRunner.playLesson();
-    });
-    replaySlot.appendChild(replay);
-
     card.appendChild(titleSlot);
-    card.appendChild(simSlot);
-    card.appendChild(replaySlot);
+
+    var buttonSpecs = opts.buttons || [
+      {
+        part: 'sim',
+        text: 'Q 퀴즈 가이드로 복습하기',
+        onClick: function(){ location.href = opts.simulatorHref || simulatorHref(); }
+      },
+      {
+        part: 'replay',
+        text: '가이드 영상 다시보기',
+        ghost: true,
+        onClick: function(){
+          if(typeof SceneRunner === 'undefined') return;
+          if(SceneRunner.pauseLesson) SceneRunner.pauseLesson();
+          if(SceneRunner.restartLesson) SceneRunner.restartLesson();
+          if(SceneRunner.playLesson) SceneRunner.playLesson();
+        }
+      }
+    ];
+    var buttonSlots = [];
+    var buttonEls = [];
+    var bi;
+    for(bi = 0; bi < buttonSpecs.length; bi++){
+      (function(spec){
+        var slot = makeSlot(spec.part || ('btn' + bi));
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'g-close-btn' + (spec.ghost ? ' g-close-btn-ghost' : '') + (opts.buttonClass ? ' ' + opts.buttonClass : '');
+        btn.textContent = spec.text;
+        if(spec.onClick) btn.addEventListener('click', spec.onClick);
+        slot.appendChild(btn);
+        card.appendChild(slot);
+        buttonSlots.push(slot);
+        buttonEls.push(btn);
+        if(spec.part === 'sim'){ simSlot = slot; sim = btn; }
+        if(spec.part === 'replay'){ replaySlot = slot; replay = btn; }
+      })(buttonSpecs[bi]);
+    }
+
     root.appendChild(card);
     if(parent) parent.appendChild(root);
 
@@ -75,7 +93,9 @@ var GuideClosePanel = (function(){
       simSlot: simSlot,
       sim: sim,
       replaySlot: replaySlot,
-      replay: replay
+      replay: replay,
+      buttonSlots: buttonSlots,
+      buttons: buttonEls
     };
   }
 
@@ -136,7 +156,7 @@ var GuideClosePanel = (function(){
       var p;
       var e;
       var y;
-      if(card._gCloseToken !== token){
+      if(card._gCloseToken !== token || !card.isConnected){
         clearInterval(card._gCloseTimer);
         return;
       }
@@ -156,9 +176,87 @@ var GuideClosePanel = (function(){
       card.style.overflow = '';
       slot.style.opacity = '';
       slot.style.transform = '';
+      if(opts.onDone) opts.onDone();
     }, 32);
   }
 
-  return { mount: mount, open: open, simulatorHref: simulatorHref };
+  var simEndTimers = [];
+  var simEndObserver = null;
+
+  function clearSimEndTimers(){
+    while(simEndTimers.length) clearTimeout(simEndTimers.pop());
+    if(simEndObserver){
+      simEndObserver.disconnect();
+      simEndObserver = null;
+    }
+  }
+
+  function showSimulatorEnd(canvas, options){
+    var opts = options || {};
+    var stack;
+    var panel;
+    var steps;
+    var fitObserver;
+    function alive(){
+      return panel && panel.wrap && panel.wrap.isConnected;
+    }
+    function fit(){
+      var canvasRect;
+      var rect;
+      var scale;
+      if(!alive()) return;
+      canvasRect = canvas.getBoundingClientRect();
+      stack.style.transform = 'translate(-50%, -50%)';
+      rect = panel.card.getBoundingClientRect();
+      scale = 1;
+      if(rect.width > 0 && rect.height > 0){
+        scale = Math.min((canvasRect.width * 0.8) / rect.width, (canvasRect.height * 0.8) / rect.height);
+      }
+      stack.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+    }
+    function later(ms, fn){
+      simEndTimers.push(window.setTimeout(function(){
+        if(!alive()) return;
+        fn();
+      }, ms));
+    }
+    clearSimEndTimers();
+    if(!canvas) return null;
+    canvas.innerHTML = '';
+    stack = document.createElement('div');
+    stack.className = 'sim-close-stack';
+    panel = mount(stack, {
+      className: 'sim-close',
+      zoneWrap: false,
+      title: opts.title,
+      titleOpen: false,
+      buttons: [
+        { part: 'relearn', text: '퀴즈 다시 풀기', onClick: opts.onRelearn },
+        { part: 'watch', text: '교육 영상 다시 보기', ghost: true, onClick: opts.onWatch },
+        { part: 'list', text: '리스트로 돌아가기', ghost: true, onClick: opts.onList }
+      ]
+    });
+    canvas.appendChild(stack);
+    panel.wrap.classList.add('is-in');
+    fit();
+    if(window.ResizeObserver){
+      fitObserver = new ResizeObserver(fit);
+      simEndObserver = fitObserver;
+      fitObserver.observe(panel.card);
+    }
+    later(680, function(){
+      panel.wrap.classList.remove('is-in');
+      panel.wrap.classList.add('is-idle');
+      fit();
+    });
+    steps = [panel.titleSlot].concat(panel.buttonSlots);
+    later(1100, function(){ open(steps[0], { ms: 680, float: true, onDone: fit }); });
+    later(2500, function(){ open(steps[1], { ms: 680, float: true, onDone: fit }); });
+    later(3900, function(){ open(steps[2], { ms: 680, float: true, onDone: fit }); });
+    later(5300, function(){ open(steps[3], { ms: 680, float: true, onDone: fit }); });
+    return panel;
+  }
+
+  return { mount: mount, open: open, simulatorHref: simulatorHref, showSimulatorEnd: showSimulatorEnd };
 })();
 </script>

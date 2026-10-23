@@ -89,3 +89,19 @@
 .guide01-canvas.scene07-canvas .s07-outro-card.g-close-card{
   gap:0;
 }
+
+#motion-canvas .sim-close-stack{
+  position:absolute;
+  left:50%;
+  top:50%;
+  z-index:20;
+  width:max-content;
+  height:max-content;
+  pointer-events:none;
+  transform:translate(-50%, -50%);
+  transform-origin:center center;
+}
+#motion-canvas .sim-close-stack .g-close{
+  position:relative;
+  pointer-events:auto;
+}

@@ -9,7 +9,8 @@
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261024s10note"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261024simq2"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261024simclose"/>
 <style>
 <!--#include file="includes/styles.asp"-->
 .sim-board{display:flex;flex-direction:column;gap:10px;margin:0 0 16px 0}
@@ -36,6 +37,7 @@
 }
 .sim-verdict-btn.is-miss{background:#fff;color:#991b1b;border:1.5px solid rgba(238,51,56,.45)}
 .sim-verdict-btn.is-correct-choice{background:#10b981}
+.sim-judge.is-met{background:#10b981;color:#fff}
 .sim-verdict-btn.is-miss.is-correct-choice{border:none;color:#fff}
 .sim-verdict-btn.is-wrong{animation:sim-shake .35s ease}
 </style>
@@ -67,6 +69,7 @@
 <!--#include file="includes/series/guide03/scenes/scene10.setup.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene10.js.asp"-->
 <!--#include file="includes/sim_voice.js.asp"-->
+<!--#include file="includes/components/guide_close_panel.js.asp"-->
 <!--#include file="includes/series/guide03/guide03_simulator.js.asp"-->
 
 <script>try{Guide03Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>

@@ -7,7 +7,7 @@
 <title>시뮬레이터 - ALTWELL SMART GUIDE</title>
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
-<link rel="stylesheet" href="_css/sim.css?v=20261023title"/>
+<link rel="stylesheet" href="_css/sim.css?v=20261024cardfoot"/>
 <link rel="stylesheet" href="_css/page_loading.css?v=20261023load7"/>
 </head>
 <body class="d2 page-list">
@@ -78,7 +78,7 @@ ListSectionActive = "sim"
         <div class="sc-body">
           <div class="sc-label">Interactive Content</div>
           <div class="sc-title">BASE사업자 이해하기</div>
-          <div class="sc-desc">본인·파트너 조건을 퀴즈로 복습한 뒤, 이번 달 BASE 자격 달성 여부를 판정하는 실습 콘텐츠입니다.</div>
+          <div class="sc-desc">본인·파트너 조건을 퀴즈로 복습한 뒤, 이번 달 BASE사업자 자격 달성 여부를 판정하는 실습 콘텐츠입니다.</div>
           <div class="sc-meta-list">챕터 6개</div>
           <div class="sc-footer">
             <span class="sc-meta">조건 판단</span>

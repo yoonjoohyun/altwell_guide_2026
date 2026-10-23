@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide01.css?v=20261019s6ease"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261024simclose"/>
 <style>
 <!--#include file="includes/styles.asp"-->
 </style>
@@ -44,6 +45,7 @@
 <!--#include file="includes/series/guide01/scenes/scene07.setup.js.asp"-->
 <!--#include file="includes/series/guide01/scenes/scene07.js.asp"-->
 <!--#include file="includes/sim_voice.js.asp"-->
+<!--#include file="includes/components/guide_close_panel.js.asp"-->
 <!--#include file="includes/series/guide01/guide01_simulator.js.asp"-->
 
 <script>try{Guide01Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>

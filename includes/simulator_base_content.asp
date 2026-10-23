@@ -26,9 +26,4 @@
             <span class="sim-result-text">소비자에서 권리 소득을 만들어가는 사업자로 전환</span>
           </li>
         </ul>
-        <div class="sim-result-actions">
-          <button type="button" id="sim-btn-relearn" class="sim-action-btn sim-action-primary">퀴즈 다시 풀기</button>
-          <button type="button" id="sim-btn-watch-video" class="sim-action-btn">교육영상 다시 보기</button>
-          <button type="button" id="sim-btn-back-list" class="sim-action-btn sim-action-muted">리스트로 돌아가기</button>
-        </div>
       </div>

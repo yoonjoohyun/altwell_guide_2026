@@ -1,5 +1,153 @@
 <script>
 /* 가이드03 시뮬레이션 — 왼쪽은 해당 씬 모션, 오른쪽은 이번 달 BASE 판정 보드. */
+var Guide03SimQualifyLayout = (function(){
+  var _ctx = null;
+  var _resizeBound = false;
+
+  function applyFit(){
+    if(!_ctx || typeof Guide03 === 'undefined') return;
+    Guide03.fitGroup(_ctx.canvas, _ctx.inner, _ctx.stage, null);
+  }
+
+  function schedule(){ requestAnimationFrame(applyFit); }
+
+  function bind(ctx){
+    _ctx = ctx;
+    if(_resizeBound) return;
+    _resizeBound = true;
+    window.addEventListener('resize', schedule);
+  }
+
+  return { schedule: schedule, bind: bind };
+})();
+
+function setupGuide03SimQualify(canvas){
+  var zone = Guide03Scene10Config.layout.anchorZone;
+  var stack = document.createElement('div');
+  var inner = document.createElement('div');
+  var stage = document.createElement('div');
+  var pane = document.createElement('div');
+  var board = document.createElement('div');
+  var tree = document.createElement('div');
+  var lines = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  var rowTop = document.createElement('div');
+  var rowBottom = document.createElement('div');
+  var note = document.createElement('div');
+  var noteInner = document.createElement('div');
+
+  function chip(className, node){
+    var el = document.createElement('div');
+    el.className = 'g03-simq-chip g03-slot is-hidden ' + className;
+    if(node) el.appendChild(node);
+    return el;
+  }
+
+  function autoChip(){
+    var icon = Guide03.cloneTemplate('autoship_icon');
+    return chip('g03-simq-auto', icon);
+  }
+
+  function sepChip(){
+    var el = chip('g03-simq-sep', null);
+    el.textContent = 'S.E.P 30만 이상';
+    return el;
+  }
+
+  function person(templateId, withBadge){
+    var icon = Guide03.cloneTemplate(templateId);
+    var col = document.createElement('div');
+    var host = document.createElement('div');
+    var dock = null;
+    var badgeWrap = null;
+    var badge = null;
+    col.className = 'g03-simq-col';
+    host.className = 'g03-member' + (withBadge ? ' g03-simq-self' : '');
+    if(icon) host.appendChild(icon);
+    col.appendChild(host);
+    if(withBadge){
+      dock = document.createElement('div');
+      dock.className = 'g03-simq-dock';
+      badgeWrap = document.createElement('div');
+      badgeWrap.className = 'g03-slot g03-simq-badge is-hidden';
+      badge = Guide03.cloneTemplate('base_business_icon');
+      if(badge){
+        badge.classList.remove('base_business_icon_o');
+        badge.classList.add('base_business_icon_c');
+        badgeWrap.appendChild(badge);
+      }
+      dock.appendChild(badgeWrap);
+      host.appendChild(dock);
+    }
+    return {
+      col: col,
+      host: host,
+      icon: icon,
+      auto: autoChip(),
+      sep: sepChip(),
+      badge: badgeWrap
+    };
+  }
+
+  function mountPerson(entry){
+    entry.col.appendChild(entry.auto);
+    entry.col.appendChild(entry.sep);
+  }
+
+  var self = person('member_base_self', true);
+  var left = person('member_base_partner', false);
+  var right = person('member_base_partner', false);
+  mountPerson(self);
+  mountPerson(left);
+  mountPerson(right);
+
+  lines.setAttribute('class', 'g03-lines');
+  lines.setAttribute('aria-hidden', 'true');
+  lines.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+  lines.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'path'));
+  tree.className = 'g03-tree g03-simq-tree';
+  rowTop.className = 'g03-member-row';
+  rowBottom.className = 'g03-member-row';
+  rowTop.appendChild(self.col);
+  rowBottom.appendChild(left.col);
+  rowBottom.appendChild(right.col);
+  tree.appendChild(lines);
+  tree.appendChild(rowTop);
+  tree.appendChild(rowBottom);
+
+  board.className = 'g03-board g03-simq-board';
+  board.appendChild(tree);
+  note.className = 'g03-simq-note g03-slot is-hidden';
+  noteInner.className = 'g03-simq-note-inner';
+  noteInner.innerHTML = '구성원 합산 조건 등<span class="g03-simq-note-em">추가 조건 필요 없음</span>';
+  note.appendChild(noteInner);
+  pane.className = 'g03-simq-pane';
+  pane.appendChild(board);
+  pane.appendChild(note);
+  stage.className = 'g03-simq';
+  stage.appendChild(pane);
+
+  stack.className = 'g03-stack g01-zone-wrap lo-zone-place';
+  Guide03.placeAtZone(stack, zone);
+  inner.className = 'g03-stack-inner';
+  inner.appendChild(stage);
+  stack.appendChild(inner);
+  canvas.appendChild(stack);
+  Guide03SimQualifyLayout.bind({ canvas: canvas, inner: inner, stage: stage });
+  Guide03SimQualifyLayout.schedule();
+
+  return {
+    simQualify: true,
+    stage: stage,
+    board: board,
+    tree: tree,
+    lines: lines,
+    members: [self, left, right],
+    chips: { self: self, a: left, b: right },
+    note: note,
+    badge: self.badge
+  };
+}
+
 var Guide03Simulator = (function(){
   function blank(){
     return {
@@ -8,13 +156,6 @@ var Guide03Simulator = (function(){
       b: { auto: false, sep: false },
       total: 0
     };
-  }
-
-  function withSelf(){
-    var state = blank();
-    state.self.auto = true;
-    state.self.sep = true;
-    return state;
   }
 
   var STEPS = [
@@ -68,64 +209,46 @@ var Guide03Simulator = (function(){
       scene: Guide03Scene07,
       setup: setupGuide03Scene07,
       run: runGuide03Scene07,
-      prompt: '파트너의 이번 달 현황을 보고 베이스사업자 파트너의 조건을 충족하는지 판단해보세요.',
-      mode: 'verdict',
-      verdict: false,
-      showTotal: true,
-      totalLock: true,
-      people: [
-        { who: 'self', name: '본인', keys: ['auto', 'sep'], lock: true },
-        { who: 'a', name: '파트너 1', keys: ['auto', 'sep'], lock: true },
-        { who: 'b', name: '파트너 2', keys: ['auto', 'sep'], lock: true }
+      mode: 'quiz',
+      question: 'BASE사업자 하위 파트너들의 조건으로 알맞은것은 무엇인가요?',
+      choices: [
+        '두 명 모두 오토십을 유지하거나, 두 명 모두 S.E.P 30만 이상이어야 한다',
+        '한 명은 오토십만, 다른 한 명은 S.E.P 30만이면 된다',
+        '파트너 한 명만 조건을 채우면 된다'
       ],
-      start: (function(){
-        var state = withSelf();
-        state.a.auto = true;
-        state.b.sep = true;
-        state.total = 100;
-        return state;
-      })(),
-      success: '파트너 두 명은 같은 조건이어야 합니다. 한 명은 오토십만, 다른 한 명은 S.E.P만이면 인정되지 않습니다.',
-      fail: '조건을 섞은 구성은 미달입니다. 두 파트너가 같은 조건인지 다시 보세요.'
+      answer: 0,
+      feedback: '하위 파트너 두 명은 같은 조건이어야 합니다. 둘 다 오토십을 유지하거나, 둘 다 S.E.P 30만 이상이어야 합니다.'
     },
     {
       config: Guide03Scene06Config,
       scene: Guide03Scene06,
       setup: setupGuide03Scene06,
       run: runGuide03Scene06,
-      prompt: '베이스사업자 본인과 파트너의 조건이 충족되었을때 합산 S.E.P를 보고 BASE사업자 조건이 충족되는지 판정하세요.',
-      mode: 'verdict',
-      verdict: false,
-      showTotal: true,
-      totalLock: true,
-      totals: [90],
-      people: [
-        { who: 'self', name: '본인', keys: ['auto', 'sep'], lock: true },
-        { who: 'a', name: '파트너 1', keys: ['sep'], lock: true },
-        { who: 'b', name: '파트너 2', keys: ['sep'], lock: true }
+      mode: 'quiz',
+      question: 'BASE사업자 자격을 충족하기 위한 S.E.P 실적 조건으로 알맞은 것은?',
+      choices: [
+        '파트너 두 명 모두 S.E.P 30만 이상이고, 구성원 합산 S.E.P가 100만 이상이어야 한다',
+        '각자 S.E.P 30만이면 합산이 100만 미만이어도 된다',
+        '합산 S.E.P만 100만이면 파트너 각자의 실적은 없어도 된다'
       ],
-      start: (function(){
-        var state = withSelf();
-        state.a.sep = true;
-        state.b.sep = true;
-        state.total = 90;
-        return state;
-      })(),
-      success: '구성원 합산 S.E.P가 90만이면 매월 100만 이상 조건에 미달합니다.',
-      fail: '합산 S.E.P가 100만 미만이면 미달입니다.'
+      answer: 0,
+      feedback: 'S.E.P 실적으로 자격을 충족하려면 파트너 두 명 모두 S.E.P 30만 이상이어야 하고, 구성원 합산 S.E.P도 매월 100만 이상이어야 합니다.'
     },
     {
       config: Guide03Scene10Config,
       scene: Guide03Scene10,
-      setup: setupGuide03Scene10,
       run: runGuide03Scene10,
       title: 'BASE 사업자 자격 (오토십 활용법)',
       label: '6-1',
+      voicePart: 'sim06-1',
       prompt: '본인, 파트너, 합산 S.E.P를 설정하여 오토십으로 이번 달 BASE사업자 자격을 충족시키세요.',
       mode: 'build',
       goal: 'all',
       sumRule: 'any',
       showTotal: true,
+      totalBox: true,
+      labels: { auto: '오토십 구독', sep: 'S.E.P 30만' },
+      setup: setupGuide03SimQualify,
       totals: [40, 60, 80],
       people: [
         { who: 'self', name: '본인', keys: ['auto', 'sep'] },
@@ -139,18 +262,20 @@ var Guide03Simulator = (function(){
     {
       config: Guide03Scene10Config,
       scene: Guide03Scene10,
-      setup: setupGuide03Scene10,
       run: runGuide03Scene10,
       title: 'BASE 사업자 자격 (S.E.P 활용법)',
       label: '6-2',
       progress: 5.5,
-      voice: false,
+      voicePart: 'sim06-2',
       prompt: '본인, 파트너, 합산 S.E.P를 설정하여 S.E.P 실적으로 이번 달 BASE사업자 자격을 충족시키세요.',
       mode: 'build',
       goal: 'all',
       sumRule: '100',
       showTotal: true,
-      totals: [80, 90, 100],
+      totalBox: true,
+      labels: { auto: '오토십 구독', sep: 'S.E.P 30만' },
+      setup: setupGuide03SimQualify,
+      totals: [90, 100, 150],
       people: [
         { who: 'self', name: '본인', keys: ['auto', 'sep'] },
         { who: 'a', name: '파트너 1', keys: ['auto', 'sep'] },
@@ -207,9 +332,12 @@ var Guide03Simulator = (function(){
 
   function failText(step, state){
     if(step.fail) return step.fail;
-    if(!selfOk(state)) return '본인은 오토십 유지와 S.E.P 30만을 함께 채워야 합니다.';
+    if(!selfOk(state)){
+      if(step.labels) return '본인은 오토십 구독과 S.E.P 30만을 함께 채워야 합니다.';
+      return '본인은 오토십 유지와 S.E.P 30만을 함께 채워야 합니다.';
+    }
     if(step.sumRule === 'any'){
-      if(!partnersAuto(state)) return '파트너 두 명 모두 오토십을 유지해야 합니다. 그러면 합산 S.E.P 조건은 없습니다.';
+      if(!partnersAuto(state)) return '파트너 두 명 모두 오토십을 구독해야 합니다. 그러면 합산 S.E.P 조건은 없습니다.';
       return '구성원 합산 S.E.P를 선택해 주세요. 오토십을 유지하면 40만, 60만, 80만 모두 자격입니다.';
     }
     if(step.sumRule === '100'){
@@ -341,6 +469,38 @@ var Guide03Simulator = (function(){
       Guide03Scene07Layout.schedule();
       return;
     }
+    if(id === 'guide03-scene-10' && assets.simQualify){
+      var who;
+      var pass = solved[index] && goalMet(step, state);
+      setShown(assets.board, true);
+      for(who in assets.chips){
+        if(!assets.chips.hasOwnProperty(who)) continue;
+        setShown(assets.chips[who].auto, !!state[who].auto);
+        setShown(assets.chips[who].sep, !!state[who].sep);
+      }
+      if(assets.note){
+        assets.note.firstElementChild.innerHTML = step.sumRule === '100'
+          ? '구성원 3명의<span class="g03-s10-note-sep">합산 S.E.P 100만 이상</span>'
+          : '구성원 합산 조건 등<span class="g03-simq-note-em">추가 조건 필요 없음</span>';
+      }
+      setShown(assets.note, pass);
+      if(assets.note) assets.note.classList.remove('g03-enter');
+      setShown(assets.badge, pass);
+      assets.board.classList.toggle('is-pass', pass);
+      if(pass && !assets.board._simPassed){
+        assets.board._simPassed = true;
+        assets.board.classList.remove('is-flash');
+        void assets.board.offsetWidth;
+        assets.board.classList.add('is-flash');
+      }
+      if(!pass) assets.board._simPassed = false;
+      Guide03SimQualifyLayout.schedule();
+      window.requestAnimationFrame(function(){
+        if(!currentAssets || currentAssets !== assets) return;
+        if(typeof guide03Scene01DrawLines === 'function') guide03Scene01DrawLines(assets, false);
+      });
+      return;
+    }
     if(id === 'guide03-scene-10'){
       setShown(assets.card, true);
       setShown(assets.left.root, true);
@@ -388,7 +548,7 @@ var Guide03Simulator = (function(){
   }
 
   function syncQuizCompact(){
-    document.body.classList.toggle('sim-quiz-compact', index >= 0 && index < 3);
+    document.body.classList.toggle('sim-quiz-compact', !!(STEPS[index] && STEPS[index].mode === 'quiz'));
   }
 
   function showResult(){
@@ -419,6 +579,15 @@ var Guide03Simulator = (function(){
     }
     setChrome(STEPS.length, true);
     if(typeof SimVoice !== 'undefined') SimVoice.playClose('guide03');
+    releaseScenes();
+    if(typeof GuideClosePanel !== 'undefined'){
+      GuideClosePanel.showSimulatorEnd(canvasEl(), {
+        title: 'BASE사업자 이해하기',
+        onRelearn: restart,
+        onWatch: function(){ location.href = 'guide03_smartguide.asp?from=sim'; },
+        onList: function(){ location.href = 'sim.asp'; }
+      });
+    }
   }
 
   function displayTotal(){ return 6; }
@@ -475,11 +644,11 @@ var Guide03Simulator = (function(){
     }
   }
 
-  function makeToggle(who, key, locked){
+  function makeToggle(who, key, locked, label){
     var btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'sim-toggle' + (board[who][key] ? ' is-on' : '');
-    btn.textContent = LABELS[key];
+    btn.textContent = label || LABELS[key];
     btn.setAttribute('aria-pressed', board[who][key] ? 'true' : 'false');
     btn.disabled = !!locked;
     btn.addEventListener('click', function(){
@@ -511,7 +680,7 @@ var Guide03Simulator = (function(){
       toggles = document.createElement('div');
       toggles.className = 'sim-toggles';
       for(k = 0; k < person.keys.length; k++){
-        toggles.appendChild(makeToggle(person.who, person.keys[k], person.lock || solved[index]));
+        toggles.appendChild(makeToggle(person.who, person.keys[k], person.lock || solved[index], step.labels && step.labels[person.keys[k]]));
       }
       row.appendChild(name);
       row.appendChild(toggles);
@@ -525,7 +694,7 @@ var Guide03Simulator = (function(){
     var label = document.createElement('div');
     var i;
     var btn;
-    row.className = 'sim-total';
+    row.className = 'sim-total' + (step.totalBox ? ' sim-person' : '');
     label.className = 'sim-total-label';
     label.textContent = '구성원 합산 S.E.P';
     row.appendChild(label);
@@ -560,6 +729,11 @@ var Guide03Simulator = (function(){
     var totalEl = document.querySelector('.sim-total');
     var i;
     for(i = 0; i < buttons.length; i++) buttons[i].disabled = true;
+    var judge = document.querySelector('.sim-judge');
+    if(judge && step.mode === 'build'){
+      judge.textContent = '이번 달 자격 충족';
+      judge.classList.add('is-met');
+    }
     if(boardEl) boardEl.style.display = 'none';
     if(totalEl) totalEl.style.display = 'none';
     showFeedback(true, step.success);
@@ -576,6 +750,7 @@ var Guide03Simulator = (function(){
     }
     solved[index] = true;
     saved[index] = copyState(board);
+    syncMotion();
     lockSolved(step);
   }
 
@@ -701,9 +876,14 @@ var Guide03Simulator = (function(){
     var host = document.getElementById('sim-choices');
     if(!host) return;
     board = copyState(solved[index] && saved[index] ? saved[index] : step.start);
+    var people;
     host.innerHTML = '';
-    host.appendChild(renderPeople(step));
-    if(step.showTotal) host.appendChild(renderTotal(step));
+    people = renderPeople(step);
+    host.appendChild(people);
+    if(step.showTotal){
+      if(step.totalBox) people.appendChild(renderTotal(step));
+      else host.appendChild(renderTotal(step));
+    }
     host.appendChild(renderActions(step));
     hideNext();
     syncMotion();
@@ -729,7 +909,7 @@ var Guide03Simulator = (function(){
     syncQuizCompact();
     setChrome(index, false);
     if(label) label.textContent = 'BASE사업자 이해하기';
-    if(typeof SimVoice !== 'undefined' && step.voice !== false) SimVoice.playStep('guide03', index);
+    if(typeof SimVoice !== 'undefined' && step.voice !== false) SimVoice.playStep('guide03', index, step.voicePart);
   }
 
   function go(nextIndex){

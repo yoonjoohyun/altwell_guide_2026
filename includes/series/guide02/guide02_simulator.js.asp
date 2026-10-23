@@ -198,6 +198,15 @@ var Guide02Simulator = (function(){
     }
     setChrome(STEPS.length, true);
     if(typeof SimVoice !== 'undefined') SimVoice.playClose('guide02');
+    releaseScenes();
+    if(typeof GuideClosePanel !== 'undefined'){
+      GuideClosePanel.showSimulatorEnd(canvasEl(), {
+        title: '스타트팩 알아보기',
+        onRelearn: restart,
+        onWatch: function(){ location.href = 'guide02_smartguide.asp?from=sim'; },
+        onList: function(){ location.href = 'sim.asp'; }
+      });
+    }
   }
 
   function setChrome(stepIndex, done){

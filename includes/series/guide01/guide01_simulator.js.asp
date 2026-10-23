@@ -196,6 +196,15 @@ var Guide01Simulator = (function(){
     }
     setChrome(STEPS.length, true);
     if(typeof SimVoice !== 'undefined') SimVoice.playClose('guide01');
+    releaseScenes();
+    if(typeof GuideClosePanel !== 'undefined'){
+      GuideClosePanel.showSimulatorEnd(canvasEl(), {
+        title: '오토십 알아보기',
+        onRelearn: restart,
+        onWatch: function(){ location.href = 'guide01_smartguide.asp?from=sim'; },
+        onList: function(){ location.href = 'sim.asp'; }
+      });
+    }
   }
 
   function setChrome(stepIndex, done){

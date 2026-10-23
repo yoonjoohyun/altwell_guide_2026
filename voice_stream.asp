@@ -109,8 +109,8 @@ Function FindSimVoice(fso, seriesId, partId)
   If seriesKey <> "guide01" And seriesKey <> "guide02" And seriesKey <> "guide03" Then Exit Function
   If partId = "simclose" Then
     name = seriesKey & "_step_close"
-  ElseIf RegExpTest("^sim[0-9]{2}$", partId) Then
-    name = seriesKey & "_step_" & Right(partId, 2)
+  ElseIf RegExpTest("^sim[0-9]{2}(-[12])?$", partId) Then
+    name = seriesKey & "_step_" & Mid(partId, 4)
   Else
     Exit Function
   End If

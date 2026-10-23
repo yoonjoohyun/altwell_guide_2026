@@ -29,8 +29,8 @@ var SimVoice = (function(){
     if(pending && pending.catch) pending.catch(function(){});
   }
 
-  function playStep(series, stepIndex){
-    play(series, 'sim' + pad(stepIndex + 1));
+  function playStep(series, stepIndex, part){
+    play(series, part || ('sim' + pad(stepIndex + 1)));
   }
 
   function playClose(series){

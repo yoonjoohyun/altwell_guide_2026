@@ -113,6 +113,8 @@
 }
 .vcard:hover .vc-play{transform:scale(1.12)}
 .vc-body{padding:13px 15px 15px;flex:1}
+.cards-grid .vc-body{display:flex;flex-direction:column;min-height:0}
+.cards-grid .vc-meta{margin-top:auto}
 .vc-top{display:flex;align-items:center;gap:5px;margin-bottom:7px}
 .vc-step{
   font-size:13px;font-weight:700;letter-spacing:.06em;
@@ -124,7 +126,7 @@
 .vc-soon{font-size:13px;font-weight:700;background:#f3f4f6;color:#9ca3af;border-radius:5px;padding:3px 9px}
 .vc-title{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:6px;color:var(--fg)}
 .cards-grid .vc-title{color:var(--fg)}
-.vc-desc{font-size:15px;color:var(--sub);line-height:1.65}
+.vc-desc{font-size:15px;color:var(--sub);line-height:1.65; margin-bottom:12px;}
 .vc-meta{font-size:14px;color:var(--sub);margin-top:10px}
 .vc-prog{height:3px;background:var(--muted);border-radius:99px;margin-top:11px;overflow:hidden}
 .vc-prog-fill{height:100%;border-radius:99px;background:var(--red)}
