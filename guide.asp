@@ -7,7 +7,7 @@
 <title>가이드 영상 - ALTWELL SMART GUIDE</title>
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
-<link rel="stylesheet" href="_css/guide.css"/>
+<link rel="stylesheet" href="_css/guide.css?v=20261023title"/>
 </head>
 <body class="d2 page-list">
 <%
@@ -26,6 +26,7 @@ ListSectionActive = "guide"
 %>
 <!--#include file="includes/list_section_tabs.asp"-->
     <div class="lp-panel">
+    <div class="lp-panel-inner">
     <div class="lp-panel-top">
     <div class="view-tabs">
       <button class="vt on" onclick="setView('grid',this)">썸네일</button>
@@ -46,7 +47,7 @@ ListSectionActive = "guide"
         </div>
       </div>
 
-      <div class="vcard" onclick="location.href='guide01_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide01_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g1">
           <span>SMART<br>AUTOSHIP<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -62,7 +63,7 @@ ListSectionActive = "guide"
         </div>
       </div>
 
-      <div class="vcard" onclick="location.href='guide02_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide02_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>START PACK<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -78,7 +79,7 @@ ListSectionActive = "guide"
         </div>
       </div>
       
-      <div class="vcard" onclick="location.href='guide03_smartguide.asp?from=guide'">
+      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide03_smartguide.asp?from=guide'">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>BASE<br>BUSINESS<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -117,6 +118,7 @@ ListSectionActive = "guide"
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
+    </div>
     </div>
     </div>
   </div>

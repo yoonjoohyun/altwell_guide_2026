@@ -152,6 +152,7 @@ body.page-layout #layout-ov{
 /* ── List layout (guide · sim 공통) ── */
 .list-wrap{max-width:1060px;margin:0 auto;padding:32px 22px 60px;}
 .list-wrap:has(.lp-panel){
+  --list-content-max:1200px;
   display:flex;
   flex-direction:column;
   max-width:none;
@@ -163,7 +164,7 @@ body.page-layout #layout-ov{
 .list-wrap:has(.lp-panel) .lp-head{
   flex-shrink:0;
   width:100%;
-  max-width:1060px;
+  max-width:var(--list-content-max);
   margin-left:auto;
   margin-right:auto;
   margin-bottom:clamp(20px,3.5vw,36px);
@@ -176,7 +177,7 @@ body.page-layout #layout-ov{
   font-size:clamp(26px,5.2vw,42px);
   font-weight:900;letter-spacing:-.025em;
   line-height:1.18;
-  margin-bottom:clamp(8px,1.4vw,14px);
+  margin-bottom:clamp(2px,1.4vw,4px);
   word-break:keep-all;
   color:rgba(17,24,39,0.9);
 }
@@ -199,8 +200,21 @@ body.page-layout #layout-ov{
   background:var(--card);
   border-top:1px solid var(--border);
   border-radius:0;
-  padding:clamp(18px,2.5vw,26px) var(--lp-panel-pad-x) clamp(66px,9vw,96px);
+  padding:clamp(18px,2.5vw,26px) 0 clamp(66px,9vw,96px);
   box-sizing:border-box;
+}
+.lp-panel-inner{
+  width:100%;
+  max-width:var(--list-content-max);
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:var(--lp-panel-pad-x);
+  padding-right:var(--lp-panel-pad-x);
+  box-sizing:border-box;
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
 .list-wrap:has(.lp-panel) .lp-section-tabs{
   flex-shrink:0;
@@ -270,10 +284,8 @@ body.page-layout #layout-ov{
   .lp-head{margin-bottom:18px}
   .lp-title{letter-spacing:-.02em}
   .lp-desc{line-height:1.5}
-  .lp-panel{
-    --lp-panel-pad-x:21px;
-    padding:16px var(--lp-panel-pad-x) 60px;
-  }
+  .lp-panel{padding:16px 0 60px}
+  .lp-panel-inner{--lp-panel-pad-x:21px}
 }
 
 /* guide.asp · sim.asp — 스크롤 하단 푸터 */

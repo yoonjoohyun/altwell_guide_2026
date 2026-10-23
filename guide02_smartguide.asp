@@ -50,6 +50,6 @@
 <!--#include file="includes/series/guide02/scenes/scene09.setup.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene09.js.asp"-->
 <!--#include file="includes/series/guide02/guide02.asp"-->
-<script>SeriesGuide02.init();</script>
+<script>try{SeriesGuide02.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 </body>
 </html>

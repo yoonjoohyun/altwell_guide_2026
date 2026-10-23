@@ -7,7 +7,7 @@
 <title>시뮬레이터 - ALTWELL SMART GUIDE</title>
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
-<link rel="stylesheet" href="_css/sim.css"/>
+<link rel="stylesheet" href="_css/sim.css?v=20261023title"/>
 </head>
 <body class="d2 page-list">
 <%
@@ -26,6 +26,7 @@ ListSectionActive = "sim"
 %>
 <!--#include file="includes/list_section_tabs.asp"-->
     <div class="lp-panel">
+    <div class="lp-panel-inner">
     <div class="lp-panel-top">
     <div class="view-tabs">
       <button type="button" class="vt on" onclick="setSimView('grid',this)">썸네일</button>
@@ -46,7 +47,7 @@ ListSectionActive = "sim"
           <div class="sc-meta-list">챕터 7개</div>
           <div class="sc-footer">
             <span class="sc-meta">핵심 퀴즈</span>
-            <button type="button" class="sc-go">▶ 시작하기</button>
+            <button type="button" class="sc-go">시작하기 ▶</button>
           </div>
         </div>
       </div>
@@ -54,6 +55,7 @@ ListSectionActive = "sim"
         <div class="sc-thumb t2">
           <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(142,61,76,.4),transparent 70%)"></div>
           <div class="sc-thumb-icon">START PACK<br>QUIZ</div>
+          <div class="sc-badge">NEW</div>
         </div>
         <div class="sc-body">
           <div class="sc-label">Interactive Content</div>
@@ -62,7 +64,7 @@ ListSectionActive = "sim"
           <div class="sc-meta-list">챕터 8개</div>
           <div class="sc-footer">
             <span class="sc-meta">핵심 퀴즈</span>
-            <button type="button" class="sc-go">▶ 시작하기</button>
+            <button type="button" class="sc-go">시작하기 ▶</button>
           </div>
         </div>
       </div>
@@ -70,6 +72,7 @@ ListSectionActive = "sim"
         <div class="sc-thumb t3">
           <div class="sc-thumb-glow"></div>
           <div class="sc-thumb-icon">BASE<br>BUSINESS<br>SIM</div>
+          <div class="sc-badge">NEW</div>
         </div>
         <div class="sc-body">
           <div class="sc-label">Interactive Content</div>
@@ -77,11 +80,12 @@ ListSectionActive = "sim"
           <div class="sc-desc">본인·파트너·합산 SEP를 맞추고 이번 달 BASE 자격 달성 여부를 판정하는 실습 콘텐츠입니다.</div>
           <div class="sc-meta-list">챕터 6개</div>
           <div class="sc-footer">
-            <span class="sc-meta">조건 판정</span>
-            <button type="button" class="sc-go">▶ 시작하기</button>
+            <span class="sc-meta">조건 판단</span>
+            <button type="button" class="sc-go">시작하기 ▶</button>
           </div>
         </div>
       </div>
+    </div>
     </div>
     </div>
   </div>

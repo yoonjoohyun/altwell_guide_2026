@@ -1,3 +1,4 @@
+<!--#include file="page_loading.asp"-->
 <div id="layout-ov">
 
   <!-- ① 상단 프레임 -->

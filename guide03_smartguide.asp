@@ -56,6 +56,6 @@
 <!--#include file="includes/series/guide03/scenes/scene11.setup.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene11.js.asp"-->
 <!--#include file="includes/series/guide03/guide03.asp"-->
-<script>SeriesGuide03.init();</script>
+<script>try{SeriesGuide03.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 </body>
 </html>

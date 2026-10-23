@@ -89,6 +89,10 @@ function onSeek(ev){
   var backUrl = (function(){
     var p = new URLSearchParams(location.search).get('from');
     var file = p === 'sim' ? 'sim.asp' : 'guide.asp';
+    var root = (typeof window !== 'undefined' && window.GUIDE_ROOT)
+      ? String(window.GUIDE_ROOT).replace(/\/$/, '')
+      : '';
+    if(root) return root + '/' + file;
     var path = location.pathname || '';
     if(/\/series\/[^/]+\//.test(path)){
       return '../../' + file;

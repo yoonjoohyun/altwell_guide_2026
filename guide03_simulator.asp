@@ -66,6 +66,6 @@
 <!--#include file="includes/series/guide03/scenes/scene10.js.asp"-->
 <!--#include file="includes/series/guide03/guide03_simulator.js.asp"-->
 
-<script>Guide03Simulator.init();</script>
+<script>try{Guide03Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 </body>
 </html>

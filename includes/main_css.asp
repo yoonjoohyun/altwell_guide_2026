@@ -1,1 +1,1 @@
-<link rel="stylesheet" href="_css/main.css?v=20261022nonavback"/>
+<link rel="stylesheet" href="_css/main.css?v=20261023panelinner"/>

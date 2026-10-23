@@ -6,3 +6,4 @@
 <!--#include file="sceneTransition.js.asp"-->
 <!--#include file="readLog.js.asp"-->
 <!--#include file="sceneRunner.js.asp"-->
+<!--#include file="page_loading.js.asp"-->

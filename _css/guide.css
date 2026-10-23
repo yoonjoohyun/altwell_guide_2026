@@ -122,7 +122,8 @@
 .vc-new{font-size:13px;font-weight:700;background:#dcfce7;color:#16a34a;border-radius:5px;padding:3px 9px}
 .vc-done{font-size:13px;font-weight:700;background:#dbeafe;color:#2563eb;border-radius:5px;padding:3px 9px}
 .vc-soon{font-size:13px;font-weight:700;background:#f3f4f6;color:#9ca3af;border-radius:5px;padding:3px 9px}
-.vc-title{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:6px;color:var(--red)}
+.vc-title{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:6px;color:var(--fg)}
+.cards-grid .vc-title{color:var(--fg)}
 .vc-desc{font-size:15px;color:var(--sub);line-height:1.65}
 .vc-meta{font-size:14px;color:var(--sub);margin-top:10px}
 .vc-prog{height:3px;background:var(--muted);border-radius:99px;margin-top:11px;overflow:hidden}

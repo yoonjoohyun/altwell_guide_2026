@@ -124,7 +124,8 @@
 }
 .sc-body{padding:18px 20px 20px}
 .sc-label{font-size:13px;font-weight:700;letter-spacing:.09em;color:var(--red);margin-bottom:8px}
-.sc-title{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em;color:var(--red)}
+.sc-title{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em;color:var(--fg)}
+.sim-grid .sc-title{color:var(--fg)}
 .sc-card.disabled .sc-title{color:#9ca3af}
 .sc-desc{font-size:16px;color:var(--sub);line-height:1.7;margin-bottom:16px}
 .sc-footer{display:flex;align-items:center;justify-content:space-between}

@@ -79,7 +79,7 @@
 
 <!--#include file="includes/series/guide01/guide01.asp"-->
 
-<script>SeriesGuide01.init();</script>
+<script>try{SeriesGuide01.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 
 
 

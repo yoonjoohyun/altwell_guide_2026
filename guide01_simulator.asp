@@ -45,6 +45,6 @@
 <!--#include file="includes/series/guide01/scenes/scene07.js.asp"-->
 <!--#include file="includes/series/guide01/guide01_simulator.js.asp"-->
 
-<script>Guide01Simulator.init();</script>
+<script>try{Guide01Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 </body>
 </html>

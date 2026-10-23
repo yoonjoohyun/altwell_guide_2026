@@ -1,4 +1,5 @@
 <!-- Simulator common layout frame (Motion Canvas + Question Panel + Controls) -->
+<!--#include file="player/page_loading.asp"-->
 <div id="layout-ov" class="layout-simulator">
 
   <!--#include file="player/video_controller_top.asp"-->
