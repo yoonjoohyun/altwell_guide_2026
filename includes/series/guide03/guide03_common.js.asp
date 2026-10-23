@@ -152,6 +152,7 @@ var Guide03 = (function(){
     placeAtZone: placeAtZone,
     fitGroup: fitGroup,
     panelBulletTimeline: panelBulletTimeline,
+    panelFlashBullet: panelFlashBullet,
     finishSceneHold: finishSceneHold
   };
 })();

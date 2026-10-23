@@ -49,12 +49,22 @@ function guide03Scene05Fit(){
 }
 
 async function guide03Scene05Reveal(el){
+  var motion;
   if(!el) return;
   showElement(el);
-  el.classList.add('g03-enter');
+  motion = (el.classList.contains('g03-s05-note') || el.classList.contains('g03-s05-coda-badge')) ? el.firstElementChild : el;
+  if(motion) motion.classList.add('g03-enter');
   guide03Scene05Fit();
   await wait(760);
-  el.classList.remove('g03-enter');
+  if(motion) motion.classList.remove('g03-enter');
+}
+
+async function guide03Scene05Open(slot){
+  var done;
+  if(!slot) return;
+  done = guide03EaseOpen(slot);
+  guide03Scene05Fit();
+  await done;
 }
 
 function guide03Scene05Fill(fill){
@@ -100,5 +110,38 @@ async function runGuide03Scene05(tl, assets, ctx){
   await tl.wait(at(T.stable));
   if(guide03Scene05Cancelled(ctx)) return;
   await guide03Scene05Reveal(assets.stable);
+
+  await tl.wait(guide03Scene05AddAt(T.coda.board, ctx));
+  if(guide03Scene05Cancelled(ctx)) return;
+  if(assets.opening) assets.opening.classList.add('is-gone');
+  showElement(assets.coda.root);
+  if(Guide03.panelFlashBullet) Guide03.panelFlashBullet(2);
+  await guide03Scene05Reveal(assets.coda.board);
+
+  await tl.wait(guide03Scene05AddAt(T.coda.self, ctx));
+  if(guide03Scene05Cancelled(ctx)) return;
+  await guide03Scene05Open(assets.coda.members[0].slot);
+
+  for(i = 0; i < T.coda.partners.length; i++){
+    await tl.wait(guide03Scene05AddAt(T.coda.partners[i], ctx));
+    if(guide03Scene05Cancelled(ctx)) return;
+    await guide03Scene05Open(assets.coda.members[i + 1].slot);
+  }
+  if(guide03Scene05Cancelled(ctx)) return;
+  guide03Scene01DrawLines(assets.coda, true);
+
+  for(i = 0; i < assets.coda.autos.length; i++){
+    await tl.wait(guide03Scene05AddAt(T.coda.autos[i], ctx));
+    if(guide03Scene05Cancelled(ctx)) return;
+    await guide03Scene05Reveal(assets.coda.autos[i]);
+    guide03Scene01DrawLines(assets.coda, false);
+  }
+
+  await tl.wait(guide03Scene05AddAt(T.coda.note, ctx));
+  if(guide03Scene05Cancelled(ctx)) return;
+  await Promise.all([
+    guide03Scene05Reveal(assets.coda.note),
+    guide03Scene05Reveal(assets.coda.badge)
+  ]);
 }
 </script>

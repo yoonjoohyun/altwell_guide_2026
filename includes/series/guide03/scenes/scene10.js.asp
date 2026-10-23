@@ -140,48 +140,85 @@ async function runGuide03Scene10(tl, assets, ctx){
   assets.badge.classList.remove('g03-enter');
   await guide03Scene10HideBadge(assets.badge);
 
+  function markEnter(nodes){
+    var motions = [];
+    var i;
+    var motion;
+    for(i = 0; i < nodes.length; i++){
+      if(!nodes[i]) continue;
+      motion = nodes[i].querySelector('.g03-s10-note-inner, .base_business_icon_c') || nodes[i];
+      motion.classList.add('g03-enter');
+      motions.push(motion);
+    }
+    return motions;
+  }
+
+  function clearEnter(motions){
+    var i;
+    for(i = 0; i < motions.length; i++) motions[i].classList.remove('g03-enter');
+  }
+
+  async function floatIn(hosts, motions){
+    var entered = [];
+    await guide03Scene10Place(assets.stage, null, null, function(){
+      var i;
+      for(i = 0; i < hosts.length; i++) showElement(hosts[i]);
+      entered = markEnter(motions || []);
+    });
+    clearEnter(entered);
+  }
+
   await tl.wait(at(T.self));
   if(guide03Scene10Cancelled(ctx)) return;
   showElement(assets.card);
   guide03Scene10Fit();
-  await guide03Scene10Place(assets.stage, assets.self.host, assets.self.icon);
+  await floatIn(
+    [assets.left.root, assets.right.root, assets.left.self.host, assets.right.self.host],
+    [assets.left.self.icon, assets.right.self.icon]
+  );
 
   await tl.wait(at(T.selfAuto));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.selfAuto, assets.selfAuto);
+  await floatIn(
+    [assets.left.selfAuto, assets.right.selfAuto],
+    [assets.left.selfAuto, assets.right.selfAuto]
+  );
 
   await tl.wait(at(T.selfSep));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.selfSep, assets.selfSep);
+  await floatIn(
+    [assets.left.selfSep, assets.right.selfSep],
+    [assets.left.selfSep, assets.right.selfSep]
+  );
 
   await tl.wait(at(T.partners[0]));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.partners[0].host, assets.partners[0].icon);
+  await floatIn(
+    [assets.left.partners[0].host, assets.left.partners[1].host],
+    [assets.left.partners[0].icon, assets.left.partners[1].icon]
+  );
 
   await tl.wait(at(T.partners[1]));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.partners[1].host, assets.partners[1].icon);
+  await floatIn(
+    [assets.right.partners[0].host, assets.right.partners[1].host],
+    [assets.right.partners[0].icon, assets.right.partners[1].icon]
+  );
 
   await tl.wait(at(T.partnerAuto));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.partnerAuto, assets.partnerAuto);
-
-  await tl.wait(at(T.or));
-  if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.or, assets.or);
+  await floatIn([assets.left.chip], [assets.left.chip]);
 
   await tl.wait(at(T.partnerSep));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.partnerSep, assets.partnerSep);
+  await floatIn([assets.right.chip], [assets.right.chip]);
 
   await tl.wait(at(T.card));
   if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10Place(assets.stage, assets.caption, assets.caption, function(){
-    assets.card.classList.add('is-on');
-  });
-
-  if(guide03Scene10Cancelled(ctx)) return;
-  await guide03Scene10SelfFoldFloat(assets.self, assets.selfBadge);
+  await floatIn(
+    [assets.left.note, assets.right.note, assets.left.badge, assets.right.badge],
+    [assets.left.note, assets.right.note, assets.left.badge, assets.right.badge]
+  );
 
   await tl.wait(at(T.orb1));
   if(guide03Scene10Cancelled(ctx)) return;

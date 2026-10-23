@@ -45,17 +45,27 @@ var SeriesGuide03 = {
           var config = configs[sceneIndex];
           var seq = config && config.media && config.media.sequence;
           index += 1;
-          if(!seq || !seq.length || seq[0].part !== 'title' || !SceneMedia.probeDurationPath) return next();
-          SceneMedia.probeDurationPath(
-            SceneMedia.getMediaPath(sceneIndex, 'title'),
-            config.media.fallbackMs[0]
-          ).then(function(ms){
-            if(ms > 0){
-              config.media.titleMs = ms;
-              if(scenes[sceneIndex]) scenes[sceneIndex].mediaTitleMs = ms;
-            }
-            next();
+          if(!seq || !seq.length || !SceneMedia.probeDurationPath) return next();
+          var fallbacks = config.media.fallbackMs || [];
+          var chain = Promise.resolve();
+          seq.forEach(function(item, idx){
+            chain = chain.then(function(){
+              var part = item.part || '';
+              return SceneMedia.probeDurationPath(
+                SceneMedia.getMediaPath(sceneIndex, part),
+                fallbacks[idx] || 30000
+              ).then(function(ms){
+                if(!(ms > 0)) return;
+                if(!config.media.partMs) config.media.partMs = {};
+                config.media.partMs[part || 'main'] = ms;
+                if(part === 'title'){
+                  config.media.titleMs = ms;
+                  if(scenes[sceneIndex]) scenes[sceneIndex].mediaTitleMs = ms;
+                }
+              });
+            });
           });
+          chain.then(next);
         }
         next();
       }
