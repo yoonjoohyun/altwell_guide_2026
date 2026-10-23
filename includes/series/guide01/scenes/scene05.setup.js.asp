@@ -60,7 +60,7 @@ var Scene05Layout = (function(){
     if(!coin) return null;
 
     inner = coin.querySelector('.point_token_inner');
-    if(inner) inner.textContent = 'EP';
+    if(inner) inner.textContent = 'E.P';
     coin.classList.add('s05-ep-coin', 'guide01-asset');
     coin.setAttribute('aria-label', 'E.P');
 

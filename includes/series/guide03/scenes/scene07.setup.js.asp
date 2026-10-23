@@ -40,7 +40,7 @@ function setupGuide03Scene07(canvas){
       if(icon) el.appendChild(icon);
     }else{
       el.className = 'g03-s07-sep';
-      el.textContent = 'SEP 30만 이상 달성';
+      el.textContent = 'S.E.P 30만 이상 달성';
     }
     el.classList.add('g03-slot');
     if(!shown) el.classList.add('is-hidden');

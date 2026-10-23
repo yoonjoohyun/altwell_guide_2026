@@ -60,7 +60,7 @@ function setupGuide03Scene10(canvas){
 
   function sepLabel(){
     var el = hidden('g03-s10-sep g03-s10-shift');
-    el.textContent = 'SEP 30만 이상 달성';
+    el.textContent = 'S.E.P 30만 이상 달성';
     return el;
   }
 
@@ -74,7 +74,31 @@ function setupGuide03Scene10(canvas){
   var badgeWrap = hidden('g03-s10-badge');
   if(badge) badgeWrap.appendChild(badge);
 
+  function attachSelfFoldBadge(selfEntry){
+    var host = selfEntry.host;
+    var dock;
+    var badgeWrap;
+    var badge;
+    if(!host) return null;
+    host.classList.add('g03-s10-self-host');
+    dock = document.createElement('div');
+    dock.className = 'g03-s10-self-dock';
+    badgeWrap = document.createElement('div');
+    badgeWrap.id = 'g03-s10-self-badge';
+    badgeWrap.className = 'g03-slot g03-s10-self-badge is-hidden';
+    badge = Guide03.cloneTemplate('base_business_icon');
+    if(badge){
+      badge.classList.remove('base_business_icon_o');
+      badge.classList.add('base_business_icon_c');
+      badgeWrap.appendChild(badge);
+    }
+    dock.appendChild(badgeWrap);
+    host.appendChild(dock);
+    return badgeWrap;
+  }
+
   var self = member('member_base_self');
+  var selfBadge = attachSelfFoldBadge(self);
   var selfAuto = autoIcon();
   var selfSep = sepLabel();
   var partners = [member('member_base_partner'), member('member_base_partner')];
@@ -84,7 +108,7 @@ function setupGuide03Scene10(canvas){
   or.textContent = 'or';
 
   var caption = hidden('g03-s10-caption');
-  caption.innerHTML = '구성원의 총 SEP<br>매월 100만 이상 달성';
+  caption.innerHTML = '구성원의 총 S.E.P<br>매월 100만 이상 달성';
 
   selfCol.className = 'g03-s10-col g03-s10-shift';
   partnerCol.className = 'g03-s10-col g03-s10-shift';
@@ -152,6 +176,7 @@ function setupGuide03Scene10(canvas){
     card: card,
     caption: caption,
     self: self,
+    selfBadge: selfBadge,
     selfAuto: selfAuto,
     selfSep: selfSep,
     partners: partners,

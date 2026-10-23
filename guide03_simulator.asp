@@ -9,7 +9,7 @@
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261022ease"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide03.css?v=20261023s04track"/>
 <style>
 <!--#include file="includes/styles.asp"-->
 .sim-board{display:flex;flex-direction:column;gap:10px;margin:0 0 16px 0}
@@ -29,12 +29,14 @@
 .sim-toggle:disabled,.sim-total-btn:disabled,.sim-verdict-btn:disabled,.sim-judge:disabled{cursor:default}
 .sim-total{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .sim-total-label{font-size:15px;font-weight:800;color:#0f172a;width:100%}
-.sim-actions{display:flex;flex-wrap:wrap;gap:8px}
+.sim-actions{display:flex;flex-wrap:nowrap;gap:8px;width:100%;box-sizing:border-box}
 .sim-judge,.sim-verdict-btn{
-  border:none;background:#1e5ab4;color:#fff;padding:10px 16px;font-size:16px
+  flex:1 1 0;min-width:0;box-sizing:border-box;
+  border:none;background:#1e5ab4;color:#fff;padding:10px 8px;font-size:24px
 }
 .sim-verdict-btn.is-miss{background:#fff;color:#991b1b;border:1.5px solid rgba(238,51,56,.45)}
 .sim-verdict-btn.is-correct-choice{background:#10b981}
+.sim-verdict-btn.is-miss.is-correct-choice{border:none;color:#fff}
 .sim-verdict-btn.is-wrong{animation:sim-shake .35s ease}
 </style>
 </head>
@@ -64,6 +66,7 @@
 <!--#include file="includes/series/guide03/scenes/scene10.constants.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene10.setup.js.asp"-->
 <!--#include file="includes/series/guide03/scenes/scene10.js.asp"-->
+<!--#include file="includes/sim_voice.js.asp"-->
 <!--#include file="includes/series/guide03/guide03_simulator.js.asp"-->
 
 <script>try{Guide03Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>

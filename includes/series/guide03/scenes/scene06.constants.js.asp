@@ -21,8 +21,8 @@ var Guide03Scene06Config = {
   panel: {
     title: 'S.E.P실적으로 BASE사업자 만들기',
     bullets: [
-      '각각 SEP 30만 이상 달성',
-      '구성원 모두의 SEP 총 합이 100만 이상'
+      '각각 S.E.P 30만 이상 달성',
+      '구성원 모두의 S.E.P 총 합이 100만 이상'
     ],
     flashes: [
       { at: 0, index: 0 },

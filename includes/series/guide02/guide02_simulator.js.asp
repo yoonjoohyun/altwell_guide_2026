@@ -26,7 +26,7 @@ var Guide02Simulator = (function(){
     },
     {
       config: Guide02Scene03Config,
-      question: '스타트팩의 종류와 구매 횟수로 맞는 것은?',
+      question: '스타트팩의 종류와 구매 가능 횟수로 맞는 것은?',
       choices: [
         '누벨마리와 시그니처 두 종류이며, 각각 한 번씩 구매할 수 있다',
         '한 종류만 있으며 원하는 만큼 반복 구매할 수 있다',
@@ -39,12 +39,12 @@ var Guide02Simulator = (function(){
       config: Guide02Scene04Config,
       question: '스타트팩의 가격·승급 혜택으로 맞는 것은?',
       choices: [
-        '25% 할인된 회원가에 50%가 추가 할인되고, 스타트팩 각각 50만 승급 EP가 제공된다',
-        '회원가에서 10%만 할인되고 승급 EP는 없다',
+        '25% 할인된 회원가에 50%가 추가 할인되고, 스타트팩 각각 50만 승급 E.P가 제공된다',
+        '회원가에서 10%만 할인되고 승급 E.P는 없다',
         '가격 할인 없이 배송비만 면제된다'
       ],
       answer: 0,
-      feedback: '25% 할인된 회원가에 50%가 추가 할인됩니다. 두 종류를 모두 사면 약 125만원 할인 혜택이 있고, 각각 50만 승급 EP가 제공됩니다.'
+      feedback: '25% 할인된 회원가에 50%가 추가 할인됩니다. 두 종류를 모두 사면 약 125만원 할인 혜택이 있고, 각각 50만 승급 E.P가 제공됩니다.'
     },
     {
       config: Guide02Scene05Config,
@@ -59,14 +59,14 @@ var Guide02Simulator = (function(){
     },
     {
       config: Guide02Scene06Config,
-      question: '스타트팩의 승급 EP에 대한 설명으로 맞는 것은?',
+      question: '스타트팩의 승급 E.P에 대한 설명으로 맞는 것은?',
       choices: [
-        '각각 50만 승급 EP가 제공되며, 승급에만 쓰이고 수당 EP에는 적용되지 않는다',
-        '50만 EP가 수당으로 그대로 지급된다',
-        '승급 EP는 스타트팩 두 종류를 모두 샀을 때만 한 번 지급된다'
+        '각각 50만 승급 E.P가 제공되며, 승급에만 쓰이고 수당 E.P에는 적용되지 않는다',
+        '50만 E.P가 수당으로 그대로 지급된다',
+        '승급 E.P는 스타트팩 두 종류를 모두 샀을 때만 한 번 지급된다'
       ],
       answer: 0,
-      feedback: '스타트팩을 구매하면 각각 50만 승급 EP가 제공됩니다. 이 EP는 승급을 위한 것이며, 약 30만의 수당 EP는 따로 제공됩니다.'
+      feedback: '스타트팩을 구매하면 각각 50만 승급 E.P가 제공됩니다. 이 E.P는 승급을 위한 것이며, 약 30만의 수당 E.P는 따로 제공됩니다.'
     },
     {
       config: Guide02Scene07Config,
@@ -81,14 +81,14 @@ var Guide02Simulator = (function(){
     },
     {
       config: Guide02Scene08Config,
-      question: '스타트팩에서 꼭 기억할 내용으로 맞는 것은?',
+      question: '스타트팩에서 꼭 기억해야할 내용으로 맞는 것은?',
       choices: [
-        '3개월 이내의 신규 회원, 50% 추가 할인, 50만 승급 EP, 추천인 최초 1회 5포인트',
+        '3개월 이내의 신규 회원, 50% 추가 할인, 50만 승급 E.P, 추천인 최초 1회 5포인트',
         '가입 후 6개월까지 구매할 수 있고 추천포인트는 없다',
-        '할인과 승급 EP는 시그니처 스타트팩에만 적용된다'
+        '할인과 승급 E.P는 시그니처 스타트팩에만 적용된다'
       ],
       answer: 0,
-      feedback: '가입월 포함 3개월이내의 신규회원만 구매할 수 있고, 회원가에 50%가 추가 할인되며, 50만 승급 EP와 추천인 최초 1회 5포인트가 함께합니다.'
+      feedback: '가입월 포함 3개월이내의 신규회원만 구매할 수 있고, 회원가에 50%가 추가 할인되며, 50만 승급 E.P와 추천인 최초 1회 5포인트가 함께합니다.'
     }
   ];
 
@@ -178,14 +178,14 @@ var Guide02Simulator = (function(){
     var lines = [
       '가입월 포함 3개월, 신규 회원 전용',
       '누벨마리·시그니처 각 1회, 회원가에 50% 추가 할인',
-      '각각 50만 승급 EP, 추천인 최초 1회 5포인트'
+      '각각 50만 승급 E.P, 추천인 최초 1회 5포인트'
     ];
     var i;
     var item;
     if(q) q.classList.add('is-hidden');
     if(result) result.classList.remove('is-hidden');
     setText('sim-result-chapter', '스타트팩 알아보기');
-    setText('sim-result-title', '스타트팩의 핵심을 복습했습니다');
+    setText('sim-result-title', '학습 완료!');
     if(summary){
       summary.innerHTML = '';
       for(i = 0; i < lines.length; i++){
@@ -197,6 +197,7 @@ var Guide02Simulator = (function(){
       }
     }
     setChrome(STEPS.length, true);
+    if(typeof SimVoice !== 'undefined') SimVoice.playClose('guide02');
   }
 
   function setChrome(stepIndex, done){
@@ -311,12 +312,14 @@ var Guide02Simulator = (function(){
     renderChoices(step);
     setChrome(index, false);
     if(label) label.textContent = '스타트팩 알아보기';
+    if(typeof SimVoice !== 'undefined') SimVoice.playStep('guide02', index);
   }
 
   function go(nextIndex){
     if(nextIndex < 0 || nextIndex >= STEPS.length) return;
     motionToken++;
     index = nextIndex;
+    reopen(index);
     renderStep();
   }
 
@@ -332,13 +335,20 @@ var Guide02Simulator = (function(){
     go(index + 1);
   }
 
+  function reopen(stepIndex){
+    if(stepIndex < 0 || stepIndex >= STEPS.length) return;
+    solved[stepIndex] = false;
+  }
+
   function goPrev(){
     var result = document.getElementById('sim-result-panel');
     if(result && !result.classList.contains('is-hidden')){
+      reopen(index);
       motionToken++;
       renderStep();
       return;
     }
+    reopen(index - 1);
     go(index - 1);
   }
 

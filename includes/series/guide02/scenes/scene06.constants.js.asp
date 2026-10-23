@@ -20,8 +20,8 @@ var Guide02Scene06Config = {
   panel: {
     title: '스타트팩과 초기 승급',
     bullets: [
-      '스타트팩 구매 시 각각 50만 승급 EP제공',
-      '승급만을 위한 추가 승급EP로 수당EP에 적용되지 않음'
+      '스타트팩 구매 시 각각 50만 승급 E.P제공',
+      '승급만을 위한 추가 승급E.P로 수당E.P에 적용되지 않음'
     ],
     flashes: [
       { at: 2000, index: 0 },

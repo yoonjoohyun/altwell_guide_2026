@@ -166,7 +166,7 @@ var Scene07Layout = (function(){
       token = cloneFromTemplate('point_token_icon');
       if(token){
         tokenInner = token.querySelector('.point_token_inner');
-        if(tokenInner) tokenInner.textContent = 'EP';
+        if(tokenInner) tokenInner.textContent = 'E.P';
         token.classList.add('s07-ep-coin');
         token.style.setProperty('--size', '42px');
         token.setAttribute('aria-label', 'E.P');

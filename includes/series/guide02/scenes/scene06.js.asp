@@ -120,7 +120,7 @@ async function guide02Scene06Fly(assets, fromEl, toEl, opts){
   }else{
     return;
   }
-  flyer.textContent = '50만 승급EP';
+  flyer.textContent = '50만 승급E.P';
   flyer.style.transition = 'none';
   flyer.style.left = start.x + 'px';
   flyer.style.top = start.y + 'px';
@@ -195,7 +195,7 @@ async function runGuide02Scene06(tl, assets, ctx){
   await guide02Scene06Fly(assets, assets.rightChip, assets.headChip);
   if(guide02Scene06Cancelled(ctx)) return;
   assets.headChip.classList.add('is-total');
-  assets.headChip.innerHTML = '<span>총 100만</span><span>승급EP 혜택</span>';
+  assets.headChip.innerHTML = '<span>총 100만</span><span>승급E.P 혜택</span>';
   assets.headChip.classList.remove('is-bump');
   void assets.headChip.offsetWidth;
   assets.headChip.classList.add('is-bump');

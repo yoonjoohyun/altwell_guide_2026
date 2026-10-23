@@ -27,8 +27,8 @@
           </li>
         </ul>
         <div class="sim-result-actions">
-          <button type="button" id="sim-btn-relearn" class="sim-action-btn sim-action-primary">다시 학습하기</button>
+          <button type="button" id="sim-btn-relearn" class="sim-action-btn sim-action-primary">퀴즈 다시 풀기</button>
           <button type="button" id="sim-btn-watch-video" class="sim-action-btn">교육영상 다시 보기</button>
-          <button type="button" id="sim-btn-back-list" class="sim-action-btn sim-action-muted">시뮬레이터 목록으로 돌아가기</button>
+          <button type="button" id="sim-btn-back-list" class="sim-action-btn sim-action-muted">리스트로 돌아가기</button>
         </div>
       </div>

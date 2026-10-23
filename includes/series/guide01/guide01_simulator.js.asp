@@ -15,7 +15,7 @@ var Guide01Simulator = (function(){
     },
     {
       config: Scene02Config,
-      question: '오토십 가격 혜택으로 맞는 것은?',
+      question: '오토십의 가격 혜택으로 맞는 것은?',
       choices: [
         '25% 할인된 회원가에 추가 20% 할인',
         '정가에서 10%만 할인',
@@ -26,7 +26,7 @@ var Guide01Simulator = (function(){
     },
     {
       config: Scene03Config,
-      question: '구독 신청 방법으로 맞는 것은?',
+      question: '구독 신청의 방법으로 맞는 것은?',
       choices: [
         '앨트웰의 모든 회원이 신청할 수 있고, 최대 5품목이며 같은 상품은 중복 구독할 수 없다',
         '일반 소비회원도 개수 제한 없이 오토십을 신청할 수 있다',
@@ -61,12 +61,12 @@ var Guide01Simulator = (function(){
       config: Scene06Config,
       question: '구독 중 추가와 갱신 종료에 대한 설명으로 맞는 것은?',
       choices: [
-        '다른 상품은 최대 5품목까지 추가할 수 있으며, 갱신 종료는 다음 자동결제부터 멈춘다',
+        '기존에 구독중인 상품과 다른 상품을 추가할 수 있으며, 갱신 종료는 다음 자동 결제부터 중지됩니다',
         '같은 상품으로 언제든 자유롭게 바꿀 수 있으며, 갱신 종료 시 구독이 즉시 종료된다',
         '상품 추가는 제한 없이 가능하며, 갱신 종료를 하면 이미 결제한 배송까지 취소된다'
       ],
       answer: 0,
-      feedback: '다른 상품은 최대 5품목까지 구독할 수 있습니다. 동일 상품 중복과 상품 변경은 불가하고, 갱신 종료는 다음 자동결제부터 멈춥니다.'
+      feedback: '오토십은 각각 다른 상품으로 최대 5품목까지 구독할 수 있습니다. 동일 상품 중복과 상품 변경은 불가하고, 갱신 종료는 다음 자동결제부터 중지됩니다.'
     },
     {
       config: Scene07Config,
@@ -175,15 +175,15 @@ var Guide01Simulator = (function(){
     var summary = document.getElementById('sim-result-summary');
     var lines = [
       '3개월 정기 구독과 추가 할인',
-      '3개월분 일괄 결제·배송, E.P는 3회 분할',
-      '추천포인트와 BASE사업자로 이어지는 구독'
+      '3개월분 일괄 결제·배송, E.P는 3회 분할 지급',
+      '추천포인트와 BASE사업자로 이어지는 구독 서비스'
     ];
     var i;
     var item;
     if(q) q.classList.add('is-hidden');
     if(result) result.classList.remove('is-hidden');
     setText('sim-result-chapter', '오토십 알아보기');
-    setText('sim-result-title', '오토십의 핵심을 복습했습니다');
+    setText('sim-result-title', '학습 완료!');
     if(summary){
       summary.innerHTML = '';
       for(i = 0; i < lines.length; i++){
@@ -195,6 +195,7 @@ var Guide01Simulator = (function(){
       }
     }
     setChrome(STEPS.length, true);
+    if(typeof SimVoice !== 'undefined') SimVoice.playClose('guide01');
   }
 
   function setChrome(stepIndex, done){
@@ -309,12 +310,14 @@ var Guide01Simulator = (function(){
     renderChoices(step);
     setChrome(index, false);
     if(label) label.textContent = '오토십 알아보기';
+    if(typeof SimVoice !== 'undefined') SimVoice.playStep('guide01', index);
   }
 
   function go(nextIndex){
     if(nextIndex < 0 || nextIndex >= STEPS.length) return;
     motionToken++;
     index = nextIndex;
+    reopen(index);
     renderStep();
   }
 
@@ -329,13 +332,20 @@ var Guide01Simulator = (function(){
     go(index + 1);
   }
 
+  function reopen(stepIndex){
+    if(stepIndex < 0 || stepIndex >= STEPS.length) return;
+    solved[stepIndex] = false;
+  }
+
   function goPrev(){
     var result = document.getElementById('sim-result-panel');
     if(result && !result.classList.contains('is-hidden')){
+      reopen(index);
       motionToken++;
       renderStep();
       return;
     }
+    reopen(index - 1);
     go(index - 1);
   }
 

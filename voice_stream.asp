@@ -40,7 +40,9 @@ End If
 
 Set fso = Server.CreateObject("Scripting.FileSystemObject")
 
-If LCase(seriesId) = "guide01" Then
+If Left(partId, 3) = "sim" Then
+  filePath = FindSimVoice(fso, seriesId, partId)
+ElseIf LCase(seriesId) = "guide01" Then
   filePath = FindGuide01Voice(fso, sceneNum, partId)
 ElseIf LCase(seriesId) = "guide02" Then
   filePath = FindGuide02Voice(fso, sceneNum, partId)
@@ -98,6 +100,21 @@ Function FindVoiceFile(fso, baseNoExt)
       Exit Function
     End If
   Next
+End Function
+
+Function FindSimVoice(fso, seriesId, partId)
+  Dim name, seriesKey
+  seriesKey = LCase(seriesId)
+  FindSimVoice = ""
+  If seriesKey <> "guide01" And seriesKey <> "guide02" And seriesKey <> "guide03" Then Exit Function
+  If partId = "simclose" Then
+    name = seriesKey & "_step_close"
+  ElseIf RegExpTest("^sim[0-9]{2}$", partId) Then
+    name = seriesKey & "_step_" & Right(partId, 2)
+  Else
+    Exit Function
+  End If
+  FindSimVoice = FindVoiceFile(fso, Server.MapPath("voice/guide_season01/" & seriesKey & "/sim/" & name))
 End Function
 
 Function FindGuide03Voice(fso, sceneNum, partId)

@@ -1872,6 +1872,51 @@ body.page-layout #layout-ov{display:flex}
 .sim-next-btn:disabled{opacity:.4;cursor:not-allowed}
 .sim-next-btn:focus-visible{outline:2px solid #0f172a;outline-offset:2px}
 
+/* guide01·guide02 퀴즈 시뮬 — 선택·피드백·다음 버튼 80% */
+body.sim-quiz-compact #lo-panel .sim-choice-btn{
+  gap:8px;
+  border-width:1.6px;
+  border-radius:8px;
+  padding:calc(clamp(12px, 1.6%, 16px) * 0.8) calc(clamp(14px, 1.8%, 18px) * 0.8);
+}
+body.sim-quiz-compact #lo-panel .sim-choice-key{
+  font-size:calc(clamp(24px, 1.4vw, 26px) * 0.8);
+}
+body.sim-quiz-compact #lo-panel .sim-choice-text{
+  font-size:calc(clamp(20px, 1.45vw, 22px) * 0.8);
+}
+body.sim-quiz-compact #lo-panel .sim-feedback{
+  gap:8px;
+  border-radius:8px;
+  padding:calc(clamp(12px, 1.6%, 16px) * 0.8);
+  margin:0 0 calc(clamp(14px, 2%, 20px) * 0.8) 0;
+  font-size:calc(clamp(20px, 1.4vw, 22px) * 0.8);
+}
+body.sim-quiz-compact #lo-panel .sim-feedback-correct{border-width:1.2px}
+body.sim-quiz-compact #lo-panel .sim-feedback-incorrect{border-width:1.2px}
+body.sim-quiz-compact #lo-panel .sim-next-btn{
+  font-size:calc(clamp(24px, 1.4vw, 26px) * 0.8);
+  border-radius:6.4px;
+  padding:8px 17.6px;
+}
+@media(min-width:961px){
+  body.sim-quiz-compact #lo-panel .sim-choice-key{
+    font-size:calc(clamp(36px, 1.4vw, 38px) * 0.8);
+  }
+  body.sim-quiz-compact #lo-panel .sim-choice-text{
+    font-size:calc(clamp(30px, 1.45vw, 34px) * 0.8);
+  }
+  body.sim-quiz-compact #lo-panel .sim-feedback{
+    font-size:calc(clamp(30px, 1.4vw, 34px) * 0.8);
+  }
+  body.sim-quiz-compact #lo-panel .sim-next-btn{
+    font-size:calc(clamp(36px, 1.4vw, 38px) * 0.8);
+  }
+}
+@media(max-width:900px){
+  body.sim-quiz-compact #lo-panel .sim-choice-btn{padding:9.6px 11.2px}
+}
+
 #sim-result-panel{padding-top:clamp(8px,1.5%,16px)}
 .sim-result-chapter{
   font-size:clamp(24px,1vw,26px);font-weight:700;

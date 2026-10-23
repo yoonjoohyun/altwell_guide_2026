@@ -1,8 +1,8 @@
 <script>
-/* guide01 Scene 06 — 구독 중 추가·변경·해지 */
+/* guide01 Scene 06 — 구독 중 추가·갱신종료 */
 var Scene06Config = {
   id: 'guide01-scene-06',
-  title: '구독 중 추가·변경·해지',
+  title: '구독 중 추가·갱신종료',
   duration: 32000,
   canvasCls: 'scene06-canvas',
 

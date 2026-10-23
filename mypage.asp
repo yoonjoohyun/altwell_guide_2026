@@ -43,7 +43,7 @@
           { title: '어떻게 구독하나요?', done: true },
           { title: '결제와 배송', done: true },
           { title: 'E.P와 추천포인트 발생', done: true },
-          { title: '구독 중 추가·변경·해지', done: true },
+          { title: '구독 중 추가·갱신종료', done: true },
           { title: '오토십, 이것만 기억하세요', done: true }
         ]
       },
@@ -94,7 +94,7 @@
           { title: '어떻게 구독하나요?', done: false },
           { title: '결제와 배송', done: false },
           { title: 'E.P와 추천포인트 발생', done: false },
-          { title: '구독 중 추가·변경·해지', done: false },
+          { title: '구독 중 추가·갱신종료', done: false },
           { title: '오토십, 이것만 기억하세요', done: false }
         ]
       },
@@ -120,9 +120,9 @@
         tone: 'tone-s',
         doneLabel: '복습 완료',
         scenes: [
-          { title: '본인 조건 맞추기', done: false },
-          { title: '오토십 경로로 파트너 맞추기', done: false },
-          { title: 'SEP 경로로 파트너 맞추기', done: false },
+          { title: 'BASE 본인 조건', done: false },
+          { title: '오토십으로 파트너 조건', done: false },
+          { title: 'S.E.P로 파트너 조건', done: false },
           { title: '섞인 파트너 판정', done: false },
           { title: '합산 SEP 판정', done: false },
           { title: '이번 달 BASE 자격 만들기', done: false }

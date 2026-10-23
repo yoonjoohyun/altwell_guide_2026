@@ -106,7 +106,7 @@ function setupGuide02Scene08(canvas){
 
   var once = textSlot('g02-s08-once', 'g02-s08-line', '· 각각 1회 구매 가능');
   var price = textSlot('g02-s08-price', 'g02-s08-line', '· 파격적인 50% 할인가 제공');
-  var ep = textSlot('g02-s08-ep', 'g02-s08-line', '· 각각 50만 승급EP 혜택');
+  var ep = textSlot('g02-s08-ep', 'g02-s08-line', '· 각각 50만 승급E.P 혜택');
   var points = slot('g02-s08-points');
   var pointsNode = Guide02.cloneTemplate('startpack_recommend_points');
   var pointsTitle;

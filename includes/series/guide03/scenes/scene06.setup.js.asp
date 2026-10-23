@@ -69,7 +69,7 @@ function setupGuide03Scene06(canvas){
   stage.className = 'g03-s06';
   board.className = 'g03-board g03-slot is-hidden';
   sum.className = 'g03-s06-sum g03-slot is-hidden';
-  sum.innerHTML = '구성원 모두의 SEP 합<br>매월 100만 이상 달성';
+  sum.innerHTML = '구성원 모두의 S.E.P 합<br>매월 100만 이상 달성';
   tree.className = 'g03-tree';
   lines.setAttribute('class', 'g03-lines');
   lines.setAttribute('aria-hidden', 'true');
@@ -82,8 +82,8 @@ function setupGuide03Scene06(canvas){
   rightCol.className = 'g03-s06-col';
   leftSep.className = 'g03-s06-sep g03-slot is-hidden';
   rightSep.className = 'g03-s06-sep g03-slot is-hidden';
-  leftSep.textContent = 'SEP 30만 이상 달성';
-  rightSep.textContent = 'SEP 30만 이상 달성';
+  leftSep.textContent = 'S.E.P 30만 이상 달성';
+  rightSep.textContent = 'S.E.P 30만 이상 달성';
 
   rowTop.appendChild(self.slot);
   leftCol.appendChild(left.slot);

@@ -145,7 +145,7 @@ function setupGuide03Scene09(canvas){
   bannerLayer.id = 'g03-s09-banner-layer';
   bannerLayer.className = 'g03-s09-banner-layer g01-zone-wrap g03-slot is-hidden';
   banner.className = 'g03-s09-banner';
-  banner.textContent = '안정적인 조직 확장';
+  banner.innerHTML = '파트너와 함께<br>안정적인 조직 확장';
   bannerLayer.appendChild(banner);
   canvas.appendChild(bannerLayer);
 

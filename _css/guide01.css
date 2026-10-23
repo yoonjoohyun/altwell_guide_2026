@@ -2471,7 +2471,7 @@
   }
 }
 
-/* ========== Scene 06 — 구독 중 추가·변경·해지 ========== */
+/* ========== Scene 06 — 구독 중 추가·갱신종료 ========== */
 #lo-panel.scene06-panel .scene-title,
 #lo-panel.scene06-panel .bullet-item .bullet-text{
   transition:color 420ms ease-in-out, opacity 420ms ease-in-out;

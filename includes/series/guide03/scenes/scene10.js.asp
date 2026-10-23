@@ -108,6 +108,20 @@ async function guide03Scene10HideBadge(wrap){
   hideElement(wrap);
 }
 
+async function guide03Scene10SelfFoldFloat(selfEntry, selfBadge){
+  var host;
+  if(!selfEntry || !selfBadge) return;
+  host = selfEntry.host;
+  if(!host) return;
+  showElement(selfBadge);
+  selfBadge.classList.add('g03-fade');
+  host.classList.add('is-jump');
+  guide03Scene10Fit();
+  await wait(680);
+  host.classList.remove('is-jump');
+  selfBadge.classList.remove('g03-fade');
+}
+
 async function runGuide03Scene10(tl, assets, ctx){
   var T = Guide03Scene10Config.T;
   var at = function(ms){ return guide03Scene10AtMain(ms, ctx); };
@@ -165,6 +179,9 @@ async function runGuide03Scene10(tl, assets, ctx){
   await guide03Scene10Place(assets.stage, assets.caption, assets.caption, function(){
     assets.card.classList.add('is-on');
   });
+
+  if(guide03Scene10Cancelled(ctx)) return;
+  await guide03Scene10SelfFoldFloat(assets.self, assets.selfBadge);
 
   await tl.wait(at(T.orb1));
   if(guide03Scene10Cancelled(ctx)) return;

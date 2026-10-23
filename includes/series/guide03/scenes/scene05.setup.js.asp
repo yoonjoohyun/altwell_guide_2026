@@ -90,7 +90,7 @@ function setupGuide03Scene05(canvas){
 
   gauge.className = 'g03-s05-gauge';
   label.className = 'g03-s05-gauge-label';
-  label.textContent = 'SEP 30만 이상 달성';
+  label.textContent = 'S.E.P 30만 이상 달성';
   track.className = 'g03-s05-gauge-track';
   fill.className = 'g03-s05-gauge-fill';
   track.appendChild(fill);

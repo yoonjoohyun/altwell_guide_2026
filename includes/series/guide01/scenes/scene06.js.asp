@@ -1,5 +1,5 @@
 <script>
-/* guide01 Scene 06 — 구독 중 추가·변경·해지 */
+/* guide01 Scene 06 — 구독 중 추가·갱신종료 */
 var Guide01Scene06 = defineScene({
   id: Scene06Config.id,
   title: Scene06Config.title,

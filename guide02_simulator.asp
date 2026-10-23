@@ -14,7 +14,7 @@
 <!--#include file="includes/styles.asp"-->
 </style>
 </head>
-<body class="page-layout">
+<body class="page-layout sim-quiz-compact">
 
 <!--#include file="includes/simulator_layout.asp"-->
 <!--#include file="includes/components/guide02_templates.asp"-->
@@ -45,6 +45,7 @@
 <!--#include file="includes/series/guide02/scenes/scene08.constants.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene08.setup.js.asp"-->
 <!--#include file="includes/series/guide02/scenes/scene08.js.asp"-->
+<!--#include file="includes/sim_voice.js.asp"-->
 <!--#include file="includes/series/guide02/guide02_simulator.js.asp"-->
 
 <script>try{Guide02Simulator.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>

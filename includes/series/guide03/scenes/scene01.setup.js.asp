@@ -83,7 +83,31 @@ function setupGuide03Scene01(canvas){
   badgeWrap.className = 'g03-slot g03-base-badge is-hidden';
   if(badge) badgeWrap.appendChild(badge);
 
+  function attachSelfFoldBadge(memberEntry){
+    var wrap = memberEntry.slot && memberEntry.slot.querySelector('.g03-member');
+    var badgeWrap;
+    var badge;
+    var dock;
+    if(!wrap) return null;
+    wrap.classList.add('g03-s01-self-host');
+    dock = document.createElement('div');
+    dock.className = 'g03-s01-self-dock';
+    badgeWrap = document.createElement('div');
+    badgeWrap.id = 'g03-s01-self-badge';
+    badgeWrap.className = 'g03-slot g03-s01-self-badge is-hidden';
+    badge = Guide03.cloneTemplate('base_business_icon');
+    if(badge){
+      badge.classList.remove('base_business_icon_o');
+      badge.classList.add('base_business_icon_c');
+      badgeWrap.appendChild(badge);
+    }
+    dock.appendChild(badgeWrap);
+    wrap.appendChild(dock);
+    return badgeWrap;
+  }
+
   var top = memberSlot('g03-s01-member-self');
+  var selfBadge = attachSelfFoldBadge(top);
   var left = memberSlot('g03-s01-member-left');
   var right = memberSlot('g03-s01-member-right');
   rowTop.appendChild(top.slot);
@@ -141,6 +165,7 @@ function setupGuide03Scene01(canvas){
     tree: tree,
     lines: lines,
     members: [top, left, right],
+    selfBadge: selfBadge,
     unit: unitSlot,
     bonus: bonusWrap,
     rank: rankWrap

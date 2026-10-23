@@ -89,7 +89,7 @@ function setupGuide02Scene06(canvas){
     packCol.className = 'g02-s06-packcol' + (tone === 'signature' ? ' is-signature' : ' is-nouvel');
     anchor.className = 'g02-s06-chip-anchor';
     chip.className = 'g02_promo_chip g02-slot is-hidden';
-    chip.textContent = '50만 승급EP';
+    chip.textContent = '50만 승급E.P';
     doneWrap.className = 'g02-s06-purchase-done-slot g02-slot is-hidden';
     if(purchaseDone) doneWrap.appendChild(purchaseDone);
     anchor.appendChild(chip);
@@ -122,14 +122,14 @@ function setupGuide02Scene06(canvas){
   var headChip = document.createElement('div');
   headChip.id = 'g02-s06-head-chip';
   headChip.className = 'g02_promo_chip g02-slot is-hidden';
-  headChip.innerHTML = '<span class="g02_promo_num">50만</span> 승급EP';
+  headChip.innerHTML = '<span class="g02_promo_num">50만</span> 승급E.P';
 
   var flyer = document.createElement('div');
   flyer.className = 'g02_promo_chip g02_promo_flyer g02-slot is-hidden';
-  flyer.textContent = '50만 승급EP';
+  flyer.textContent = '50만 승급E.P';
 
   var lineBuy = line('스타트팩 구매', false);
-  var lineSplit = line("= 50만 승급EP & 약 30만 수당E.P", false);
+  var lineSplit = line("= 50만 승급E.P & 약 30만 수당E.P", false);
   var lineOnly = line('*승급을 위한 추가 E.P 혜택', true);
   note.appendChild(lineBuy);
   note.appendChild(lineSplit);

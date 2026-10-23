@@ -60,10 +60,18 @@ async function guide03Scene01Open(slot){
   await done;
 }
 
-async function guide03Scene01JumpTo(icon, kind){
+async function guide03Scene01JumpTo(icon, kind, selfBadge){
   var label;
+  var host;
+  var jumpEl;
   if(!icon) return;
-  icon.classList.add('is-jump');
+  host = kind === 'self' ? icon.closest('.g03-s01-self-host') : null;
+  jumpEl = host || icon;
+  if(kind === 'self' && selfBadge){
+    showElement(selfBadge);
+    selfBadge.classList.add('g03-fade');
+  }
+  jumpEl.classList.add('is-jump');
   await wait(260);
   if(kind === 'self'){
     icon.classList.add('member_base_self');
@@ -76,7 +84,8 @@ async function guide03Scene01JumpTo(icon, kind){
   }
   icon.innerHTML = '<span class="member_face_label">' + label + '</span>';
   await wait(420);
-  icon.classList.remove('is-jump');
+  jumpEl.classList.remove('is-jump');
+  if(selfBadge) selfBadge.classList.remove('g03-fade');
 }
 
 async function runGuide03Scene01(tl, assets, ctx){
@@ -100,7 +109,7 @@ async function runGuide03Scene01(tl, assets, ctx){
 
   await tl.wait(at(T.self));
   if(guide03Scene01Cancelled(ctx)) return;
-  await guide03Scene01JumpTo(assets.members[0].icon, 'self');
+  await guide03Scene01JumpTo(assets.members[0].icon, 'self', assets.selfBadge);
 
   await tl.wait(at(T.partners));
   if(guide03Scene01Cancelled(ctx)) return;

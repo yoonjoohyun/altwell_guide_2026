@@ -158,11 +158,11 @@ function setupGuide03Scene04(canvas){
   row1.appendChild(rightP.col);
   panel1.appendChild(row1);
 
-  var leftJp = column('lev_jp', false, 'SEP 30만 이상', 'g03-s04-sep');
-  var rightSp = column('lev_sp', true, 'SEP 30만 이상', 'g03-s04-sep');
+  var leftJp = column('lev_jp', false, 'S.E.P 30만 이상', 'g03-s04-sep');
+  var rightSp = column('lev_sp', true, 'S.E.P 30만 이상', 'g03-s04-sep');
   var loss = document.createElement('div');
   loss.className = 'g03-s04-loss';
-  loss.textContent = '파트너 자격 상실';
+  loss.textContent = '하위 파트너 자격 상실';
   hidden(loss, loss.className);
   rightSp.col.appendChild(loss);
   row2.appendChild(leftJp.col);

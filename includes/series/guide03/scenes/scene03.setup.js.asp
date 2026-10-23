@@ -69,7 +69,7 @@ function setupGuide03Scene03(canvas){
   sep.className = 'g03-slot g03-s03-sep is-hidden';
   pie.className = 'g03-s03-pie';
   core.className = 'g03-s03-sep-core';
-  core.innerHTML = '매월 SEP<br>30만 이상';
+  core.innerHTML = '매월 S.E.P<br>30만 이상';
   sliceLabel.id = 'g03-s03-slice-label';
   sliceLabel.className = 'g03-s03-slice-label g03-slot is-hidden';
   sliceLabel.innerHTML = '오토십<br>1개 이상';
