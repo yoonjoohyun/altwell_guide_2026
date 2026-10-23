@@ -12,6 +12,7 @@ var PageLoading = (function(){
   function hide(){
     if(done || !el) return;
     done = true;
+    try{ sessionStorage.removeItem('guideEntryLoading'); }catch(e){}
     el.setAttribute('aria-busy', 'false');
     var wait = Math.max(0, MIN_MS - (Date.now() - shownAt));
     setTimeout(function(){

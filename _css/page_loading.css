@@ -1,4 +1,8 @@
 /* 영상 · 시뮬레이터 진입 로딩 */
+body.page-layout:has(#page-loading:not(.is-out)),
+body.page-list:has(#list-entry-loading){
+  overflow:hidden;
+}
 .page-loading{
   position:fixed;
   inset:0;

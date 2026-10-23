@@ -8,6 +8,7 @@
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
 <link rel="stylesheet" href="_css/guide.css?v=20261023title"/>
+<link rel="stylesheet" href="_css/page_loading.css?v=20261023load7"/>
 </head>
 <body class="d2 page-list">
 <%
@@ -47,7 +48,7 @@ ListSectionActive = "guide"
         </div>
       </div>
 
-      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide01_smartguide.asp?from=guide'">
+      <div class="vcard entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide01_smartguide.asp?from=guide">
         <div class="vc-thumb"><div class="vc-thumb-inner g1">
           <span>SMART<br>AUTOSHIP<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -63,7 +64,7 @@ ListSectionActive = "guide"
         </div>
       </div>
 
-      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide02_smartguide.asp?from=guide'">
+      <div class="vcard entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide02_smartguide.asp?from=guide">
         <div class="vc-thumb"><div class="vc-thumb-inner g2">
           <span>START PACK<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -79,7 +80,7 @@ ListSectionActive = "guide"
         </div>
       </div>
       
-      <div class="vcard" onclick="location.href='<%=GuideAppRoot()%>/guide03_smartguide.asp?from=guide'">
+      <div class="vcard entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide03_smartguide.asp?from=guide">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>BASE<br>BUSINESS<br>GUIDE</span><div class="vc-play">▶</div>
         </div></div>
@@ -123,7 +124,9 @@ ListSectionActive = "guide"
     </div>
   </div>
 <!--#include file="includes/list_footer.asp"-->
-</div><script>
+</div>
+<!--#include file="includes/list_entry_nav.js.asp"-->
+<script>
 function setView(mode,btn){
   var vc=document.getElementById('vcards');
   if(!vc)return;

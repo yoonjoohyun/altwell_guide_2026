@@ -8,6 +8,7 @@
 <!--#include file="includes/fonts.asp"-->
 <!--#include file="includes/main_css.asp"-->
 <link rel="stylesheet" href="_css/sim.css?v=20261023title"/>
+<link rel="stylesheet" href="_css/page_loading.css?v=20261023load7"/>
 </head>
 <body class="d2 page-list">
 <%
@@ -34,7 +35,7 @@ ListSectionActive = "sim"
     </div>
     </div>
     <div class="sim-grid" id="simcards">
-      <div class="sc-card" onclick="location.href='guide01_simulator.asp'">
+      <div class="sc-card entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide01_simulator.asp">
         <div class="sc-thumb t1">
           <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(44,81,202,.35),transparent 70%)"></div>
           <div class="sc-thumb-icon">SMART<br>AUTOSHIP<br>QUIZ</div>
@@ -51,7 +52,7 @@ ListSectionActive = "sim"
           </div>
         </div>
       </div>
-      <div class="sc-card" onclick="location.href='guide02_simulator.asp'">
+      <div class="sc-card entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide02_simulator.asp">
         <div class="sc-thumb t2">
           <div class="sc-thumb-glow" style="background:radial-gradient(circle,rgba(142,61,76,.4),transparent 70%)"></div>
           <div class="sc-thumb-icon">START PACK<br>QUIZ</div>
@@ -68,7 +69,7 @@ ListSectionActive = "sim"
           </div>
         </div>
       </div>
-      <div class="sc-card" onclick="location.href='guide03_simulator.asp'">
+      <div class="sc-card entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide03_simulator.asp">
         <div class="sc-thumb t3">
           <div class="sc-thumb-glow"></div>
           <div class="sc-thumb-icon">BASE<br>BUSINESS<br>SIM</div>
@@ -91,6 +92,7 @@ ListSectionActive = "sim"
   </div>
 <!--#include file="includes/list_footer.asp"-->
 </div>
+<!--#include file="includes/list_entry_nav.js.asp"-->
 <script>
 function setSimView(mode,btn){
   var root=document.getElementById('simcards');
