@@ -108,6 +108,19 @@ async function guide03Scene10HideBadge(wrap){
   hideElement(wrap);
 }
 
+async function guide03Scene10PaneBorderFlash(pane){
+  var board;
+  var noteInner;
+  var jobs;
+  if(!pane || typeof guide03Scene02BoardBorderFlash !== 'function') return;
+  jobs = [];
+  board = pane.root && pane.root.querySelector('.g03-s10-board');
+  noteInner = pane.note && pane.note.querySelector('.g03-s10-note-inner');
+  if(board) jobs.push(guide03Scene02BoardBorderFlash(board));
+  if(noteInner) jobs.push(guide03Scene02BoardBorderFlash(noteInner));
+  if(jobs.length) await Promise.all(jobs);
+}
+
 async function guide03Scene10SelfFoldFloat(selfEntry, selfBadge){
   var host;
   if(!selfEntry || !selfBadge) return;
@@ -209,16 +222,24 @@ async function runGuide03Scene10(tl, assets, ctx){
   if(guide03Scene10Cancelled(ctx)) return;
   await floatIn([assets.left.chip], [assets.left.chip]);
 
+  if(guide03Scene10Cancelled(ctx)) return;
+  await floatIn([assets.left.note], [assets.left.note]);
+  if(guide03Scene10Cancelled(ctx)) return;
+  await guide03Scene10SelfFoldFloat(assets.left.self, assets.left.badge);
+  if(guide03Scene10Cancelled(ctx)) return;
+  await guide03Scene10PaneBorderFlash(assets.left);
+
   await tl.wait(at(T.partnerSep));
   if(guide03Scene10Cancelled(ctx)) return;
   await floatIn([assets.right.chip], [assets.right.chip]);
 
   await tl.wait(at(T.card));
   if(guide03Scene10Cancelled(ctx)) return;
-  await floatIn(
-    [assets.left.note, assets.right.note, assets.left.badge, assets.right.badge],
-    [assets.left.note, assets.right.note, assets.left.badge, assets.right.badge]
-  );
+  await floatIn([assets.right.note], [assets.right.note]);
+  if(guide03Scene10Cancelled(ctx)) return;
+  await guide03Scene10SelfFoldFloat(assets.right.self, assets.right.badge);
+  if(guide03Scene10Cancelled(ctx)) return;
+  await guide03Scene10PaneBorderFlash(assets.right);
 
   await tl.wait(at(T.orb1));
   if(guide03Scene10Cancelled(ctx)) return;

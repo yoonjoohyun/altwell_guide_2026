@@ -47,7 +47,7 @@ var Guide03Scene10Config = {
     partners: [6000, 7000],
     partnerAuto: 8000,
     or: 8800,
-    partnerSep: 9600,
+    partnerSep: 11100,
     card: 14000,
     orb1: 22000,
     orb2: 30000,
