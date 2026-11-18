@@ -23,3 +23,4 @@ Function GuideAppRoot()
   End If
 End Function
 %>
+<!--#include virtual="/smart_guide_login.asp"-->

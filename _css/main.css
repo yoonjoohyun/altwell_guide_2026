@@ -87,6 +87,27 @@ body.d2 .nav-logo:not(.nav-logo--img) span{color:var(--fg)}
   gap:5px;
   color:var(--fg);
 }
+.nav-logo--img .nav-logo-mark-link{
+  display:inline-flex;
+  align-items:center;
+  line-height:0;
+  text-decoration:none;
+  color:inherit;
+  flex-shrink:0;
+}
+.nav-logo--img .nav-logo-mark-link:hover{opacity:.85}
+.nav-logo--img .nav-logo-text{
+  background:none;
+  border:none;
+  padding:0;
+  cursor:pointer;
+  font:inherit;
+  font-size:16px;
+  font-weight:900;
+  letter-spacing:-.01em;
+  line-height:1;
+}
+.nav-logo--img .nav-logo-text:hover{opacity:.85}
 .nav-logo--img .nav-logo-mark{
   height:1em;
   width:auto;

@@ -19,7 +19,7 @@ NavShowMypage = False
 <div class="list-page" id="sim-page">
   <div class="list-wrap">
     <div class="lp-head">
-      <div class="lp-title">Interactive Content</div>
+      <div class="lp-title">스마트 가이드 콘텐츠</div>
       <div class="lp-desc">인터랙티브 학습 자료를 통해 가이드 영상의 내용을 복습해보세요.</div>
     </div>
 <%

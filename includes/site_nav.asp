@@ -7,14 +7,16 @@ If IsEmpty(NavShowMypage) Then NavShowMypage = False
 NavSubTitle = Trim(CStr(NavSubTitle))
 %>
 <nav id="nav">
-  <button type="button" class="nav-logo nav-logo--img" onclick="location.href='<%=GuideAppRoot()%>/index.asp'" aria-label="홈으로 ALTWELL SMART GUIDE">
-    <img class="nav-logo-mark" src="<%=GuideAppRoot()%>/images/logo_altwell.png" alt="ALTWELL" width="120" height="16"/>
+  <div class="nav-logo nav-logo--img">
+    <a class="nav-logo-mark-link" href="/" aria-label="ALTWELL 홈">
+      <img class="nav-logo-mark" src="<%=GuideAppRoot()%>/images/logo_altwell.png" alt="ALTWELL" width="120" height="16"/>
+    </a>
     <span class="nav-logo-divider" aria-hidden="true">｜</span>
-    <span class="nav-logo-text">SMART GUIDE</span>
-  </button>
+    <button type="button" class="nav-logo-text" onclick="location.href='<%=GuideAppRoot()%>/index.asp'" aria-label="SMART GUIDE 홈">SMART GUIDE</button>
+  </div>
   <span id="nav-page-title"<% If Len(NavSubTitle) = 0 Then %> class="is-empty"<% End If %>><%=Server.HTMLEncode(NavSubTitle)%></span>
   <div class="nav-spacer"></div>
   <% If NavShowMypage Then %>
-  <button type="button" class="nav-mypage" onclick="location.href='<%=GuideAppRoot()%>/mypage.asp'" style="display:block;">마이페이지</button>
+  <button type="button" class="nav-mypage" onclick="location.href='<%=GuideAppRoot()%>/mypage.asp'" style="display:none;">마이페이지</button>
   <% End If %>
 </nav>

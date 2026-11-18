@@ -19,7 +19,7 @@ NavShowMypage = False
 <div class="list-page" id="guide-page">
   <div class="list-wrap">
     <div class="lp-head">
-      <div class="lp-title">Guide Videos</div>
+      <div class="lp-title">스마트 가이드 영상</div>
       <div class="lp-desc">앨트웰의 성공적인 비즈니스를 위해 필요한 모든 것들을 영상을 통해 알아보세요.</div>
     </div>
 <%

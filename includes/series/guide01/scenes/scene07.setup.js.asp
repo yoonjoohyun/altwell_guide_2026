@@ -71,7 +71,7 @@ var Scene07Layout = (function(){
   function mountDiscount(){
     var card = cloneFromTemplate('autoship_discount_summary_card');
     var rows;
-    var copy = ['-25% 회원가', '+추가 20% 할인', '=오토십 할인가'];
+    var copy = ['25% 회원가', '+추가 20% 할인', '=오토십 할인가'];
     var kept = [];
     var i;
     if(!card) return null;

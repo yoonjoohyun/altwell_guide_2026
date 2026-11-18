@@ -25,7 +25,7 @@ var ReadLog = (function(){
     if(sent[key]) return;
     sent[key] = true;
     url = ENDPOINT
-      + '?id_num=' + encodeURIComponent(item.id)
+      + '?member_no=<%=session("gvuserid")%>&id_num=' + encodeURIComponent(item.id)
       + '&title=' + encodeURIComponent(item.title)
       + '&section=' + encodeURIComponent(section)
       + '&div=' + encodeURIComponent(div);
