@@ -1,8 +1,8 @@
 # ALTWELL SMART GUIDE — 통합 개발 문서
 
 > Classic ASP + Vanilla JS 교육용 인터랙티브 가이드  
-> **미리보기:** `asset_design.asp` · **guide01:** `guide01_smartguide.asp` · **guide02:** `guide02_smartguide.asp`  
-> **Last updated:** 2026-10-01 (§1 진입 경로 · §9 Guide02 현행)
+> **미리보기:** `asset_design.asp` · **guide01:** `guide01_smartguide.asp` · **guide02:** `guide02_smartguide.asp` · **guide03:** `guide03_smartguide.asp`  
+> **Last updated:** 2026-11-18 (§10~11 화면 맞춤·클로징·공통 작업 · Guide02/03 현행)
 
 ---
 
@@ -18,12 +18,16 @@
 7. [guide01 씬 추가 가이드](#7-guide01-씬-추가-가이드)
 8. [씬1~5 제작 프로세스 요약](#8-씬15-제작-프로세스-요약)
 9. [Guide02 현행](#9-guide02-현행)
+10. [Guide03 현행](#10-guide03-현행)
+11. [씬 공통 작업 — 화면 맞춤 · 클로징 · 시뮬](#11-씬-공통-작업--화면-맞춤--클로징--시뮬)
 
 ---
 
 ## 0. Guide01 동결 · Guide02 작업 경계
 
-Guide01 씬 01~06은 완성본이다. Guide02는 **새 파일만** 추가한다. Guide01을 공통화·리네임·파일 이동하는 정리는 하지 않는다. 그 작업은 모션, 패널 애니메이션, 에셋 디자인, 타이밍을 바꿀 수 있다.
+Guide01 씬 01~06은 완성본으로 취급한다. Guide01에는 이후 씬 07(핵심 요약)·씬 08(클로징)이 **추가 파일로** 붙어 있다. Guide02·Guide03는 각각 전용 시리즈 폴더·CSS·템플릿만 쓴다. Guide01을 공통화·리네임·파일 이동하는 정리는 하지 않는다. 그 작업은 모션, 패널 애니메이션, 에셋 디자인, 타이밍을 바꿀 수 있다.
+
+**공통으로 재사용하는 것(가이드 간 공유 OK):** `GuideClosePanel`, `ReadLog`, `video_runtime` / `sceneRunner` / `sceneMedia`, `_css/guide_close.css`, `includes/site_nav.asp`. 시리즈별 모션·fit·패널 flash는 각 `guideNN_common`·씬 파일에 둔다.
 
 ### 0-1. 수정 금지 (Guide01 완성본)
 
@@ -84,19 +88,24 @@ Guide02의 레이아웃 헬퍼는 `guide02_common`에만 둔다. `Scene02Layout`
 ```
 index.asp → guide.asp → guide01_smartguide.asp   (오토십)
                     → guide02_smartguide.asp   (스타트팩)
+                    → guide03_smartguide.asp   (BASE사업자)
                     → asset_design.asp (에셋 시안·G01 애니)
                     → frame_layout.asp (템플릿·AssetShowcase)
-         → sim.asp
+         → sim.asp  → guide01|02|03_simulator.asp
+         → mypage.asp
 ```
 
 리스트의 영상 링크는 같은 폴더 기준 상대 경로다. `/series/season01/…` 처럼 사이트 최상위로 고정하지 않는다.
+
+로그인 체크는 `includes/asp_utf8.asp` 끝의 `<!--#include virtual="/smart_guide_login.asp"-->`로 진입 페이지에 공통 적용된다. 네비 로고 PNG는 `/`(사이트 루트), `SMART GUIDE` 텍스트는 `GuideAppRoot()/index.asp`다.
 
 ### 1-2. 페이지 2종
 
 | 종류 | 예 | CSS |
 |------|-----|-----|
 | **리스트** | `index.asp`, `guide.asp`, `sim.asp` | `_css/main.css` + 페이지별 |
-| **영상** | `guide01_smartguide.asp`, `guide02_smartguide.asp`, `frame_layout.asp` | `main.css` + `icon_style.css` + 가이드 CSS(`guide01.css` 또는 `guide02.css`) + `styles.asp` + `video_controller.css` |
+| **영상** | `guide01|02|03_smartguide.asp`, `frame_layout.asp` | `main.css` + `icon_style.css` + 가이드 CSS(`guide01|02|03.css`) + `styles.asp` + `video_controller.css` (+ 클로징 시 `guide_close.css`) |
+| **시뮬** | `guide01|02|03_simulator.asp` | 영상과 동일 가이드 CSS + `guide_close.css` + `simulator_layout.asp` |
 
 ### 1-3. 영상 페이지 셸
 
@@ -137,27 +146,32 @@ Object Library (styles.asp)
 ```
 guide_page/
 ├── index.asp, guide.asp, sim.asp
-├── guide01_smartguide.asp        # 오토십 영상 진입
-├── guide02_smartguide.asp        # 스타트팩 영상 진입
+├── guide01_smartguide.asp · guide01_simulator.asp
+├── guide02_smartguide.asp · guide02_simulator.asp
+├── guide03_smartguide.asp · guide03_simulator.asp
+├── mypage.asp                    # 시청·복습 기록 확인
 ├── asset_design.asp              # 에셋 시안 + G01 애니 미리보기
 ├── frame_layout.asp              # 영상 템플릿 + AssetShowcase
 ├── voice_stream.asp              # mp4 스트리밍
 ├── SMART_GUIDE_DOCS.md           # 본 문서
 ├── series/season01/              # 예전 주소 → 루트 페이지 redirect
 ├── _css/
-│   ├── main.css, icon_style.css, guide01.css, guide02.css, video_controller.css
+│   ├── main.css, icon_style.css, guide01.css, guide02.css, guide03.css
+│   ├── guide_close.css, video_controller.css
 │   └── index.css, guide.css, sim.css
-├── voice/guide_season01/guide01/ · guide02/
+├── voice/guide_season01/guide01/ · guide02/ · guide03/
 └── includes/
-    ├── asp_utf8.asp              # GuideAppRoot()
+    ├── asp_utf8.asp              # GuideAppRoot() + smart_guide_login
+    ├── site_nav.asp, readLog.js.asp
     ├── sceneRunner.js.asp, sceneMedia.js.asp, motion.js.asp
     ├── scenes/defineScene.js.asp
-    ├── components/               # guide01_templates.asp · guide02_templates.asp
+    ├── components/               # guide01|02|03_templates · guide_close_panel.js
     ├── player/video_layout.asp
     ├── motions/g01/              # zoned · badgeFold · preview
     └── series/
-        ├── guide01/  scenes/scene01~07 (3파일)
-        └── guide02/  scenes/scene01~07 (3파일)
+        ├── guide01/  scenes/scene01~08 (클로징 08)
+        ├── guide02/  scenes/scene01~09 (클로징 09)
+        └── guide03/  scenes/scene01~11 (클로징 11)
 ```
 
 ### 1-6. 영상 페이지 Include 체인
@@ -165,11 +179,12 @@ guide_page/
 진입 ASP는 프로젝트 루트에 둔다. include는 자식 폴더 `file="includes/…"` 만 쓴다. `virtual="/includes/…"` 와 `../` include는 쓰지 않는다. 이 IIS는 상위 폴더 include가 꺼져 있다.
 
 ```
-guide01_smartguide.asp / guide02_smartguide.asp
-├── file includes/asp_utf8.asp          (GuideAppRoot)
+guide01|02|03_smartguide.asp
+├── file includes/asp_utf8.asp          (GuideAppRoot · login)
 ├── file includes/player/video_layout.asp
 ├── file includes/components/guide0N_templates.asp
-├── file includes/video_runtime.asp     (defineScene · sceneMedia · sceneTransition · sceneRunner)
+├── file includes/components/guide_close_panel.js.asp
+├── file includes/video_runtime.asp     (defineScene · sceneMedia · sceneTransition · sceneRunner · ReadLog)
 ├── file includes/series/guide0N/guide0N_common.js.asp
 ├── scene01~07.constants · setup · js
 ├── file includes/series/guide0N/guide0N.asp
@@ -1563,7 +1578,7 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 
 ## 9. Guide02 현행
 
-스타트팩 알아보기. 씬 01~07. Guide01 씬 파일·`guide01.css`·`sceneTransition.js.asp`는 수정하지 않는다.
+스타트팩 알아보기. 씬 01~09(마지막은 클로징). Guide01 씬 파일·`guide01.css`·`sceneTransition.js.asp`는 수정하지 않는다.
 
 | 씬 | id | 제목 |
 |----|-----|------|
@@ -1574,8 +1589,10 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 | 05 | `guide02-scene-05` | 추천인에게는 어떤 혜택이 있나요? |
 | 06 | `guide02-scene-06` | 스타트팩과 초기 승급 |
 | 07 | `guide02-scene-07` | 왜 스타트팩을 운영할까요? |
+| 08 | `guide02-scene-08` | 스타트팩 핵심 내용 |
+| 09 | `guide02-scene-09` | 클로징 (`GuideClosePanel`) |
 
-공통 헬퍼는 `Guide02` (`guide02_common.js.asp`)다. `timeline.wait(ms)`는 씬 시작 시각 기준의 절대 대기. `cloneTemplate`은 `#guide02-templates`만 복제한다. 존 배치는 `placeAtZone` → `G01ZonedAnim`. 맞춤 배율은 씬 setup의 `applyFit`이 `--group-scale`에 넣는다. Guide01의 세로 체인 측정(`layoutVerticalChain`)을 가져오지 않는다.
+공통 헬퍼는 `Guide02` (`guide02_common.js.asp`)다. `timeline.wait(ms)`는 씬 시작 시각 기준의 절대 대기. `cloneTemplate`은 `#guide02-templates`만 복제한다. 존 배치는 `placeAtZone` → `G01ZonedAnim`. 맞춤 배율은 씬 setup의 `applyFit` → `Guide02.fitGroup(..., inset)`이 `--group-scale`에 넣는다. Guide01의 세로 체인 측정(`layoutVerticalChain`)을 가져오지 않는다.
 
 ### 9-1. 타이밍
 
@@ -1609,6 +1626,207 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 
 혜택·`!` 배경은 `#3D8BFF` → `#1554E0`, 글자는 `#FFE566`.
 
+### 9-4. fitInset (화면 점유)
+
+기본 그룹은 `fitInset: 0.85`(캔버스의 약 85%). 단일 플로트(뱃지·카드만) 구간은 `fitInsetFloat: 0.4`로 줄인다. 씬 03·04 constants에 명시. 씬 07은 단독 히어로를 **50%**, 씬 08은 뱃지 단독을 **가로 42% / 세로 28%** 로 맞춘 뒤 그룹은 `0.88`. 상세는 [§11-1](#11-1-화면-구성--group-scale--fitinset).
+
+---
+
+## 10. Guide03 현행
+
+BASE사업자 이해하기. 씬 01~11(마지막은 클로징). Guide01·02 파일을 수정하지 않고 `includes/series/guide03/` · `_css/guide03.css` · `guide03_templates.asp`만 쓴다.
+
+| 씬 | 제목 |
+|----|------|
+| 01 | BASE사업자란? |
+| 02 | BASE사업자의 기본 구성 |
+| 03 | BASE사업자 본인 조건 |
+| 04 | 파트너 2명의 조건 |
+| 05 | 오토십으로 BASE사업자 만들기 |
+| 06 | S.E.P실적으로 BASE사업자 만들기 |
+| 07 | 파트너 실적에서 꼭 기억할 점 |
+| 08 | BASE사업자 자격과 보상 |
+| 09 | BASE사업자를 늘려야 하는 이유 |
+| 10 | BASE 사업자 핵심 내용 |
+| 11 | 클로징 (`GuideClosePanel`) |
+
+공통 헬퍼는 `Guide03` (`guide03_common.js.asp`). `fitGroup`이 **그룹 80% / 뱃지 단독 40%** 를 기본으로 적용한다([§11-1](#11-1-화면-구성--group-scale--fitinset)). 패널 bullet flash·타이틀 음성 `titleMs` 패턴은 Guide02와 같다.
+
+시뮬(`guide03_simulator.js.asp`)은 STEP1~3 퀴즈 후 판정·빌드 단계로 이어지며, 완료 시 `GuideClosePanel.showSimulatorEnd`를 쓴다.
+
+---
+
+## 11. 씬 공통 작업 — 화면 맞춤 · 클로징 · 시뮬
+
+영상·시뮬레이션을 새로 만들거나 고칠 때 **가이드를 가리지 않고** 반복되는 작업이다. 시리즈별 CSS·템플릿은 분리하되, 아래 규칙·모듈은 공유한다.
+
+### 11-1. 화면 구성 — `--group-scale` · fitInset
+
+모션 그룹은 보통 앵커 존 `d4`에 `g01-zone-wrap` 스택을 두고, inner에 **`--group-scale`** 을 걸어 캔버스 안에 맞게 줄인다. 목표: **복합 오브젝트 그룹은 화면의 약 80%(가이드에 따라 85%)**, **뱃지·한 줄 텍스트 등 단일 오브젝트는 40~50%** 로 과대해지지 않게 한다.
+
+#### 공식 (Guide02 / Guide03 공통 개념)
+
+```
+fit = min( (canvasW × ratio) / contentW , (canvasH × ratio) / contentH )
+inner.style.setProperty('--group-scale', fit)
+```
+
+`ratio`가 화면 점유율이다. content가 작을수록 scale이 커지므로, **혼자 남은 뱃지에 그룹용 0.8을 쓰면 화면을 가득 채운다** → 단독 모드 ratio를 낮춘다.
+
+| 모드 | 권장 ratio | 의미 |
+|------|------------|------|
+| **그룹** (멤버+파트너, 카드 2열, 요약판 등) | **0.80 ~ 0.88** | 작업 영역의 약 80~88%를 채움 |
+| **단일 플로트** (접힌 뱃지, 짧은 카피, 단독 카드) | **0.40 ~ 0.50** | 40~50%로 읽기 좋은 크기 |
+| **예외 축소** (매우 작은 뱃지 히어로) | 가로·세로 비대칭 또는 `badgeAloneScale` | 씬 특수 연출 |
+
+#### Guide03 — 자동 전환 (`Guide03.fitGroup`)
+
+```javascript
+ratio = badgeAlone(stage, badge) ? 0.4 : (groupInset || 0.8);
+// badgeAlone: stage에 보이는 자식이 badge 하나뿐일 때
+// 옵션: stage._g03BadgeAloneScale (예: 씬10 layout.badgeAloneScale: 0.7)
+// 옵션: layout.groupInset / fitGroup(..., groupInset) — 씬08은 0.7
+```
+
+- setup에서 `Guide03.fitGroup(canvas, inner, stage, badge)` 호출 + `ResizeObserver`로 크기 변화 시 재계산.
+- 뱃지만 보일 때와 그룹이 펼쳐질 때 **같은 API**로 ratio가 바뀐다. 씬 JS에서 수동 %를 하드코딩하지 않는다.
+
+#### Guide02 — constants + float 플래그
+
+| 설정 | 기본 | 사용 |
+|------|------|------|
+| `layout.fitInset` | `0.85` | 그룹 맞춤 |
+| `layout.fitInsetFloat` | `0.4` | 단일 플로트 구간 |
+| `Layout.setFloatActive(true\|false)` | — | 씬 03·04: 플로트 켜질 때 inset 전환 |
+
+씬별 변형:
+
+| 씬 | 단독 | 그룹 |
+|----|------|------|
+| 03·04 | `fitInsetFloat` 0.4 | `fitInset` 0.85 |
+| 07 | 뱃지/혜택 히어로 **0.5** | `fitGroup(..., 0.85)` |
+| 08 | 뱃지 단독 **0.42 × 0.28** (가로·세로) | `0.88` |
+| 그 외 | (대부분) `fitGroup` 기본 0.85 | 동일 |
+
+#### Guide01
+
+세로 스택은 `layoutVerticalChain` + 필요 시 `fitGroupScale` / `minFit`(약 0.42). 에셋 개별 크기는 `layout.scales`(대개 0.82~0.88). Guide02·03의 `fitInset` 숫자와 1:1 대응하지는 않지만, **그룹은 크게·단독은 과대하지 않게**라는 목적은 같다.
+
+#### 제작 체크리스트 (화면 맞춤)
+
+- [ ] 스택/스테이지를 `d4`(또는 시나리오 지정 존)에 `placeAtZone`
+- [ ] inner에 `--group-scale`을 쓰는 fit 헬퍼 연결 (`Guide02.fitGroup` / `Guide03.fitGroup` / Guide01 `applyNotedFill`)
+- [ ] 그룹 목표 점유 **~80%**(또는 시리즈 기본 0.85)
+- [ ] 뱃지·짧은 텍스트만 남는 타이밍에 **40~50%** 모드(또는 `setFloatActive` / `badgeAlone`) 확인
+- [ ] resize·자식 show/hide 후 `schedule()` / `fit` 재호출
+- [ ] transform idle과 fit scale을 같은 노드에 충돌시키지 않음(idle은 float 안쪽)
+
+---
+
+### 11-2. 클로징 씬 — 공통 오브젝트 `GuideClosePanel`
+
+세 가이드 모두 **마지막 씬**에서 같은 클로징 카드를 쓴다. 새 가이드를 만들 때도 이 모듈을 재사용한다.
+
+| 가이드 | 클로징 씬 | 음성 | setup |
+|--------|-----------|------|--------|
+| Guide01 | Scene 08 | `guide01_scene_08_close.mp4` | `scene08.setup.js.asp` |
+| Guide02 | Scene 09 | `guide02_scene_09_close.mp4` | `scene09.setup.js.asp` |
+| Guide03 | Scene 11 | `guide03_scene_11_close.mp4` | `scene11.setup.js.asp` |
+
+**모듈**
+
+| 파일 | 역할 |
+|------|------|
+| `includes/components/guide_close_panel.js.asp` | `GuideClosePanel.mount` · `open` · `showSimulatorEnd` |
+| `_css/guide_close.css` | 카드·버튼·시뮬 종료 스택 |
+
+**영상 클로징 DOM (공통)**
+
+```
+.g-close (zone wrap 선택)
+  └── .g-close-card
+        ├── .g-close-slot[data-part=title] → 「{레슨명} 완료」
+        ├── .g-close-slot[data-part=sim]   → 「Q 퀴즈 가이드로 복습하기」
+        └── .g-close-slot[data-part=replay]→ 「가이드 영상 다시보기」(ghost)
+```
+
+- `mount(parent, { title, simulatorHref, hidden, titleOpen:false, zoneWrap:false })`
+- 타임라인에서 `GuideClosePanel.open(slot, { ms:680, float:true })`로 슬롯을 순서대로 연다. 카드 높이와 슬롯 opacity/translateY를 **같은 시계**로 올린다.
+- 퀴즈 버튼 기본 링크: `GUIDE_ROOT + '/sim.asp'` 또는 시리즈별 `guideNN_simulator.asp`.
+- 다시보기: `SceneRunner.pauseLesson` → `restartLesson` → `playLesson`.
+
+**패널 텍스트:** 우측 `#lo-panel`은 시리즈마다 「수강 완료」 카피를 constants에 둔다. 모션 카드 타이틀은 `GuideClosePanel`이 `title + ' 완료'`를 붙인다.
+
+**하지 말 것:** 클로징 카드 HTML을 씬마다 새로 짜거나, 버튼 문구·순서를 가이드마다 다르게 만들기. 스타일만 `guide_close.css` / 시리즈 canvas 클래스로 조정한다.
+
+---
+
+### 11-3. 시뮬레이션 공통
+
+| 항목 | 내용 |
+|------|------|
+| 레이아웃 | `includes/simulator_layout.asp` — 좌 모션 / 우 퀴즈 |
+| 모션 | 해당 가이드 씬 `setup`+`run`을 **그대로** 재생 (`GuideNN.timeline` · fit 동일) |
+| 완료 UI | `GuideClosePanel.showSimulatorEnd(canvas, { title, onRelearn, onWatch, onList })` |
+| 완료 버튼 | 퀴즈 다시 풀기 · 교육 영상 다시 보기 · 리스트로 돌아가기 |
+| 완료 fit | 카드를 캔버스의 **80%** 안에 맞춤 (`scale = min(0.8·W/w, 0.8·H/h)`) |
+| 음성 | `SimVoice` · `voice/.../sim/guideNN_step_*.mp4`, 종료 `*_step_close.mp4` |
+| 시청 확인 | `ReadLog.simulation(lessonId, section)` — [§11-5](#11-5-시청-확인-readlog) |
+
+시뮬 종료 카드는 영상 클로징과 **같은 컴포넌트**이며 버튼 세트만 다르다.
+
+---
+
+### 11-4. 씬·시리즈 공통 제작 루틴
+
+영상·시뮬에 새 씬을 넣을 때 반복되는 순서다.
+
+1. **3파일:** `sceneNN.constants.js.asp` · `.setup.js.asp` · `.js.asp`
+2. **constants:** `id`, `duration`, `canvasCls`/`panelCls`, `media.sequence`(title/main/close), `panel.bullets`+`flashes`, `T`(모션 시각), `layout.anchorZone`(보통 `d4`) + fit 옵션
+3. **setup:** 템플릿 `cloneTemplate` → 스택 마운트 → Layout `bind`/`schedule` → assets 객체 반환
+4. **js:** `defineScene` · `play`에서 `timeline.wait` 절대 시각 · `ctx.isCancelled()` · 패널 flash · fit 재호출
+5. **등록:** `guideNN.asp`에 `registerScene` + smartguide/simulator 페이지 include
+6. **음성:** `voice/guide_season01/guideNN/` · `voice_stream.asp` part 규칙(`title`/`main`/`close`/`sim`)
+7. **CSS:** 시리즈 전용 `_css/guideNN.css`만 추가 (다른 가이드 CSS 링크 금지)
+8. **시뮬 연결:** 해당 step에 config·RUN setup/run 매핑, 정답 시 `ReadLog.simulation`
+
+**타이밍 공통**
+
+- 타이틀 mp4가 있으면 본문 `T`·panel flash는 `titleMs`를 더한 절대 시각으로 맞춘다.
+- 클로징은 `part: 'close'` 단일 파일이 흔하다.
+
+**패널 공통**
+
+- `setSceneTitle` / `setSceneBullets` + dim/emphasis flash 클래스(`g01-flash` / `g02-flash` / `g03-flash`).
+- 가이드 common의 `panelBulletTimeline`을 우선 사용.
+
+---
+
+### 11-5. 시청 확인 (ReadLog)
+
+| 파일 | 역할 |
+|------|------|
+| `includes/readLog.js.asp` | `ENDPOINT` → `read_ins.asp`에 Image GET |
+| `includes/video_runtime.asp` | ReadLog include |
+| `includes/sceneRunner.js.asp` | 씬 시작 시 `ReadLog.guideScene(lessonId, section)` |
+| `guideNN_simulator.js.asp` | 단계 완료 시 `ReadLog.simulation(lessonId, section)` |
+
+`div=m`(영상) / `div=s`(시뮬), `id_num`·`title`·`section` 쿼리. 동일 키는 세션 내 한 번만 전송.
+
+---
+
+### 11-6. 공통 모듈 빠른 표
+
+| 관심사 | 모듈 | 비고 |
+|--------|------|------|
+| 화면 80% / 단독 40~50% | `Guide02.fitGroup` · `Guide03.fitGroup` · Guide01 fit | [§11-1](#11-1-화면-구성--group-scale--fitinset) |
+| 클로징 카드 | `GuideClosePanel` | 영상 마지막 씬 + 시뮬 종료 |
+| 존 배치 | `G01ZonedAnim.placeAtZone` | Guide02/03 `placeAtZone` 위임 |
+| 씬 러너 | `sceneRunner.js.asp` | progress · ReadLog · 전환 |
+| 음성 경로 | `sceneMedia.js.asp` · `voice_stream.asp` | seriesId별 파일명 |
+| 로그인 | `asp_utf8.asp` → `/smart_guide_login.asp` | 진입 ASP 공통 |
+| 네비 | `site_nav.asp` | 로고 `/` · SMART GUIDE → index |
+
 ---
 
 ## 관련 파일 빠른 참조
@@ -1616,24 +1834,31 @@ target.animate([…], { duration, easing, fill: 'none' }).finished.then(function
 | 파일 | 내용 |
 |------|------|
 | `asset_design.asp` | 6계열 시안 + G01 애니 |
-| `includes/components/guide01_templates.asp` | clone template |
-| `includes/motions/g01/preview.js.asp` | G01 미리보기 |
-| `includes/series/guide01/scenes/sceneNN.*` | guide01 씬별 constants · setup · js |
-| `includes/series/guide02/scenes/sceneNN.*` | guide02 씬별 constants · setup · js |
-| `includes/series/guide02/guide02_common.js.asp` | `Guide02` timeline · clone · placeAtZone |
+| `includes/components/guide01_templates.asp` | guide01 clone template |
 | `includes/components/guide02_templates.asp` | guide02 clone template |
+| `includes/components/guide03_templates.asp` | guide03 clone template |
+| `includes/components/guide_close_panel.js.asp` | 클로징·시뮬 종료 공통 UI |
+| `includes/readLog.js.asp` | 시청·복습 확인 URL 호출 |
+| `includes/motions/g01/preview.js.asp` | G01 미리보기 |
+| `includes/series/guide01/scenes/sceneNN.*` | guide01 씬 |
+| `includes/series/guide02/scenes/sceneNN.*` | guide02 씬 |
+| `includes/series/guide03/scenes/sceneNN.*` | guide03 씬 |
+| `includes/series/guide02/guide02_common.js.asp` | `Guide02` timeline · fitGroup · clone |
+| `includes/series/guide03/guide03_common.js.asp` | `Guide03` timeline · fitGroup(80%/40%) |
 | `includes/sceneTransition.js.asp` | 씬 간 1s hold + 2s opacity 퇴장. 수정하지 않음 |
 | `includes/motions/g01/zonedCore.js.asp` | `g01-float-host`, idle float, resolveWrap |
 | `includes/series/guide01/guide01.asp` | guide01 registerScene · init |
 | `includes/series/guide02/guide02.asp` | guide02 registerScene · init |
-| `guide01_smartguide.asp` | guide01 페이지 진입 |
-| `guide02_smartguide.asp` | guide02 페이지 진입 |
-| `includes/asp_utf8.asp` | `GuideAppRoot()` |
-| `voice/guide_season01/guide01/` | guide01 음성 mp4 |
-| `voice/guide_season01/guide02/` | guide02 음성 mp4 |
+| `includes/series/guide03/guide03.asp` | guide03 registerScene · init |
+| `guide01_smartguide.asp` / `_simulator.asp` | guide01 진입 |
+| `guide02_smartguide.asp` / `_simulator.asp` | guide02 진입 |
+| `guide03_smartguide.asp` / `_simulator.asp` | guide03 진입 |
+| `includes/asp_utf8.asp` | `GuideAppRoot()` + 로그인 include |
+| `includes/site_nav.asp` | 공통 네비 |
+| `voice/guide_season01/guide01/` · `guide02/` · `guide03/` | 음성 mp4 |
 | `_css/icon_style.css` | 전 에셋 CSS |
-| `_css/guide01.css` | guide01 존·fold·씬별 panel |
-| `_css/guide02.css` | guide02 전용. guide01.css를 링크하지 않음 |
+| `_css/guide01.css` · `guide02.css` · `guide03.css` | 시리즈 전용 |
+| `_css/guide_close.css` | 클로징·시뮬 종료 |
 
 ---
 

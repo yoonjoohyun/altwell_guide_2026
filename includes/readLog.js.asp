@@ -5,7 +5,8 @@ var ReadLog = (function(){
   var GUIDE = {
     guide01: { id: 1, title: 'autoship_guide' },
     guide02: { id: 2, title: 'startpack_guide' },
-    guide03: { id: 3, title: 'basebusiness_guide' }
+    guide03: { id: 3, title: 'basebusiness_guide' },
+    guide04: { id: 7, title: 'recommend_bonus_guide' }
   };
   var SIM = {
     guide01: { id: 4, title: 'autoship_quiz' },

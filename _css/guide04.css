@@ -1,0 +1,271 @@
+/* guide04 — 추천보너스 알아보기. guide01~03.css 와 분리 */
+
+.g04-canvas{position:relative}
+.g04-canvas .lo-zone-place{
+  left:calc(10px + (var(--zone-col) - 0.5) / 7 * (100% - 20px));
+  top:calc(10px + (var(--zone-row) - 0.5) / 7 * (100% - 20px));
+  transform:translate(-50%, -50%);
+}
+.g04-canvas .g04-stack{
+  position:absolute;
+  z-index:12;
+  pointer-events:none;
+  width:max-content;
+  height:max-content;
+}
+.g04-canvas .g04-stack-inner{
+  transform:scale(var(--group-scale, 1));
+  transform-origin:center center;
+}
+.g04-canvas .g04-slot.is-hidden{display:none !important}
+.g04-canvas .g04-enter{animation:g04-enter 760ms ease-in-out both}
+@keyframes g04-enter{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes g04-fade{
+  from{opacity:0;transform:scale(.86)}
+  to{opacity:1;transform:scale(1)}
+}
+.g04-fade{animation:g04-fade 760ms cubic-bezier(.16,1,.3,1) both}
+
+.g04-s01{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+  position:relative;
+}
+.g04-canvas .g04-bonus-badge .recommend_bonus_icon_o{--size:52px}
+.g04-board{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+  width:max-content;
+  min-width:240px;
+  padding:18px 22px 16px;
+  border-radius:18px;
+  background:linear-gradient(180deg, #FFF9E6, #F7E9B8);
+  box-shadow:inset 0 0 0 2px #E2C65A, 0 8px 18px rgba(80,60,10,.14);
+  box-sizing:border-box;
+  position:relative;
+  transition:filter 420ms ease, opacity 420ms ease;
+}
+.g04-board.is-muted{
+  filter:grayscale(.82) brightness(.92);
+}
+.g04-tree{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+.g04-lines{
+  position:absolute;
+  left:0;
+  top:0;
+  z-index:0;
+  overflow:visible;
+  pointer-events:none;
+  opacity:0;
+}
+.g04-lines.is-on{opacity:1}
+.g04-lines path{
+  fill:none;
+  stroke:#C7A417;
+  stroke-width:2.5;
+  stroke-linecap:round;
+  stroke-dasharray:7 6;
+}
+.g04-member-row{
+  position:relative;
+  z-index:1;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  gap:28px;
+}
+.g04-partner-row{gap:36px}
+.g04-partner-col{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.g04-grow{
+  display:grid;
+  grid-template-rows:0fr;
+  grid-template-columns:0fr;
+  transition:grid-template-rows 740ms ease-in-out, grid-template-columns 740ms ease-in-out;
+}
+.g04-grow.is-open{
+  grid-template-rows:1fr;
+  grid-template-columns:1fr;
+}
+.g04-grow-clip{
+  overflow:hidden;
+  min-width:0;
+  min-height:0;
+}
+.g04-grow.is-open.is-settled .g04-grow-clip{
+  overflow:visible;
+  min-width:auto;
+  min-height:auto;
+}
+.g04-canvas .g04-member .member_icon{--size:120px}
+.g04-s01-self-host{position:relative}
+.g04-s01-dock{
+  position:absolute;
+  left:22px;
+  top:72px;
+  z-index:4;
+  transform:translate(-36%, 0);
+  line-height:0;
+  pointer-events:none;
+}
+.g04-canvas .g04-s01-dock-badge .recommend_bonus_icon_c,
+.g04-canvas .g04-s01-dock-badge .base_business_icon_c{--size:42px}
+.g04-s01-dock .g04-s01-dock-badge{
+  display:inline-block;
+  width:max-content;
+  transform:scale(0.82);
+  transform-origin:left bottom;
+}
+
+.g04-canvas .g04-product .autoship_icon_o{--size:40px}
+.g04-canvas .g04-startpack .g02_startpack_badge{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-width:108px;
+  padding:8px 12px;
+  border-radius:12px;
+  background:linear-gradient(145deg, #7a1048, #bd2076);
+  box-shadow:inset 0 0 0 2px rgba(255,220,240,.35), 0 6px 14px rgba(80,10,40,.22);
+  color:#fff;
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+}
+.g04-canvas .g04-startpack .g02_startpack_row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.g04-canvas .g04-startpack .g02_startpack_mark{
+  width:22px;
+  height:22px;
+  border-radius:50%;
+  background:rgba(255,255,255,.18);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:12px;
+}
+.g04-canvas .g04-startpack .g02_startpack_name{
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:-.02em;
+}
+.g04-canvas .g04-startpack .g02_startpack_sub{display:none}
+
+.g04-chip-text{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:8px 16px;
+  border-radius:999px;
+  background:linear-gradient(120deg, #ffd738, #FFE373, #e6c92a);
+  box-shadow:inset 0 0 0 2px #C7A417;
+  color:#665308;
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+  font-size:16px;
+  font-weight:800;
+}
+.g04-summary{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:6px;
+  width:100%;
+  min-width:200px;
+}
+.g04-summary-line{
+  text-align:center;
+  padding:8px 12px;
+  border-radius:10px;
+  background:rgba(255,255,255,.55);
+  box-shadow:inset 0 0 0 1px rgba(199,164,23,.35);
+  color:#5c4a12;
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+  font-size:15px;
+  font-weight:800;
+}
+.g04-deny{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:8;
+  pointer-events:none;
+}
+.g04-canvas .g04-deny .status_cross_icon{
+  --size:88px;
+  width:var(--size);
+  height:var(--size);
+}
+
+.g04-point-coin{
+  position:absolute;
+  z-index:20;
+  width:34px;
+  height:34px;
+  margin:-17px 0 0 -17px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at 35% 30%, #ffe9a0, #e0b922 55%, #b88910);
+  box-shadow:inset 0 0 0 2px #a67c0c, 0 4px 10px rgba(0,0,0,.18);
+  color:#5c4508;
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+  font-size:14px;
+  font-weight:900;
+  transition:transform 680ms cubic-bezier(.22,1,.36,1), opacity 680ms ease;
+  pointer-events:none;
+}
+.g04-base-fly{
+  position:absolute;
+  left:50%;
+  top:8%;
+  transform:translateX(-50%);
+  z-index:16;
+}
+.g04-canvas .g04-base-fly .base_business_icon_o{--size:48px}
+
+.g04-canvas .g04-fold{
+  --g04-gap:6px;
+}
+.g04-canvas .g04-fold-track{
+  display:inline-block;
+  overflow:hidden;
+  vertical-align:middle;
+  max-width:0;
+}
+.g04-canvas .g04-fold .recommend_bonus_text,
+.g04-canvas .g04-fold .base_text,
+.g04-canvas .g04-fold .autoship_text{
+  display:inline-block;
+}
+
+#lo-panel.g04-scene01-panel .bullet-item.g04-flash{
+  animation:g04-bullet-flash 900ms ease;
+}
+@keyframes g04-bullet-flash{
+  0%{filter:brightness(1)}
+  35%{filter:brightness(1.18)}
+  100%{filter:brightness(1)}
+}

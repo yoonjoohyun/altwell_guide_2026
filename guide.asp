@@ -95,6 +95,22 @@ ListSectionActive = "guide"
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
+
+      <div class="vcard entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide04_smartguide.asp?from=guide">
+        <div class="vc-thumb"><div class="vc-thumb-inner g4">
+          <span>RECOMMEND<br>BONUS<br>GUIDE</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 04</span><span class="vc-new">NEW</span></div>
+          <div class="vc-title">추천보너스 알아보기</div>
+          <div class="vc-desc">BASE사업자의 직접 추천 활동에 대한 보상, 오토십·스타트팩 추천포인트의 기본 구조를 알아보세요.</div>
+          <div class="vc-meta">
+            <span class="vc-meta-grid">제작 중</span>
+            <span class="vc-meta-list">제작 중 (1/5)</span>
+          </div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
       <div class="vcard" onclick="location.href='03_sep_growth_smartguide.asp?from=guide'" style="display:none;">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>?</span><div class="vc-play">▶</div>
