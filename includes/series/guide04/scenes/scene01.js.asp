@@ -1,281 +1,112 @@
 <script>
-var Guide04Scene01 = defineScene({
-  id: Guide04Scene01Config.id,
-  title: Guide04Scene01Config.title,
-  duration: Guide04Scene01Config.duration,
-  mediaSequence: Guide04Scene01Config.media.sequence,
-  mediaFallbackMs: Guide04Scene01Config.media.fallbackMs,
+var Guide04Scene01 = guide04DefineScene(
+  Guide04Scene01Config,
+  setupGuide04Scene01,
+  function(tl, assets, ctx){ return runGuide04Scene01(tl, assets, ctx); },
+  Guide04Scene01Layout
+);
 
-  reset: function(){
-    var panel = document.getElementById('lo-panel');
-    if(panel) panel.classList.remove(Guide04Scene01Config.panelCls);
-    if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.unbind();
-    Guide04.resetScene(Guide04Scene01Config.canvasCls);
-  },
-
-  play: async function(ctx){
-    var canvas = ctx.canvas;
-    var panel;
-    var tl;
-    var assets;
-    if(!canvas) return;
-    panel = document.getElementById('lo-panel');
-    if(panel) panel.classList.add(Guide04Scene01Config.panelCls);
-    tl = Guide04.timeline(ctx);
-    Guide04.resetScene(Guide04Scene01Config.canvasCls);
-    Guide04.mountStage(canvas, Guide04Scene01Config.canvasCls);
-    assets = setupGuide04Scene01(canvas);
-
-    await Promise.all([
-      runGuide04Scene01(tl, assets, ctx),
-      Guide04.panelBulletTimeline(
-        tl,
-        Guide04Scene01Config.panel.title,
-        Guide04Scene01Config.panel.bullets,
-        guide04Scene01PanelFlashes(ctx)
-      )
-    ]);
-    if(ctx.isCancelled && ctx.isCancelled()) return;
-    await Guide04.finishSceneHold(tl, ctx.sceneDuration || Guide04Scene01Config.duration);
-  }
-});
-
-function guide04Scene01Cancelled(ctx){
-  return ctx && ctx.isCancelled && ctx.isCancelled();
+function guide04Scene01Lines(A, count, animateFrom){
+  var icons = [];
+  var i;
+  for(i = 0; i < count; i++) icons.push(A.partners[i].mem.icon);
+  G04Kit.drawLines(A.tree, A.svg, A.paths, A.self.icon, icons, animateFrom, 0.94, 0.18);
 }
 
-async function guide04Scene01Reveal(el){
-  if(!el) return;
-  showElement(el);
-  el.classList.add('g04-enter');
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-  await wait(760);
-  el.classList.remove('g04-enter');
+async function guide04Scene01Coin(A, p){
+  var gain = p.kind === 'pack' ? 5 : 1;
+  await G04Kit.fly(p.prodNode, A.tag, A.stage, { text: gain + 'P' });
+  G04Kit.tagSet(A.tag, A.tag.value + gain, true);
 }
 
-async function guide04Scene01Open(slot){
-  if(!slot) return;
-  var done = guide04EaseOpen(slot);
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-  await done;
-}
-
-async function guide04Scene01UnfoldChip(wrap){
-  var badge;
-  var text;
-  var track;
-  var gap;
-  var textW;
-  if(!wrap) return;
-  badge = wrap.querySelector('.recommend_bonus_icon_o, .base_business_icon_o, .autoship_icon_o');
-  text = badge && badge.querySelector('.recommend_bonus_text, .base_text, .autoship_text');
-  if(!badge || !text){
-    await guide04Scene01Reveal(wrap);
-    return;
-  }
-  showElement(wrap);
-  badge.classList.add('g04-fold');
-  gap = parseFloat(getComputedStyle(badge).getPropertyValue('--size')) * 5 / 36;
-  if(!gap || gap < 1) gap = 6;
-  badge.style.setProperty('--g04-gap', gap + 'px');
-  textW = Math.ceil(text.scrollWidth || text.getBoundingClientRect().width);
-  track = document.createElement('span');
-  track.className = 'g04-fold-track';
-  text.parentNode.insertBefore(track, text);
-  track.appendChild(text);
-  track.style.maxWidth = '0px';
-  text.style.opacity = '0';
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-  await wait(40);
-  track.style.transition = 'max-width 640ms cubic-bezier(.22,1,.36,1)';
-  text.style.transition = 'opacity 360ms cubic-bezier(.25,.1,.25,1) 120ms';
-  track.style.maxWidth = (textW + gap) + 'px';
-  text.style.opacity = '1';
-  await wait(700);
-}
-
-async function guide04Scene01FoldAway(wrap){
-  var badge;
-  var track;
-  var text;
-  if(!wrap) return;
-  badge = wrap.querySelector('.recommend_bonus_icon_o, .base_business_icon_o');
-  track = wrap.querySelector('.g04-fold-track');
-  text = track && track.firstElementChild;
-  if(badge && track && text){
-    track.style.transition = 'max-width 420ms cubic-bezier(.22,1,.36,1)';
-    text.style.transition = 'opacity 220ms ease';
-    text.style.opacity = '0';
-    track.style.maxWidth = '0px';
-    await wait(440);
-  }
-  wrap.classList.add('is-hidden');
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-}
-
-function guide04Scene01Point(icon, tree, yRatio){
-  var iconBox = icon.getBoundingClientRect();
-  var treeBox = tree.getBoundingClientRect();
-  var scale = treeBox.width / (tree.offsetWidth || 1) || 1;
-  return {
-    x: (iconBox.left + iconBox.width / 2 - treeBox.left) / scale,
-    y: (iconBox.top + iconBox.height * yRatio - treeBox.top) / scale
-  };
-}
-
-function guide04Scene01DrawLines(assets, animate){
-  var tree = assets.tree;
-  var svg = assets.lines;
-  var selfIcon = assets.self.icon;
-  var leftIcon = assets.left.icon;
-  var rightIcon = assets.right.icon;
-  if(!tree || !svg || !selfIcon || !leftIcon || !rightIcon) return;
-  var from = guide04Scene01Point(selfIcon, tree, 0.94);
-  var left = guide04Scene01Point(leftIcon, tree, 0.18);
-  var right = guide04Scene01Point(rightIcon, tree, 0.18);
-  var w = tree.offsetWidth || 1;
-  var h = tree.offsetHeight || 1;
-  svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-  svg.setAttribute('width', String(w));
-  svg.setAttribute('height', String(h));
-  var paths = svg.querySelectorAll('path');
-  [[left, paths[0]], [right, paths[1]]].forEach(function(pair){
-    var to = pair[0];
-    var path = pair[1];
-    if(!path) return;
-    path.setAttribute('d', 'M' + from.x + ' ' + from.y + ' L' + to.x + ' ' + to.y);
-    if(!animate){
-      path.style.strokeDashoffset = '0';
-      return;
-    }
-    var len = path.getTotalLength ? path.getTotalLength() : 0;
-    path.style.transition = 'none';
-    path.style.strokeDashoffset = String(len || 0);
-  });
-  svg.classList.add('is-on');
-  if(!animate) return;
-  window.requestAnimationFrame(function(){
-    paths.forEach(function(path){
-      path.style.transition = 'stroke-dashoffset 720ms cubic-bezier(.16,1,.3,1)';
-      path.style.strokeDashoffset = '0';
-    });
-  });
-}
-
-async function guide04Scene01FlyCoin(fromEl, toEl, stage){
-  var from;
-  var to;
-  var coin;
-  var dx;
-  var dy;
-  if(!fromEl || !toEl || !stage) return;
-  from = fromEl.getBoundingClientRect();
-  to = toEl.getBoundingClientRect();
-  coin = document.createElement('div');
-  coin.className = 'g04-point-coin';
-  coin.textContent = 'P';
-  stage.appendChild(coin);
-  coin.style.left = (from.left + from.width / 2 - stage.getBoundingClientRect().left) + 'px';
-  coin.style.top = (from.top + from.height / 2 - stage.getBoundingClientRect().top) + 'px';
-  dx = (to.left + to.width / 2) - (from.left + from.width / 2);
-  dy = (to.top + to.height / 2) - (from.top + from.height / 2);
-  await wait(30);
-  coin.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(.72)';
-  coin.style.opacity = '0.15';
-  await wait(680);
-  if(coin.parentNode) coin.parentNode.removeChild(coin);
-}
-
-async function guide04Scene01UnfoldBaseOntoSelf(assets){
-  var temp = document.createElement('div');
-  var badge = Guide04.cloneTemplate('base_business_icon');
-  if(!badge || !assets.baseDock) return;
-  temp.className = 'g04-slot g04-base-fly';
-  temp.appendChild(badge);
-  assets.stage.appendChild(temp);
-  showElement(temp);
-  await guide04Scene01UnfoldChip(temp);
+async function guide04Scene01BaseOnto(A){
+  var K = G04Kit;
+  var sch = Guide04Scene01Layout.schedule;
+  var temp = K.titleBadge('base_business_icon');
+  temp.classList.add('g04-base-fly');
+  A.stage.appendChild(temp);
+  await K.unfold(temp, sch);
   await wait(420);
-  await guide04Scene01FoldAway(temp);
+  await K.foldAway(temp, sch);
   if(temp.parentNode) temp.parentNode.removeChild(temp);
-  showElement(assets.baseDock);
-  assets.baseDock.classList.add('g04-fade');
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-  await wait(760);
-  assets.baseDock.classList.remove('g04-fade');
+  A.self.icon.classList.remove('g04-nobase');
+  await K.fadeIn(A.baseDock, sch);
 }
 
-async function runGuide04Scene01(tl, assets, ctx){
-  var T = Guide04Scene01Config.T;
-  var at = function(ms){ return guide04Scene01AtMain(ms, ctx); };
+async function runGuide04Scene01(tl, A, ctx){
+  var K = G04Kit;
+  var C = Guide04Scene01Config;
+  var T = C.T;
+  var sch = Guide04Scene01Layout.schedule;
+  var X = function(ms){ return guide04WaitMain(tl, C, ms, ctx); };
   var i;
 
+  /* 타이틀 구간: 추천 보너스 뱃지 */
   await tl.wait(T.badge);
-  if(guide04Scene01Cancelled(ctx)) return;
-  await guide04Scene01UnfoldChip(assets.badge);
+  if(guide04Cancelled(ctx)) return;
+  await K.unfold(A.badge, sch);
 
-  await tl.wait(at(T.board));
-  if(guide04Scene01Cancelled(ctx)) return;
-  await guide04Scene01FoldAway(assets.badge);
-  await guide04Scene01Reveal(assets.board);
-
-  await tl.wait(at(T.self));
-  if(guide04Scene01Cancelled(ctx)) return;
-  await guide04Scene01Open(assets.self.slot);
-
-  for(i = 0; i < T.partners.length; i++){
-    await tl.wait(at(T.partners[i]));
-    if(guide04Scene01Cancelled(ctx)) return;
-    await guide04Scene01Open(i === 0 ? assets.left.slot : assets.right.slot);
+  /* 직접 추천 활동 보상 */
+  if(await X(T.board)) return;
+  await K.foldAway(A.badge, sch);
+  await K.reveal(A.board, sch);
+  if(await X(T.self)) return;
+  await K.open(A.self.slot, sch);
+  K.fadeIn(A.baseDock, sch);
+  for(i = 0; i < 2; i++){
+    if(await X(T.partners[i])) return;
+    await K.open(A.partners[i].mem.slot, sch);
   }
-  if(guide04Scene01Cancelled(ctx)) return;
-  guide04Scene01DrawLines(assets, true);
+  if(await X(T.lines)) return;
+  guide04Scene01Lines(A, 2, true);
 
-  await tl.wait(at(T.products));
-  if(guide04Scene01Cancelled(ctx)) return;
-  showElement(assets.auto.querySelector('.g04-product'));
-  showElement(assets.pack.querySelector('.g04-product'));
-  await Promise.all([
-    guide04Scene01Open(assets.auto),
-    guide04Scene01Open(assets.pack)
-  ]);
+  /* 오토십·스타트팩 이용 → 포인트 */
+  if(await X(T.products)) return;
+  await Promise.all([K.open(A.partners[0].prod, sch), K.open(A.partners[1].prod, sch)]);
+  if(await X(T.coins)) return;
+  await K.open(A.tagSlot, sch);
+  await guide04Scene01Coin(A, A.partners[0]);
+  await guide04Scene01Coin(A, A.partners[1]);
 
-  await tl.wait(at(T.coins));
-  if(guide04Scene01Cancelled(ctx)) return;
-  showElement(assets.recommendDock);
-  assets.recommendDock.classList.add('g04-fade');
-  if(typeof Guide04Scene01Layout !== 'undefined') Guide04Scene01Layout.schedule();
-  await Promise.all([
-    guide04Scene01FlyCoin(assets.auto, assets.recommendDock, assets.stage),
-    wait(180).then(function(){
-      return guide04Scene01FlyCoin(assets.pack, assets.recommendDock, assets.stage);
-    })
-  ]);
-  assets.recommendDock.classList.remove('g04-fade');
-
-  await tl.wait(at(T.right));
-  if(guide04Scene01Cancelled(ctx)) return;
-  await guide04Scene01Open(assets.rightChip);
-
-  await tl.wait(at(T.deny));
-  if(guide04Scene01Cancelled(ctx)) return;
-  assets.board.classList.add('is-muted');
-  showElement(assets.deny);
-  assets.deny.classList.add('g04-enter');
-  await wait(900);
-  assets.deny.classList.remove('g04-enter');
-  assets.deny.classList.add('is-hidden');
-  assets.board.classList.remove('is-muted');
-
-  await tl.wait(at(T.base));
-  if(guide04Scene01Cancelled(ctx)) return;
-  if(assets.recommendDock) assets.recommendDock.classList.add('is-hidden');
-  await guide04Scene01UnfoldBaseOntoSelf(assets);
-
-  for(i = 0; i < T.summary.length; i++){
-    await tl.wait(at(T.summary[i]));
-    if(guide04Scene01Cancelled(ctx)) return;
-    await guide04Scene01Reveal(assets.summary[i]);
+  /* 권리소득 + 추천 회원이 늘어남 */
+  if(await X(T.right)) return;
+  await K.open(A.chipSlot, sch);
+  for(i = 0; i < T.more.length; i++){
+    if(await X(T.more[i])) return;
+    await Promise.all([K.open(A.partners[i + 2].mem.slot, sch), K.open(A.partners[i + 2].prod, sch)]);
+    guide04Scene01Lines(A, i + 3, i + 2);
   }
+  if(await X(T.coinsMore)) return;
+  for(i = 2; i < 6; i++){
+    guide04Scene01Coin(A, A.partners[i]);
+    await wait(260);
+  }
+  await wait(700);
+
+  /* 누구나 받는 것은 아님 — BASE 자격이 없으면 포인트가 닿지 않는다 */
+  if(await X(T.deny)) return;
+  A.board.classList.add('is-muted');
+  A.self.icon.classList.add('g04-nobase');
+  K.leave(A.baseDock, sch);
+  await K.fly(A.partners[2].prodNode, A.self.icon, A.stage, { text: '1P', bounce: true });
+  await K.flashOverlay(A.deny, 900);
+  A.board.classList.remove('is-muted');
+
+  /* BASE사업자 자격 유지 */
+  if(await X(T.base)) return;
+  await guide04Scene01BaseOnto(A);
+  guide04Scene01Lines(A, 6, false);
+  await guide04Scene01Coin(A, A.partners[0]);
+
+  /* 기본 구조 정리 */
+  if(await X(T.summary)) return;
+  await K.leave(A.tree, sch);
+  await K.reveal(A.sum.host, sch);
+  for(i = 0; i < T.slots.length; i++){
+    if(await X(T.slots[i])) return;
+    await K.fillSlot(A.sum.slots[i], sch);
+  }
+  if(await X(T.glow)) return;
+  A.sum.slots.forEach(function(node){ node.classList.add('is_glow'); });
 }
 </script>

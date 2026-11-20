@@ -10,12 +10,22 @@ var SeriesGuide04 = {
   init: function(){
     SceneRunner.setLessonMeta(this.meta);
     SceneRunner.registerScene(Guide04Scene01);
+    SceneRunner.registerScene(Guide04Scene02);
+    SceneRunner.registerScene(Guide04Scene03);
+    SceneRunner.registerScene(Guide04Scene04);
+    SceneRunner.registerScene(Guide04Scene05);
+    SceneRunner.registerScene(Guide04Scene06);
 
     if(typeof SceneMedia !== 'undefined'){
       SceneMedia.setSeriesId(this.meta.id);
       var scenes = SceneRunner.getScenes();
       var configs = [];
       if(typeof Guide04Scene01Config !== 'undefined') configs.push(Guide04Scene01Config);
+      if(typeof Guide04Scene02Config !== 'undefined') configs.push(Guide04Scene02Config);
+      if(typeof Guide04Scene03Config !== 'undefined') configs.push(Guide04Scene03Config);
+      if(typeof Guide04Scene04Config !== 'undefined') configs.push(Guide04Scene04Config);
+      if(typeof Guide04Scene05Config !== 'undefined') configs.push(Guide04Scene05Config);
+      if(typeof Guide04Scene06Config !== 'undefined') configs.push(Guide04Scene06Config);
 
       function probeTitles(done){
         var index = 0;

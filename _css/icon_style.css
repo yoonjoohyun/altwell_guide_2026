@@ -2071,3 +2071,250 @@
 .cursor_click_ray.is_2 { top: 19%; right: 2%; transform: rotate(-10deg); }
 .cursor_click_ray.is_3 { top: 43%; right: 8%; transform: rotate(40deg); }
 
+
+
+/*************  MORE SUB ASSET — referral_point_tag (추천포인트 카운트 태그)  *******************************************************************************************************/
+.referral_point_tag {
+    --size: 30px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: calc(var(--size) * 2 / 30);
+    height: var(--size);
+    padding: 0 calc(var(--size) * 12 / 30);
+    border-radius: 999px;
+    align-self: center;
+    background: linear-gradient(120deg, #ffd738, #ffe373 50%, #e6c92a);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 30) #c7a417, 0 calc(var(--size) * 3 / 30) calc(var(--size) * 8 / 30) rgba(80, 60, 10, 0.2);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    color: #665308;
+    white-space: nowrap;
+    box-sizing: border-box;
+    flex-shrink: 0;
+    line-height: var(--size);
+}
+.referral_point_tag_label {
+    font-size: max(13px, calc(var(--size) * 13 / 30));
+    font-weight: 700;
+    margin-right: calc(var(--size) * 4 / 30);
+}
+.referral_point_tag_num {
+    font-size: max(16px, calc(var(--size) * 18 / 30));
+    font-weight: 900;
+    min-width: 1ch;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.referral_point_tag_unit {
+    font-size: max(13px, calc(var(--size) * 13 / 30));
+    font-weight: 900;
+}
+.referral_point_tag.is_bump { animation: referral_point_tag_bump 480ms cubic-bezier(.22, 1, .36, 1); }
+@keyframes referral_point_tag_bump {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.14); }
+    100% { transform: scale(1); }
+}
+
+
+/*************  MORE SUB ASSET — referral_link_line (추천관계 연결선)  *******************************************************************************************************/
+.referral_link_line {
+    --size: 64px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    width: max-content;
+    height: var(--size);
+    flex-shrink: 0;
+}
+.referral_link_stem {
+    flex: 1 1 auto;
+    width: calc(var(--size) * 3 / 64);
+    min-height: calc(var(--size) * 6 / 64);
+    background: repeating-linear-gradient(180deg, #c7a417 0 calc(var(--size) * 7 / 64), transparent calc(var(--size) * 7 / 64) calc(var(--size) * 12 / 64));
+    background-size: 100% calc(var(--size) * 12 / 64);
+}
+.referral_link_chip {
+    padding: calc(var(--size) * 3 / 64) calc(var(--size) * 12 / 64);
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(var(--size) * 2 / 64) #c7a417;
+    color: #665308;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    font-size: max(13px, calc(var(--size) * 14 / 64));
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.referral_link_head {
+    width: 0;
+    height: 0;
+    border-left: calc(var(--size) * 6 / 64) solid transparent;
+    border-right: calc(var(--size) * 6 / 64) solid transparent;
+    border-top: calc(var(--size) * 9 / 64) solid #c7a417;
+    margin-top: calc(var(--size) * -2 / 64);
+}
+.referral_link_line.is_flow_up .referral_link_head { border-top: 0; border-bottom: calc(var(--size) * 9 / 64) solid #c7a417; order: -1; margin: 0 0 calc(var(--size) * -2 / 64); }
+.referral_link_line.is_flow_up .referral_link_stem { animation: referral_link_flow_up 900ms linear infinite; }
+@keyframes referral_link_flow_up {
+    from { background-position: 0 0; }
+    to { background-position: 0 calc(var(--size) * -12 / 64); }
+}
+
+
+/*************  MORE SUB ASSET — rf_group_frame (동일 RF그룹 프레임)  *******************************************************************************************************/
+.rf_group_frame {
+    --size: 20px;
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    padding: calc(var(--size) * 22 / 20) calc(var(--size) * 16 / 20) calc(var(--size) * 12 / 20);
+    border-radius: calc(var(--size) * 18 / 20);
+    border: calc(var(--size) * 2.5 / 20) dashed #1034ac;
+    background: rgba(44, 81, 202, 0.06);
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.rf_group_frame_tab {
+    position: absolute;
+    top: calc(var(--size) * -13 / 20);
+    left: 50%;
+    transform: translateX(-50%);
+    padding: calc(var(--size) * 3 / 20) calc(var(--size) * 14 / 20);
+    border-radius: 999px;
+    background: linear-gradient(120deg, #2c51ca, #1034ac);
+    color: #fff;
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    font-size: max(14px, calc(var(--size) * 15 / 20));
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+.rf_group_frame_body {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: calc(var(--size) * 14 / 20);
+}
+
+
+/*************  MORE SUB ASSET — point_to_cash_card (1P = 최대 1만원)  *******************************************************************************************************/
+.point_to_cash_card {
+    --size: 64px;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--size) * 14 / 64);
+    padding: calc(var(--size) * 14 / 64) calc(var(--size) * 22 / 64);
+    border-radius: calc(var(--size) * 18 / 64);
+    background: #fff;
+    box-shadow: inset 0 0 0 calc(var(--size) * 3 / 64) #c7a417, 0 calc(var(--size) * 6 / 64) calc(var(--size) * 16 / 64) rgba(80, 60, 10, 0.18);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    flex-shrink: 0;
+    box-sizing: border-box;
+}
+.point_to_cash_point {
+    display: grid;
+    place-items: center;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffd738, #ffeca0 45%, #e6c92a 80%, #ffd738);
+    box-shadow: inset 0 0 0 calc(var(--size) * 3 / 64) #c7a417;
+    color: #665308;
+    font-size: max(18px, calc(var(--size) * 24 / 64));
+    font-weight: 900;
+}
+.point_to_cash_eq {
+    color: #6b7280;
+    font-size: max(22px, calc(var(--size) * 30 / 64));
+    font-weight: 900;
+}
+.point_to_cash_cash {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--size) * 2 / 64);
+}
+.point_to_cash_max {
+    padding: calc(var(--size) * 1 / 64) calc(var(--size) * 10 / 64);
+    border-radius: 999px;
+    background: #ee3338;
+    color: #fff;
+    font-size: max(13px, calc(var(--size) * 14 / 64));
+    font-weight: 800;
+    line-height: 1.3;
+}
+.point_to_cash_won {
+    color: #111827;
+    font-size: max(24px, calc(var(--size) * 34 / 64));
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    white-space: nowrap;
+}
+
+
+/*************  MORE SUB ASSET — core_three_slot (핵심 번호 슬롯)  *******************************************************************************************************/
+.core_three_slot {
+    --size: 150px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--size) * 8 / 150);
+    width: var(--size);
+    min-height: calc(var(--size) * 168 / 150);
+    padding: calc(var(--size) * 22 / 150) calc(var(--size) * 10 / 150) calc(var(--size) * 12 / 150);
+    border-radius: calc(var(--size) * 16 / 150);
+    background: linear-gradient(180deg, #fff9e6, #f7e9b8);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2.5 / 150) #e2c65a, 0 calc(var(--size) * 6 / 150) calc(var(--size) * 14 / 150) rgba(80, 60, 10, 0.14);
+    font-family: var(--font-sans, 'MinSansVF', sans-serif);
+    box-sizing: border-box;
+    flex-shrink: 0;
+    transition: opacity 420ms ease, box-shadow 420ms ease;
+}
+.core_three_no {
+    position: absolute;
+    top: calc(var(--size) * -14 / 150);
+    left: 50%;
+    transform: translateX(-50%);
+    display: grid;
+    place-items: center;
+    width: calc(var(--size) * 28 / 150);
+    height: calc(var(--size) * 28 / 150);
+    border-radius: 50%;
+    background: #ee3338;
+    color: #fff;
+    font-size: max(15px, calc(var(--size) * 16 / 150));
+    font-weight: 900;
+    line-height: 1;
+}
+.core_three_body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: calc(var(--size) * 4 / 150);
+    min-height: calc(var(--size) * 64 / 150);
+    transition: opacity 520ms ease, transform 520ms cubic-bezier(.22, 1, .36, 1);
+}
+.core_three_text {
+    color: #5c4a12;
+    font-size: max(14px, calc(var(--size) * 15 / 150));
+    font-weight: 800;
+    line-height: 1.3;
+    text-align: center;
+    word-break: keep-all;
+    transition: opacity 520ms ease;
+}
+.core_three_slot.is_empty {
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: inset 0 0 0 calc(var(--size) * 2.5 / 150) rgba(199, 164, 23, 0.55);
+    opacity: 0.6;
+}
+.core_three_slot.is_empty .core_three_body,
+.core_three_slot.is_empty .core_three_text { opacity: 0; transform: translateY(8px); }
+.core_three_slot.is_glow { animation: core_three_glow 1400ms ease-in-out infinite; }
+@keyframes core_three_glow {
+    0%, 100% { box-shadow: inset 0 0 0 calc(var(--size) * 2.5 / 150) #e2c65a, 0 0 0 rgba(238, 51, 56, 0); }
+    50% { box-shadow: inset 0 0 0 calc(var(--size) * 3 / 150) #ee3338, 0 0 calc(var(--size) * 22 / 150) rgba(238, 51, 56, 0.35); }
+}

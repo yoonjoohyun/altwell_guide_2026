@@ -13,4 +13,9 @@
 <!--#include file="business_flow_card.asp"-->
 <!--#include file="subscription_system_frame.asp"-->
 <!--#include file="cursor_click_icon.asp"-->
+<!--#include file="referral_point_tag.asp"-->
+<!--#include file="referral_link_line.asp"-->
+<!--#include file="rf_group_frame.asp"-->
+<!--#include file="point_to_cash_card.asp"-->
+<!--#include file="core_three_slot.asp"-->
 </div>

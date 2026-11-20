@@ -8,8 +8,8 @@
 <script>window.GUIDE_ROOT="<%=GuideAppRoot()%>";</script>
 <!--#include file="includes/fonts.asp"-->
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/main.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css"/>
-<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide04.css?v=20261118s01"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/icon_style.css?v=20261120s02"/>
+<link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide04.css?v=20261120s02"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/guide_close.css?v=20261006s10"/>
 <link rel="stylesheet" href="<%=GuideAppRoot()%>/_css/video_controller.css"/>
 <style>
@@ -25,6 +25,21 @@
 <!--#include file="includes/series/guide04/scenes/scene01.constants.js.asp"-->
 <!--#include file="includes/series/guide04/scenes/scene01.setup.js.asp"-->
 <!--#include file="includes/series/guide04/scenes/scene01.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene02.constants.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene02.setup.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene02.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene03.constants.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene03.setup.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene03.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene04.constants.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene04.setup.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene04.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene05.constants.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene05.setup.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene05.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene06.constants.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene06.setup.js.asp"-->
+<!--#include file="includes/series/guide04/scenes/scene06.js.asp"-->
 <!--#include file="includes/series/guide04/guide04.asp"-->
 <script>try{SeriesGuide04.init();}catch(e){console.error(e);}if(window.PageLoading)PageLoading.ready();</script>
 </body>
