@@ -745,9 +745,11 @@ var Guide03Simulator = (function(){
     var step = STEPS[index];
     if(!step || solved[index]) return;
     if(!goalMet(step, board)){
+      SimSfx.play('wrong');
       showFeedback(false, failText(step, board));
       return;
     }
+    SimSfx.play('correct');
     solved[index] = true;
     saved[index] = copyState(board);
     syncMotion();
@@ -765,9 +767,11 @@ var Guide03Simulator = (function(){
         void btn.offsetWidth;
         btn.classList.add('is-wrong');
       }
+      SimSfx.play('wrong');
       showFeedback(false, step.fail);
       return;
     }
+    SimSfx.play('correct');
     solved[index] = true;
     saved[index] = copyState(board);
     btn = document.querySelector('.sim-verdict-btn[data-pass="' + (pass ? '1' : '0') + '"]');
@@ -837,9 +841,11 @@ var Guide03Simulator = (function(){
       btn.classList.remove('is-wrong');
       void btn.offsetWidth;
       btn.classList.add('is-wrong');
+      SimSfx.play('wrong');
       showFeedback(false, '다시 한번 골라 보세요.');
       return;
     }
+    SimSfx.play('correct');
     solved[index] = true;
     lockQuiz(step);
   }
@@ -924,11 +930,13 @@ var Guide03Simulator = (function(){
     if(!solved[index]) return;
     if(typeof ReadLog !== 'undefined') ReadLog.simulation('guide03', index + 1);
     if(index >= STEPS.length - 1){
+      SimSfx.play('result');
       motionToken++;
       releaseScenes();
       showResult();
       return;
     }
+    SimSfx.play('next');
     go(index + 1);
   }
 

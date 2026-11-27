@@ -111,6 +111,21 @@ ListSectionActive = "guide"
           <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
         </div>
       </div>
+      <div class="vcard entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide05_smartguide.asp?from=guide">
+        <div class="vc-thumb"><div class="vc-thumb-inner g5">
+          <span>MATCHING<br>BONUS<br>GUIDE</span><div class="vc-play">▶</div>
+        </div></div>
+        <div class="vc-body">
+          <div class="vc-top"><span style="display:none;" class="vc-step">GUIDE 05</span><span class="vc-new">NEW</span></div>
+          <div class="vc-title">매칭보너스 알아보기</div>
+          <div class="vc-desc">Base 사업자의 추천 회원 실적을 기반으로 지급되는 매칭보너스의 기본 구조를 알아보세요.</div>
+          <div class="vc-meta">
+            <span class="vc-meta-grid">4분 42초</span>
+            <span class="vc-meta-list">4분 42초 (7/7)</span>
+          </div>
+          <div class="vc-prog"><div class="vc-prog-fill" style="width:0%"></div></div>
+        </div>
+      </div>
       <div class="vcard" onclick="location.href='03_sep_growth_smartguide.asp?from=guide'" style="display:none;">
         <div class="vc-thumb"><div class="vc-thumb-inner g3">
           <span>?</span><div class="vc-play">▶</div>

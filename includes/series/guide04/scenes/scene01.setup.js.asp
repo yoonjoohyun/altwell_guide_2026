@@ -13,12 +13,10 @@ function setupGuide04Scene01(canvas){
   var cols = K.el('div', 'g04-cols g04-s01-cols');
   var kinds = ['auto', 'pack', 'auto', 'pack', 'auto', 'pack'];
   var partners = [];
-  var self = K.member({ id: 'g04-s01-self', label: '본인', cap: 'BASE사업자', kind: 'self' });
+  var self = K.member({ id: 'g04-s01-self', label: '본인', cap: 'Base 사업자', kind: 'self' });
   var baseDock = K.dock(self.fig, 'g04-s01-base', 'base_business_icon', true);
   var tag = K.tag(0);
-  var rightChip = K.infoBadge('권리소득', 'R', 'is_green');
-  var chipSlot = K.grow(rightChip || K.chip('권리소득'));
-  var tagSlot = K.grow(tag);
+  var tagSlot = K.under(self, K.grow(tag));
   var deny = K.overlay('status_cross_icon');
   var sum;
 
@@ -35,19 +33,25 @@ function setupGuide04Scene01(canvas){
     partners.push({ mem: mem, prod: prod, prodNode: prod.querySelector('.g04-product'), kind: kind });
   });
 
-  selfRow.appendChild(chipSlot);
+  selfRow.appendChild(K.el('div'));
   selfRow.appendChild(self.slot);
-  selfRow.appendChild(tagSlot);
+  selfRow.appendChild(K.el('div'));
   tree.appendChild(svg);
   tree.appendChild(selfRow);
   tree.appendChild(cols);
 
   sum = K.threeSlots([
-    { text: 'BASE 유지', build: function(body){ body.appendChild(K.compact('base_business_icon')); } },
-    { text: '신규 회원 추천', build: function(body){ body.appendChild(K.member({ label: '신규', kind: 'new' }).wrap); } },
+    { text: 'Base 사업자 자격 유지', build: function(body){ body.appendChild(Guide04.cloneTemplate('base_business_icon')); } },
+    { text: '신규 회원 추천', build: function(body){
+        var nm = K.member({ label: '신규', kind: 'new' });
+        nm.wrap.classList.add('is-big');
+        body.appendChild(nm.wrap);
+      } },
     { text: '제품 이용 지원', build: function(body){
-        body.appendChild(K.compact('autoship_icon'));
-        body.appendChild(K.product('pack', { hidden: false, mini: true }));
+        var col = K.el('div', 'g04-sum-col');
+        col.appendChild(Guide04.cloneTemplate('autoship_icon'));
+        col.appendChild(K.product('pack', { hidden: false }));
+        body.appendChild(col);
       } }
   ], 'g04-sum g04-phase is-hidden');
 
@@ -63,7 +67,7 @@ function setupGuide04Scene01(canvas){
   return {
     inner: m.inner, stage: m.stage, badge: badge, board: board, tree: tree,
     svg: svg, paths: paths, self: self, baseDock: baseDock, tag: tag, tagSlot: tagSlot,
-    chipSlot: chipSlot, partners: partners, deny: deny, sum: sum
+    partners: partners, deny: deny, sum: sum
   };
 }
 </script>

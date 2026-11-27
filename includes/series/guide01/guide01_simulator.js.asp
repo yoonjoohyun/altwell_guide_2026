@@ -297,12 +297,14 @@ var Guide01Simulator = (function(){
       btn.classList.remove('is-wrong');
       void btn.offsetWidth;
       btn.classList.add('is-wrong');
+      if(typeof SimSfx !== 'undefined') SimSfx.play('wrong');
       if(feedback){
         feedback.className = 'sim-feedback sim-feedback-incorrect';
         feedback.innerHTML = '<span class="sim-feedback-icon">!</span><span class="sim-feedback-text">다시 한번 골라 보세요.</span>';
       }
       return;
     }
+    if(typeof SimSfx !== 'undefined') SimSfx.play('correct');
     solved[index] = true;
     lockCorrect(step);
     setChrome(index, false);
@@ -334,10 +336,12 @@ var Guide01Simulator = (function(){
     if(!solved[index]) return;
     if(typeof ReadLog !== 'undefined') ReadLog.simulation('guide01', index + 1);
     if(index >= STEPS.length - 1){
+      if(typeof SimSfx !== 'undefined') SimSfx.play('result');
       motionToken++;
       showResult();
       return;
     }
+    if(typeof SimSfx !== 'undefined') SimSfx.play('next');
     go(index + 1);
   }
 

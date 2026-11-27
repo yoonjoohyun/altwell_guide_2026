@@ -45,6 +45,7 @@
 <!--#include file="includes/series/guide01/scenes/scene07.setup.js.asp"-->
 <!--#include file="includes/series/guide01/scenes/scene07.js.asp"-->
 <!--#include file="includes/sim_voice.js.asp"-->
+<!--#include file="includes/sim_sfx.js.asp"-->
 <!--#include file="includes/components/guide_close_panel.js.asp"-->
 <!--#include file="includes/series/guide01/guide01_simulator.js.asp"-->
 

@@ -12,7 +12,7 @@ async function guide04Scene04Click(A, target){
   await K.cursorTo(A.cursor, A.stage, target, 6, 10);
   if(ray){
     ray.classList.add('g04-pulse');
-    await wait(520);
+    await wait(660);
     ray.classList.remove('g04-pulse');
   }
 }
@@ -79,13 +79,16 @@ async function runGuide04Scene04(tl, A, ctx){
   /* 3단 추천 체인 */
   if(await X(T.chainMembers[0])) return;
   await K.open(A.upper.slot, sch);
+  K.fadeIn(A.baseUp, sch);
   await K.open(A.tagUpSlot, sch);
   if(await X(T.chainMembers[1])) return;
   await K.open(A.linkSlot1, sch);
   await Promise.all([K.open(A.me.slot, sch), K.open(A.tagMeSlot, sch)]);
+  K.fadeIn(A.baseMe, sch);
   if(await X(T.chainMembers[2])) return;
   await K.open(A.linkSlot2, sch);
   await Promise.all([K.open(A.low.slot, sch), K.open(A.tagLowSlot, sch)]);
+  K.fadeIn(A.baseLow, sch);
 
   /* 나의 이용 실적은 내 추천포인트에 포함되지 않는다 */
   if(await X(T.badges)) return;

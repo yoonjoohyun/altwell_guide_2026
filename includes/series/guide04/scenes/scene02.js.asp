@@ -42,9 +42,11 @@ async function runGuide04Scene02(tl, A, ctx){
   if(await X(T.partner)) return;
   await K.open(A.partner.slot, sch);
   if(await X(T.line)) return;
-  K.drawLines(A.tree, A.svg, A.paths, A.self.icon, [A.partner.icon], true, 0.94, 0.18);
+  K.drawLines(A.tree, A.svg, A.paths, A.self.wrap, [A.partner.icon], true, 1, 0.12);
   if(await X(T.auto)) return;
   await K.open(A.autos[0], sch);
+  if(await X(T.boxA)) return;
+  await K.open(A.boxes[0], sch);
   if(await X(T.check)) return;
   await K.fadeIn(A.checkMark, sch);
   if(await X(T.cal)) return;
@@ -63,7 +65,7 @@ async function runGuide04Scene02(tl, A, ctx){
   /* 한 명이 여러 상품을 이용해도 1P */
   for(i = 0; i < T.extra.length; i++){
     if(await X(T.extra[i])) return;
-    await K.open(A.autos[i + 1], sch);
+    await K.open(A.boxes[i + 1], sch);
   }
   if(await X(T.one)) return;
   await K.open(A.oneSlot, sch);
@@ -75,22 +77,27 @@ async function runGuide04Scene02(tl, A, ctx){
   A.partner.fig.classList.remove('is-ring');
   await K.leave(A.single, sch);
   await K.reveal(A.gridWrap, sch);
-  K.drawLines(A.tree, A.svg, A.paths, A.self.icon, [A.gridWrap], true, 0.94, 0);
+  K.drawLines(A.tree, A.svg, A.paths, A.self.wrap, [A.gridWrap], true, 1, 0);
   for(i = 0; i < A.gridMembers.length; i++){
     A.gridMembers[i].wrap.style.opacity = '1';
     await wait(110);
   }
   if(await X(T.gridCoins)) return;
+  var flights = [];
   for(i = 0; i < A.gridMembers.length; i++){
-    K.fly(A.gridMembers[i].fig, A.tag, A.stage, { text: '1P' });
-    await wait(70);
+    flights.push(K.fly(A.gridMembers[i].fig, A.tag, A.stage, { text: '1P' }).then(function(){
+      K.tagSet(A.tag, A.tag.value + 1, true);
+    }));
+    await wait(200);
   }
-  await K.tagCount(A.tag, 10, 900);
+  await Promise.all(flights);
+  K.tagSet(A.tag, 10, false);
 
   /* 동급·추월·RF 독립해도 추천관계 유지 */
   if(await X(T.promote)) return;
-  A.svg.classList.add('is-solid');
   await K.open(A.promoSlot, sch);
+  A.paths[1].classList.add('is-solid');
+  K.drawLine(A.tree, A.svg, A.paths, 1, A.self.wrap, A.gridMembers[0].icon, 1, 0.12, true);
   for(i = 0; i < T.medals.length; i++){
     if(await X(T.medals[i])) return;
     await guide04Scene02Medal(A, i);
@@ -105,7 +112,7 @@ async function runGuide04Scene02(tl, A, ctx){
     if(await X(T.monthLit[i])) return;
     A.monthCards[i].classList.add('is-lit');
     await K.fly(A.monthCards[i], A.tagB.tagNode, A.stage, { text: '10P' });
-    K.tagSet(A.tagB, 10 * (i + 2), true);
+    K.tagSet(A.tagB, 10 * (i + 1), true);
   }
   if(await X(T.cont)) return;
   await K.open(A.contSlot, sch);

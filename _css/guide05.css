@@ -1,0 +1,307 @@
+/* guide05 — 매칭보너스 알아보기. guide04.css 위에 얹는다(공통 도구·톤 재사용) */
+
+/* 뱃지 팝업 */
+.g04-canvas .g05-pop{animation:g05-pop 420ms cubic-bezier(.2,.9,.3,1.2) both}
+@keyframes g05-pop{
+  0%{opacity:0;transform:scale(.55)}
+  60%{opacity:1;transform:scale(1.08)}
+  100%{opacity:1;transform:scale(1)}
+}
+
+/* 가슴 위치 지위 에셋 */
+.g04-canvas .g05-chest{
+  position:absolute;
+  left:64%;
+  top:56%;
+  z-index:5;
+  line-height:0;
+}
+.g04-canvas .g05-chest .lev_sp,
+.g04-canvas .g05-chest .lev_fc,
+.g04-canvas .g05-chest .lev_gc,
+.g04-canvas .g05-chest .lev_dc{--size:60px}
+.g04-canvas .g05-chest .lev_rf{--size:40px}
+.g05-empty-medal{
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  box-sizing:border-box;
+  display:grid;
+  place-items:center;
+  border:3px dashed #c7a417;
+  background:rgba(255,255,255,.7);
+  color:#8a6d0b;
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+  font-size:22px;
+  font-weight:900;
+  line-height:1;
+}
+
+/* 씬1 비교 화면 */
+.g05-compare{flex-direction:row;align-items:flex-start;justify-content:center;gap:0}
+.g05-cmp-col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:200px;padding:6px 26px}
+.g05-cmp-divider{align-self:stretch;width:2px;border-radius:2px;background:rgba(199,164,23,.45)}
+.g04-canvas .g05-cmp-badge.is-small .recommend_bonus_icon_o{--size:34px}
+.g04-canvas .g05-cmp-badge.is-strong .recommend_bonus_icon_o{--size:56px;box-shadow:inset 0 0 0 2px #C7A417, 0 0 0 4px rgba(255,215,56,.45), 0 8px 18px rgba(120,90,10,.28)}
+.g05-cmp-col.is-left{opacity:.88}
+.g04-canvas .g05-start{font-size:17px;padding:9px 20px}
+
+/* 씬2 */
+.g05-header{display:flex;justify-content:center;line-height:0}
+.g05-mid{gap:14px;align-items:center}
+.g05-rates{display:flex;align-items:flex-start;justify-content:center;gap:16px}
+.g05-rate{display:flex;flex-direction:column;align-items:center;gap:10px;padding:12px 18px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 2px #E2C65A, 0 4px 10px rgba(80,60,10,.12)}
+.g05-rate-meds{display:flex;align-items:center;justify-content:center;gap:8px;min-height:44px}
+.g04-canvas .g05-rate-meds .lev_sp,
+.g04-canvas .g05-rate-meds .lev_fc,
+.g04-canvas .g05-rate-meds .lev_gc,
+.g04-canvas .g05-rate-meds .lev_dc{--size:60px}
+.g04-canvas .g05-rate-meds .lev_rf{--size:40px}
+.g05-kids-wrap{display:flex;flex-direction:column;align-items:center;gap:14px;position:relative;z-index:1}
+.g05-kids{justify-content:center}
+.g05-subnote{
+  font-family:var(--font-sans,'MinSansVF',sans-serif);
+  font-size:14px;
+  font-weight:800;
+  color:#5c4a12;
+  white-space:nowrap;
+}
+
+/* 씬1 — 멤버 캡션 자리의 Base 사업자 뱃지 */
+.g05-basecap{display:flex;justify-content:center;line-height:0;margin-top:calc(-5px - var(--g04-member) * .08);position:relative;z-index:3}
+.g04-canvas .g05-basecap .base_business_icon_o{--size:32px}
+.g04-canvas .g05-basecap.is-sm .base_business_icon_o{--size:26px}
+.g05-basecap.g05-pulse{animation:g05-badge-pulse 950ms ease-in-out 2}
+@keyframes g05-badge-pulse{
+  0%,100%{filter:none;transform:scale(1)}
+  50%{filter:drop-shadow(0 0 10px rgba(255,200,40,.95));transform:scale(1.14)}
+}
+.g04-grow-clip > .g05-basecap{margin-top:0;top:calc(-5px - var(--g04-member) * .08)}
+
+/* 장면2 — 추천보너스 / 매칭보너스(멤버 연출) */
+.g05-compare{flex-direction:column;align-items:center;justify-content:center;gap:0;min-width:520px}
+.g05-pane{display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 18px}
+.g05-cmp-row{display:flex;align-items:flex-start;justify-content:center;gap:0}
+.g05-cmp-row > .g04-grow:not(.is-member){margin-top:44px}
+.g05-cmp-row .g04-s05-link{width:56px;margin:0 10px}
+.g05-newcol{display:flex;flex-direction:column;align-items:center;gap:8px}
+.g05-pane .g04-member{--g04-member:92px}
+
+/* 상승 화살표 (루프) */
+.g05-arrow{display:inline-block;width:40px;height:52px;line-height:0;align-self:center;margin-left:8px}
+.g05-arrow .g05_arrow_up{width:100%;height:100%;animation:g05-arrow-loop 1.3s ease-out infinite;filter:drop-shadow(0 3px 5px rgba(15,100,60,.35))}
+@keyframes g05-arrow-loop{
+  0%{transform:translateY(10px);opacity:0}
+  25%{opacity:1}
+  70%{opacity:1}
+  100%{transform:translateY(-10px);opacity:0}
+}
+.g04-canvas .g05-chest{display:flex;align-items:center}
+.g04-canvas .g05-chest .g05-arrow{width:38px;height:50px;margin-left:0}
+
+/* 출발점 = Base 사업자 유지 */
+.g05-startrow{display:flex;align-items:center;justify-content:center;gap:8px;position:relative;z-index:1}
+.g04-canvas .g05-eq{font-size:26px;font-weight:900;color:#8a6d0b;font-family:var(--font-sans,'MinSansVF',sans-serif);line-height:1;padding:0 2px}
+.g04-member.has-under > .g05-basecap{margin-top:calc(32px - var(--g04-member) * .08)}
+
+/* 씬2: 접힌 매칭보너스 뱃지를 본인 머리 바로 위(5px)에 */
+/* 멤버 아이콘 머리는 박스 상단에서 20% 아래에서 시작 → 눈에 보이는 머리 기준 5px (120px*20%=24px + 박스 간격 9px) */
+.g05-s02-selfrow{margin-top:0}
+
+/* 조직 성장 보상 (패널 정중앙 플로팅) */
+.g04-canvas .g05-growbadge{display:inline-flex;align-items:center;justify-content:center;padding:14px 30px;border-radius:16px;background:linear-gradient(120deg,#ffd738,#ffe373,#e6c92a);box-shadow:inset 0 0 0 3px #c7a417, 0 0 0 5px rgba(255,215,56,.45), 0 10px 24px rgba(120,90,10,.32);color:#4a3a05;font-family:var(--font-sans,'MinSansVF',sans-serif);font-size:30px;font-weight:900;white-space:nowrap}
+
+/* 출발점 = Base 사업자 유지 : 한 덩어리 칩 안에서 글자만 순차 등장 */
+.g04-canvas .g05-start-one{gap:12px;padding:10px 26px}
+.g05-st{display:inline-block}
+.g05-st.is-pre{visibility:hidden}
+.g05-st.is-eq{font-weight:900}
+
+.g05-tagwrap{padding-top:6px;line-height:0}
+
+/* 씬2: ? 를 점선 원 정중앙에 (chest flex 규칙보다 우선) */
+.g04-canvas .g05-chest.g05-empty-medal{display:grid;place-items:center;text-align:center;padding:0}
+
+/* 씬1 통합 트리(매칭보너스): 신규 → Base 사업자 변화 + 옆 화살표(자리 차지 안 함) */
+.g05-memcol{position:relative}
+.g05-treeB .g04-cols{zoom:1.15}
+
+/* ===== 씬3: 매칭포인트 산정 기준 ===== */
+.g04-canvas .g05-s03-badge .guide_info_badge{--size:52px}
+.g05-s03-cols{gap:6px;align-items:flex-start}
+.g05-line{position:relative;padding:8px 10px 10px;border-radius:16px;gap:4px;transition:filter 420ms ease,background 420ms ease,box-shadow 420ms ease}
+.g05-linekids{display:flex;gap:6px;justify-content:center}
+.g05-line.g05-hl{background:rgba(120,210,140,.22);box-shadow:inset 0 0 0 3px #4fbf6a}
+.g05-line.g05-out{filter:grayscale(1) brightness(.92);opacity:.6;background:rgba(140,140,140,.14);box-shadow:inset 0 0 0 3px #b0b0b0}
+.g04-canvas .g05-s03-cols > .g05-stamp{position:absolute;left:66%;top:50%;transform:translate(-50%,-50%) rotate(-10deg);z-index:8;pointer-events:none;filter:none}
+.g04-canvas .g05-s03-cols > .g05-stamp .unavailable_stamp{--size:86px}
+.g05-qualcol{gap:6px}
+.g05-qual{outline:3px dashed #9aa3b8;outline-offset:4px;border-radius:16px}
+.g04-canvas .g05-wide{white-space:nowrap;padding:8px 20px}
+
+/* ===== 씬4: 매칭포인트 지급 방식 ===== */
+.g05-s04-body{flex-direction:row;align-items:stretch;gap:18px}
+.g05-s04-gaugecol{display:flex;align-items:stretch}
+.g05-gauge{display:flex;flex-direction:column;gap:6px;padding:8px;border-radius:14px;background:#fff;box-shadow:inset 0 0 0 2px #C9D6EE}
+.g05-cell{width:54px;flex:1 1 0;min-height:44px;border-radius:9px;background:#E7ECF6;box-shadow:inset 0 0 0 2px #cdd6ea;transition:background 420ms ease,box-shadow 420ms ease}
+.g05-cell.is-on{background:linear-gradient(120deg,#ffd738,#ffe373);box-shadow:inset 0 0 0 2px #C7A417}
+.g05-cell.is-sp{background:linear-gradient(120deg,#3f78e6,#2f5fc9);box-shadow:inset 0 0 0 2px #1d419a}
+.g05-cell.is-gc{background:linear-gradient(120deg,#ff9a3c,#e9741a);box-shadow:inset 0 0 0 2px #a84d0c}
+.g05-cell.g05-blink{animation:g05-blink 800ms ease-in-out infinite}
+@keyframes g05-blink{0%,100%{opacity:1}50%{opacity:.28}}
+.g05-s04-sum{gap:22px;align-items:stretch;justify-content:center;padding:0}
+.g04-board.g05-s04-bare{background:none;box-shadow:none;padding:0;min-width:0}
+.g04-canvas .g05-sumrow{display:flex;align-items:center;gap:28px;padding:22px 34px;border-radius:22px;background:#fff;box-shadow:inset 0 0 0 2px #C9D6EE,0 8px 20px rgba(31,63,168,.14)}
+.g04-canvas .g05-sumico{display:flex;align-items:center;justify-content:center;flex:0 0 250px;min-height:110px}
+.g04-canvas .g05-sumrow-lv .g05-sumico{flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.g04-canvas .g05-eqrow{display:grid;grid-template-columns:150px 28px 54px;justify-content:center;align-items:center;column-gap:6px}
+.g04-canvas .g05-eqlev{display:flex;align-items:center;justify-content:flex-end;line-height:0}
+.g04-canvas .g05-eq{font-size:26px;font-weight:800;color:#26324d;line-height:1;text-align:center}
+.g04-canvas .g05-sumlev{line-height:0}
+.g04-canvas .g05-sumlev .lev_sp,.g04-canvas .g05-sumlev .lev_fc,.g04-canvas .g05-sumlev .lev_gc{--size:54px}
+.g04-canvas .g05-sumlev .lev_irf{--size:38px;margin:0 6px 0 2px}
+.g04-canvas .g05-coin{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;color:#6a4a00;background:radial-gradient(circle at 35% 30%,#fff3a8,#ffd738 55%,#e0a812);box-shadow:inset 0 0 0 3px #c7a417,inset 0 0 0 5px rgba(255,255,255,.5)}
+.g04-canvas .g05-sumtxt{flex:1;font-size:26px;line-height:1.5;font-weight:600;color:#26324d;text-align:left}
+.g04-canvas .g05-sumtxt em{font-style:normal;color:#1f3fa8;font-weight:800}
+.g04-canvas .g05-sumtxt b{display:inline-block;margin-top:4px;padding:2px 14px;border-radius:10px;background:linear-gradient(120deg,#1f3fa8,#2f62e8);color:#fff;font-weight:800}
+
+/* ===== 씬5: 왜 Base 사업자를 육성할까 ===== */
+.g05-s05-badges{display:flex;align-items:center;justify-content:center;gap:28px}
+.g05-s05-row{flex-direction:row;align-items:center;gap:26px}
+.g05-s05-prods{display:flex;flex-direction:column;align-items:center;gap:8px}
+.g05-s05-cols{gap:0}
+.g04-canvas .g05-hub .base_business_icon_o{--size:56px}
+.g05-s05-flow{padding-top:6px}
+.g05-s05-org{align-items:center;justify-content:center}
+.g05-s05-tree{position:relative;display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:auto;column-gap:10px;row-gap:8px;padding:0 130px;z-index:1}
+.g05-s05-tree > .g04-lines{z-index:0}
+.g05-s05-cell{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center}
+.g05-s05-side{position:absolute;left:calc(50% + 62px);top:10%;display:flex;flex-direction:column;align-items:flex-start;gap:8px;z-index:5;white-space:nowrap}
+.g05-s05-prodrow{display:flex;gap:6px;align-items:center;justify-content:center}
+.g05-s05-pside{position:absolute;left:calc(50% + 56px);top:14%;display:flex;flex-direction:column;align-items:flex-start;gap:6px;z-index:5}
+.g05-s05-pside.is-left{left:auto;right:calc(50% + 56px);align-items:flex-end}
+.g05-s05-cell:nth-child(n+5) .g05-s05-pside{left:calc(50% + 40px)}
+.g05-s05-cell:nth-child(n+5) .g05-s05-pside.is-left{left:auto;right:calc(50% + 40px)}
+.g05-s05-useboard,.g05-s05-trio{display:flex;flex-direction:column;align-items:center;gap:6px}
+.g05-s05-mini{display:flex;gap:4px;align-items:flex-end}
+
+/* ===== 씬6: 매칭보너스 핵심 내용 ===== */
+.g05-s06-a{gap:14px}
+.g05-s06-c,.g05-s06-d{align-items:center;justify-content:center}
+.g05-s06-tree{position:relative;display:grid;grid-template-columns:0px 0px 32px 32px 32px 32px 0px 0px;grid-template-rows:126px 0px 0px 0px;column-gap:0;row-gap:0;padding:0 150px 0 40px;z-index:1;transition:grid-template-columns 900ms cubic-bezier(.4,0,.2,1),grid-template-rows 900ms cubic-bezier(.4,0,.2,1)}
+.g05-s06-tree.is-two{grid-template-columns:repeat(8,32px);grid-template-rows:126px 126px 0px 0px}
+.g05-s06-tree.is-three{grid-template-columns:repeat(8,56px);grid-template-rows:126px 126px 126px 40px}
+.g05-s06-tree > .g04-lines,.g05-s06-vtree > .g04-lines{z-index:0}
+.g04-canvas .g05-s06-tree .g04-member.is-sm,.g04-canvas .g05-s06-vtree .g04-member.is-sm{--g04-member:96px}
+.g04-canvas .g05-s06-tree .g05-basecap.is-sm .base_business_icon_o{--size:23px}
+.g04-canvas .g05-s06-vtree .g05-basecap.is-sm .base_business_icon_o{--size:30px}
+.g05-s06-side{position:absolute;left:calc(50% + 56px);top:8px;z-index:5;white-space:nowrap;display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.g05-s06-lside{position:absolute;right:calc(50% + 56px);top:18px;z-index:5;white-space:nowrap}
+.g05-s06-tree > .g05-stamp{position:absolute;left:75%;top:58%;transform:translate(-50%,-50%) rotate(-10deg);z-index:8;pointer-events:none;filter:none}
+.g04-canvas .g05-s06-tree > .g05-stamp .unavailable_stamp{--size:96px}
+.g05-s05-cell{transition:opacity 420ms ease,filter 420ms ease}
+.g05-s05-cell:has(> .g05-dim){filter:grayscale(1) brightness(.92);opacity:.5}
+.g05-s06-vtree{position:relative;display:grid;grid-template-columns:96px;grid-template-rows:126px 0px 0px;padding:0 170px;z-index:1;transition:grid-template-rows 800ms cubic-bezier(.4,0,.2,1)}
+.g05-s06-vtree.is-two{grid-template-rows:126px 126px 0px}
+.g05-s06-vtree.is-three{grid-template-rows:126px 126px 126px}
+.g05-pcoins{display:flex;gap:4px;align-items:center}
+.g05-pc{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:900 15px var(--font-sans,'MinSansVF',sans-serif);color:#5c4508;background:radial-gradient(circle at 35% 30%,#ffe9a0,#e0b922 55%,#b88910);box-shadow:inset 0 0 0 2px #a67c0c,0 3px 7px rgba(0,0,0,.18);transition:opacity 300ms ease}
+.g05-pc.is-used{opacity:.15}
+.g05-s06-drow{gap:18px;align-items:flex-start}
+.g05-linetag{font-size:13px;font-weight:800;color:#41507a;font-family:var(--font-sans,'MinSansVF',sans-serif);text-align:center}
+.g05-linetag{margin-top:6px}
+.g05-s06-c .g05-s03-cols{align-self:center}
+
+/* 씬1: 조직 성장 보상 테두리 글로우 / 육성 칩 ↔ 출발점 칩 같은 자리 */
+.g04-canvas .g05-growbadge{animation:g05-glow 900ms ease-in-out infinite}
+@keyframes g05-glow{
+  0%,100%{box-shadow:inset 0 0 0 3px #c7a417,0 0 0 5px rgba(255,215,56,.45),0 0 14px 4px rgba(255,215,56,.55),0 10px 24px rgba(120,90,10,.32)}
+  50%{box-shadow:inset 0 0 0 3px #f2c200,0 0 0 8px rgba(255,225,90,.75),0 0 34px 12px rgba(255,215,56,.95),0 10px 24px rgba(120,90,10,.32)}
+}
+.g05-swap{display:grid;justify-items:center;align-items:start}
+.g05-swap > *{grid-area:1/1}
+
+/* 씬3: 핵심 강조 칩(금색 대신 짙은 청색 + 빛) / 붉은 안내 뱃지 */
+.g04-canvas .g05-key{white-space:nowrap;padding:9px 22px;font-size:17px;background:linear-gradient(120deg,#1f3fa8,#2f62e8);color:#fff;box-shadow:inset 0 0 0 2px #0f2a85,0 0 0 3px rgba(47,98,232,.28),0 6px 16px rgba(31,63,168,.35)}
+.g04-canvas .g05-s03-badge + * .guide_info_badge.is_red{--size:40px}
+.g04-canvas .g04-selfrow .guide_info_badge.is_red{--size:38px}
+.g04-canvas .g05-line > .g05-stamp{position:absolute;left:50%;top:66%;transform:translate(-50%,-50%) rotate(-10deg);z-index:8;pointer-events:none;filter:none}
+.g04-canvas .g05-line > .g05-stamp .unavailable_stamp{--size:86px}
+
+/* 씬3: 좌상단 고정 안내 뱃지 */
+#g05-s03-board{padding-top:58px;min-width:700px}
+#g05-s03-board > .g05-notsum{position:absolute;left:16px;top:14px;z-index:5}
+.g04-canvas #g05-s03-board > .g05-notsum .guide_info_badge.is_red{--size:38px}
+#g05-s03-board > .g05-qualabs{position:absolute;left:16px;top:60px;z-index:5}
+.g04-canvas #g05-s03-board > .g05-qualabs .guide_info_badge.is_red{--size:38px}
+
+/* 씬4: 피라미드 구조 + 패널 상단에 반 걸친 매칭보너스 뱃지 */
+#g05-s04-board{padding-top:44px}
+#g05-s04-board > .g05-topbadge{position:absolute;left:50%;top:0;transform:translate(-50%,-50%);z-index:6;line-height:0}
+.g04-canvas #g05-s04-board > .g05-topbadge .matching_bonus_icon_o{--size:50px}
+.g05-s04-tree{position:relative;display:grid;grid-template-columns:repeat(4,auto);grid-auto-rows:auto;column-gap:8px;row-gap:6px;padding:0 102px 0 66px;z-index:1}
+.g05-s04-tree > .g04-lines{z-index:0}
+.g05-s04-cell{position:relative;z-index:1;display:flex;justify-content:center;align-items:flex-start}
+.g05-s04-side{position:absolute;left:calc(50% + 62px);top:18%;display:flex;flex-direction:column;align-items:flex-start;gap:6px;z-index:5;white-space:nowrap}
+.g05-s04-tree .g04-medal{top:-6px;right:-30px}
+.g05-s04-side.is-left{left:auto;right:calc(50% + 62px);align-items:flex-end}
+
+.g04-canvas .g05-s05-trio .g05-basecap.is-sm .base_business_icon_o{--size:15px}
+.g05-s05-trio .g05-s05-mini{gap:2px}
+.g05-s05-useboard{gap:2px}
+
+/* 씬5: 자리 확보형 팝업(클립 없음) + 우하단 도킹 에셋 + 볼륨 확장 리사이즈 */
+.g04-canvas .g05-ph{opacity:0;transform:scale(.55);transition:opacity 380ms ease,transform 520ms cubic-bezier(.22,1.3,.4,1)}
+.g04-canvas .g05-ph.g05-ps{opacity:1;transform:none}
+.g05-s05-tree{grid-template-columns:0px 0px 32px 32px 32px 32px 0px 0px;grid-template-rows:126px 0px 0px 0px;column-gap:0;row-gap:0;padding:0;transition:grid-template-columns 900ms cubic-bezier(.4,0,.2,1),grid-template-rows 900ms cubic-bezier(.4,0,.2,1)}
+.g05-s05-tree.is-two{grid-template-columns:repeat(8,32px);grid-template-rows:126px 126px 0px 0px}
+.g05-s05-tree.is-three{grid-template-columns:repeat(8,48px);grid-template-rows:126px 126px 126px 0px}
+.g05-s05-tree.is-full{grid-template-columns:repeat(8,64px);grid-template-rows:126px 126px 126px 92px}
+.g04-canvas .g05-s05-tree .g04-member.is-xs{--g04-member:60px}
+.g05-s05-cell.is-k .g05-pov{left:58%}
+.g05-s05-cell.is-k .g05-pov.is-auto{bottom:34px}
+.g05-s05-cell.is-k .g05-pov.is-pack{bottom:14px}
+.g04-canvas .g05-s05-cell.is-k .g05-pov .g04-product.is-mini .autoship_icon_o,.g04-canvas .g05-s05-cell.is-k .g05-pov .g04-startpack.is-mini .g02_startpack_badge{--size:20px}
+.g04-canvas .g05-s05-tree .g04-member.is-sm{--g04-member:96px}
+.g04-canvas .g05-s05-tree .g05-basecap.is-sm .base_business_icon_o{--size:30px}
+.g05-s05-side{position:absolute;left:calc(50% + 44px);top:4px;display:grid;align-items:center;justify-items:start;z-index:5}
+.g05-s05-side > *{grid-area:1/1}
+.g05-pov{position:absolute;left:62%;z-index:6;opacity:0;line-height:0;transform-origin:left bottom;pointer-events:none;transition:opacity 320ms ease,transform 650ms cubic-bezier(.3,1.15,.4,1)}
+.g05-pov.is-auto{bottom:54px;transform:translate(-14px,-26px) scale(1.5)}
+.g05-pov.is-pack{bottom:30px;transform:translate(-14px,2px) scale(1.5)}
+.g05-pov.is-in{opacity:1}
+.g05-pov.is-docked{opacity:1;transform:none}
+.g05-pov .autoship_text,.g05-pov .g02_startpack_name{display:inline-block;max-width:96px;overflow:hidden;white-space:nowrap;transition:max-width 480ms ease,opacity 300ms ease}
+.g05-pov.is-fold .autoship_text,.g05-pov.is-fold .g02_startpack_name{max-width:0;opacity:0}
+.g05-pov.is-fold .autoship_icon_o{gap:0}
+.g05-pov.is-fold .g02_startpack_row{gap:0}
+.g04-canvas .g05-pov .g04-product.is-mini .autoship_icon_o{--size:26px}
+.g04-canvas .g05-pov .g04-startpack.is-mini .g02_startpack_badge{--size:26px}
+
+.g05-s05-trio .base_business_icon_o .base_text{display:inline-block;max-width:90px;overflow:hidden;white-space:nowrap;transition:max-width 450ms ease,opacity 300ms ease}
+.g05-s05-trio .base_business_icon_o{transition:gap 450ms ease}
+.g05-s05-trio .is-bfold .base_business_icon_o{gap:0}
+.g05-s05-trio .is-bfold .base_text{max-width:0;opacity:0}
+.g04-canvas .g05-s05-trio .g05-basecap.is-sm.is-bfold .base_business_icon_o{--size:24px}
+.g05-s05-trio .g05-basecap.is-bfold{position:absolute;left:12px;bottom:2px;margin:0;z-index:4}
+
+/* 씬5 요약 패널: 참고 비율(카드 1:1.4, 멤버 크기) + 등장에 따라 자연스럽게 밀리는 배치 */
+.g04-canvas .g04-sum.g05-s05-flow .core_three_slot{min-height:calc(var(--size) * 210 / 150)}
+.g04-canvas .g04-sum.g05-s05-flow .core_three_body .g04-member.is-xl{--g04-member:110px}
+.g04-canvas .g04-sum.g05-s05-flow .core_three_body .g05-s05-trio .g04-member{--g04-member:78px}
+.g04-canvas .g04-sum.g05-s05-flow .core_three_body .g05-s05-useboard .g04-member{--g04-member:90px}
+.g05-s05-flow .g05-pull{margin-bottom:var(--pull,-38px);transition:opacity 380ms ease,transform 520ms cubic-bezier(.22,1.3,.4,1),margin 560ms cubic-bezier(.4,0,.2,1)}
+.g05-s05-flow .g05-pull.g05-ps{margin-bottom:0}
+.g05-s05-flow .g05-pullrow{margin-top:-92px;transition:opacity 420ms ease,transform 520ms ease,margin 600ms cubic-bezier(.4,0,.2,1)}
+.g05-s05-flow .g05-pullrow.g05-ps{margin-top:0}
+.g05-s05-trio{gap:8px}
+
+/* 씬6 피라미드/세로 구조: 지위 메달을 가슴 위쪽으로 올려 Base 뱃지와 겹치지 않게 */
+.g04-canvas .g05-s06-tree .g05-chest,.g04-canvas .g05-s06-vtree .g05-chest{left:68%;top:34%}
+.g04-canvas .g05-s06-tree .g05-chest .lev_sp,.g04-canvas .g05-s06-tree .g05-chest .lev_gc,.g04-canvas .g05-s06-vtree .g05-chest .lev_sp,.g04-canvas .g05-s06-vtree .g05-chest .lev_gc{--size:54px}
+
+/* 씬4: Base 사업자 멤버에서 5P 생성 -> SP 에서 3P/2P 분리 */
+.g05-pc-lg{width:42px;height:42px;font-size:16px}
+.g05-s04-tree .g05-bcoin{position:absolute;top:-2px;right:-22px;z-index:6}
+.g05-s04-coins{display:flex;gap:6px;align-items:center}
+.g05-s04-tree .g04-member .g05-pc.g04-pulse{animation:g05-blink 800ms ease-in-out infinite}

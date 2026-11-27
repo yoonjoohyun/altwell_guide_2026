@@ -10,7 +10,7 @@ function guide04Scene03Lines(A, count, animateFrom){
   var icons = [];
   var i;
   for(i = 0; i < count; i++) icons.push(A.members[i].mem.icon);
-  G04Kit.drawLines(A.tree, A.svg, A.paths, A.self.icon, icons, animateFrom, 0.94, 0.18);
+  G04Kit.drawLines(A.tree, A.svg, A.paths, A.self.wrap, icons, animateFrom, 1, 0.12);
 }
 
 async function guide04Scene03Coin(A, index){
@@ -46,8 +46,6 @@ async function runGuide04Scene03(tl, A, ctx){
   if(await X(T.pack)) return;
   await K.open(A.members[0].prod, sch);
   guide04Scene03Lines(A, 1, false);
-  if(await X(T.refpts)) return;
-  await K.open(A.ptsSlot, sch);
   if(await X(T.tag)) return;
   await K.open(A.tagSlot, sch);
   if(await X(T.coin)) return;
@@ -56,16 +54,26 @@ async function runGuide04Scene03(tl, A, ctx){
   /* 스타트팩 2종을 모두 이용해도 최대 5포인트 */
   if(await X(T.kinds)) return;
   await K.open(A.kindsSlot, sch);
+  await wait(500);
+  for(i = 0; i < A.kindCards.length; i++){
+    A.kindCards[i].classList.remove('is-pre');
+    A.kindCards[i].classList.add('g04-popin-soft');
+    await wait(900);
+  }
+  A.maxChip.style.width = A.kinds.offsetWidth + 'px';
   if(await X(T.over)) return;
   await K.tagCount(A.tag, 10, 700);
-  await K.flashOverlay(A.deny, 900);
+  await wait(2500);
+  await K.flashOverlay(A.deny, 2500, 620);
   K.tagSet(A.tag, 5, true);
-  await K.open(A.maxSlot, sch);
+  A.members[0].col.classList.add('is-note-gone');
+  A.maxSlot.style.visibility = 'visible';
+  await Promise.all([K.closeSlot(A.calSlot, sch), K.open(A.maxSlot, sch)]);
 
   /* 개수가 아닌 신규 추천 회원 수 */
   if(await X(T.fewer)) return;
   A.kindCards.forEach(function(card){ card.classList.add('is-dim'); });
-  await K.flashOverlay(A.deny, 900);
+  await wait(900);
   await K.closeSlot(A.kindsSlot, sch);
   for(i = 0; i < T.members.length; i++){
     if(await X(T.members[i])) return;
@@ -81,6 +89,9 @@ async function runGuide04Scene03(tl, A, ctx){
   var arrows = A.flowNode ? A.flowNode.querySelectorAll('.business_flow_arrow') : [];
   for(i = 0; i < arrows.length; i++) arrows[i].classList.add('is-pulse');
   if(await X(T.once)) return;
-  await K.open(A.onceSlot, sch);
+  for(i = 0; i < A.onceSlots.length; i++){
+    await K.open(A.onceSlots[i], sch);
+    await wait(450);
+  }
 }
 </script>

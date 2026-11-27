@@ -82,6 +82,7 @@ var Guide04 = (function(){
     if(w >= 2 && h >= 2 && canvas.clientWidth && canvas.clientHeight){
       ratio = badgeAlone(stage, badge) ? 0.4 : (groupInset != null && groupInset > 0 ? groupInset : 0.8);
       fit = Math.min((canvas.clientWidth * ratio) / w, (canvas.clientHeight * ratio) / h);
+      if(stage._g04MaxScale && fit > stage._g04MaxScale) fit = stage._g04MaxScale;
       if(fit > 0) inner.style.setProperty('--group-scale', String(Math.round(fit * 1000) / 1000));
     }
     if(after) after();
@@ -181,6 +182,44 @@ function guide04EaseOpen(slot){
     slot.style.transition = '';
   });
 }
+
+/* 플로팅 열기: 자리는 빠르게 열고, 오브젝트는 잘리거나 서서히 나타나지 않고 튀어 오르듯 등장한다 */
+function guide04PopOpen(slot){
+  var h;
+  var w;
+  var anim;
+  var pop;
+  var clip = slot ? slot.querySelector('.g04-grow-clip') : null;
+  var child = clip ? clip.firstElementChild : null;
+  if(!slot) return Promise.resolve();
+  slot.style.transition = 'none';
+  slot.classList.add('is-open', 'is-settled');
+  h = slot.offsetHeight;
+  w = slot.offsetWidth;
+  if(h < 1 && w < 1){
+    slot.style.transition = '';
+    return Promise.resolve();
+  }
+  slot.style.overflow = 'hidden';
+  anim = slot.animate([
+    { height: '0px', width: '0px' },
+    { height: h + 'px', width: w + 'px' }
+  ], { duration: 380, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+  if(child){
+    pop = child.animate([
+      { opacity: 0, translate: '0 -14px', scale: '0.8', offset: 0 },
+      { opacity: 1, translate: '0 2px', scale: '1.04', offset: 0.6 },
+      { opacity: 1, translate: '0 0', scale: '1', offset: 1 }
+    ], { duration: 560, delay: 160, easing: 'cubic-bezier(.22,1,.36,1)', fill: 'both' });
+  }
+  function cleanup(){
+    anim.cancel();
+    if(pop) pop.cancel();
+    slot.style.overflow = '';
+    slot.style.transition = '';
+  }
+  return Promise.all([anim.finished, pop ? pop.finished : null]).then(cleanup, cleanup);
+}
 </script>
 
 <script>
@@ -230,7 +269,17 @@ var G04Kit = (function(){
       cap = el('div', 'g04-cap', o.cap);
       wrap.appendChild(cap);
     }
-    return { slot: grow(wrap), wrap: wrap, fig: fig, icon: icon, cap: cap };
+    var memberSlot = grow(wrap);
+    memberSlot.classList.add('is-member');
+    return { slot: memberSlot, wrap: wrap, fig: fig, icon: icon, cap: cap };
+  }
+
+  /* 멤버 에셋 하단에 살짝 겹쳐 붙는 슬롯(추천포인트 태그 등). 자리는 미리 확보하고 등장만 플로팅 */
+  function under(mem, slot){
+    mem.wrap.classList.add('has-under');
+    slot.classList.add('g04-under');
+    mem.fig.appendChild(slot);
+    return slot;
   }
 
   /* 멤버 하단 도킹 뱃지(접힌 상태). 숨김으로 시작 */
@@ -379,65 +428,105 @@ var G04Kit = (function(){
     };
   }
 
-  /* host 안에서 from → 각 to 로 선을 그린다.
-     animate: true=전체 / 숫자=그 인덱스부터 애니메이션 / false=없음 */
-  function drawLines(host, svg, paths, fromEl, toEls, animate, fromRatio, toRatio){
-    var w;
-    var h;
-    var from;
-    var i;
-    var animFrom = animate === true ? 0 : (typeof animate === 'number' ? animate : -1);
-    if(!host || !svg || !fromEl) return;
-    w = host.offsetWidth || 1;
-    h = host.offsetHeight || 1;
-    from = pointIn(fromEl, host, fromRatio == null ? 0.94 : fromRatio);
-    svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-    svg.setAttribute('width', String(w));
-    svg.setAttribute('height', String(h));
-    for(i = 0; i < paths.length; i++){
-      var to = toEls[i];
-      var path = paths[i];
-      if(!to){
-        path.setAttribute('d', '');
-        continue;
-      }
-      var pt = pointIn(to, host, toRatio == null ? 0.18 : toRatio);
-      path.setAttribute('d', 'M' + from.x + ' ' + from.y + ' L' + pt.x + ' ' + pt.y);
-      path.style.transition = 'none';
-      if(animFrom < 0 || i < animFrom){
-        path.style.strokeDashoffset = '0';
-        continue;
-      }
-      var len = path.getTotalLength ? path.getTotalLength() : 0;
-      path.style.strokeDashoffset = String(len || 0);
+  /* 점선: 연결 정보를 저장해 두고 매 프레임 요소 위치를 다시 읽어 그린다.
+     → 펼침 애니메이션·확대 비율·판 크기가 바뀌어도 선이 항상 두 요소에 붙어 있다. */
+  var LINE_REG = [];
+  var LINE_RAF = 0;
+  var LINE_GROW_MS = 720;
+
+  function lineTick(){
+    var now = performance.now();
+    var k;
+    for(k = LINE_REG.length - 1; k >= 0; k--){
+      if(!LINE_REG[k].host.isConnected){ LINE_REG.splice(k, 1); continue; }
+      renderLines(LINE_REG[k], now);
     }
+    LINE_RAF = LINE_REG.length ? window.requestAnimationFrame(lineTick) : 0;
+  }
+
+  function renderLines(cfg, now){
+    var host = cfg.host;
+    var w = host.offsetWidth || 1;
+    var h = host.offsetHeight || 1;
+    var i;
+    cfg.svg.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+    cfg.svg.setAttribute('width', String(w));
+    cfg.svg.setAttribute('height', String(h));
+    for(i = 0; i < cfg.paths.length; i++){
+      var path = cfg.paths[i];
+      var c = cfg.links[i];
+      if(!c || !c.from.isConnected || !c.to.isConnected){ path.setAttribute('d', ''); continue; }
+      var tb = c.to.getBoundingClientRect();
+      var fb = c.from.getBoundingClientRect();
+      if(!(tb.width > 0) || !(fb.width > 0)){ path.setAttribute('d', ''); continue; }
+      var a = pointIn(c.from, host, c.fr);
+      var z = pointIn(c.to, host, c.tr);
+      var p = Math.max(0, Math.min(1, (now - c.born) / LINE_GROW_MS));
+      p = 1 - Math.pow(1 - p, 3);
+      path.setAttribute('d', 'M' + a.x + ' ' + a.y + ' L' + (a.x + (z.x - a.x) * p) + ' ' + (a.y + (z.y - a.y) * p));
+    }
+  }
+
+  function lineCfg(host, svg, paths){
+    var k;
+    for(k = 0; k < LINE_REG.length; k++){
+      if(LINE_REG[k].svg === svg) return LINE_REG[k];
+    }
+    var cfg = { host: host, svg: svg, paths: paths, links: [] };
+    LINE_REG.push(cfg);
+    return cfg;
+  }
+
+  function connectLine(cfg, i, fromEl, toEl, fr, tr, grow){
+    var prev = cfg.links[i];
+    var same = prev && prev.from === fromEl && prev.to === toEl;
+    cfg.links[i] = { from: fromEl, to: toEl, fr: fr, tr: tr, born: same ? prev.born : (grow ? performance.now() : -1e9) };
+  }
+
+  function lineStart(cfg, svg){
     svg.classList.add('is-on');
-    if(animFrom < 0) return;
-    window.requestAnimationFrame(function(){
-      var j;
-      for(j = animFrom; j < paths.length; j++){
-        paths[j].style.transition = 'stroke-dashoffset 720ms cubic-bezier(.16,1,.3,1)';
-        paths[j].style.strokeDashoffset = '0';
-      }
-    });
+    renderLines(cfg, performance.now());
+    if(!LINE_RAF) LINE_RAF = window.requestAnimationFrame(lineTick);
+  }
+
+  /* animate: true=전체 / 숫자=그 인덱스부터 자라남 / false=즉시 */
+  function drawLines(host, svg, paths, fromEl, toEls, animate, fromRatio, toRatio){
+    var animFrom = animate === true ? 0 : (typeof animate === 'number' ? animate : -1);
+    var cfg;
+    var i;
+    if(!host || !svg || !fromEl) return;
+    cfg = lineCfg(host, svg, paths);
+    for(i = 0; i < paths.length; i++){
+      if(!toEls[i]){ cfg.links[i] = null; continue; }
+      connectLine(cfg, i, fromEl, toEls[i], fromRatio == null ? 1 : fromRatio, toRatio == null ? 0 : toRatio, animFrom >= 0 && i >= animFrom);
+    }
+    lineStart(cfg, svg);
+  }
+
+  function drawLine(host, svg, paths, index, fromEl, toEl, fromRatio, toRatio, grow){
+    var cfg;
+    if(!host || !svg || !fromEl || !toEl) return;
+    cfg = lineCfg(host, svg, paths);
+    connectLine(cfg, index, fromEl, toEl, fromRatio == null ? 1 : fromRatio, toRatio == null ? 0 : toRatio, grow !== false);
+    lineStart(cfg, svg);
   }
 
   async function reveal(node, schedule){
     if(!node) return;
     showElement(node);
-    node.classList.add('g04-enter');
+    node.classList.add('g04-popin-soft');
     if(schedule) schedule();
-    await wait(760);
-    node.classList.remove('g04-enter');
+    await wait(600);
+    node.classList.remove('g04-popin-soft');
   }
 
   async function fadeIn(node, schedule){
     if(!node) return;
     showElement(node);
-    node.classList.add('g04-fade');
+    node.classList.add('g04-popin');
     if(schedule) schedule();
-    await wait(760);
-    node.classList.remove('g04-fade');
+    await wait(560);
+    node.classList.remove('g04-popin');
   }
 
   async function leave(node, schedule){
@@ -452,7 +541,7 @@ var G04Kit = (function(){
   async function open(slot, schedule){
     var done;
     if(!slot) return;
-    done = guide04EaseOpen(slot);
+    done = slot.classList.contains('is-member') ? guide04EaseOpen(slot) : guide04PopOpen(slot);
     if(schedule) schedule();
     await done;
   }
@@ -500,15 +589,21 @@ var G04Kit = (function(){
     track = el('span', 'g04-fold-track');
     text.parentNode.insertBefore(track, text);
     track.appendChild(text);
+    /* 접힌 상태에서는 라벨과 텍스트 사이 간격(gap)도 0 — 텍스트 자리가 빈 공간으로 남지 않게 */
+    badge.style.gap = '0px';
     track.style.maxWidth = '0px';
+    track.style.marginLeft = '0px';
     text.style.opacity = '0';
+    wrap.classList.add('g04-popin');
     if(schedule) schedule();
     await wait(40);
-    track.style.transition = 'max-width 640ms cubic-bezier(.22,1,.36,1)';
+    track.style.transition = 'max-width 640ms cubic-bezier(.22,1,.36,1), margin-left 640ms cubic-bezier(.22,1,.36,1)';
     text.style.transition = 'opacity 360ms cubic-bezier(.25,.1,.25,1) 120ms';
-    track.style.maxWidth = (textW + gap) + 'px';
+    track.style.maxWidth = (textW + 2) + 'px';
+    track.style.marginLeft = gap + 'px';
     text.style.opacity = '1';
     await wait(700);
+    wrap.classList.remove('g04-popin');
   }
 
   async function foldAway(wrap, schedule){
@@ -520,10 +615,11 @@ var G04Kit = (function(){
     track = wrap.querySelector('.g04-fold-track');
     text = track && track.firstElementChild;
     if(badge && track && text){
-      track.style.transition = 'max-width 420ms cubic-bezier(.22,1,.36,1)';
+      track.style.transition = 'max-width 420ms cubic-bezier(.22,1,.36,1), margin-left 420ms cubic-bezier(.22,1,.36,1)';
       text.style.transition = 'opacity 220ms ease';
       text.style.opacity = '0';
       track.style.maxWidth = '0px';
+      track.style.marginLeft = '0px';
       await wait(440);
     }
     wrap.classList.add('is-hidden');
@@ -531,6 +627,9 @@ var G04Kit = (function(){
   }
 
   /* 코인 비행. opts: { text, bounce } — bounce 면 70% 지점까지 갔다가 되돌아온다 */
+  var FLY_MS = 1300;
+  var FLY_HOLD_MS = 500;
+
   async function fly(fromEl, toEl, stage, opts){
     var o = opts || {};
     var from;
@@ -551,18 +650,29 @@ var G04Kit = (function(){
     coin.style.top = ((from.top + from.height / 2 - sb.top) / sc) + 'px';
     dx = ((to.left + to.width / 2) - (from.left + from.width / 2)) / sc;
     dy = ((to.top + to.height / 2) - (from.top + from.height / 2)) / sc;
-    await wait(30);
+    /* 출발 지점 강조: 어디서 포인트가 발생하는지 보이도록 잠깐 멈춰 표시한다 */
+    fromEl.classList.add('g04-src-pulse');
+    coin.style.opacity = '0';
+    coin.style.transition = 'none';
+    await wait(40);
+    coin.style.transition = '';
+    coin.style.opacity = '1';
+    coin.style.transform = 'translate(0px,0px) scale(1.15)';
+    await wait(FLY_HOLD_MS);
+    coin.style.transition = 'transform ' + FLY_MS + 'ms cubic-bezier(.45,0,.25,1), opacity 400ms ease';
     if(o.bounce){
-      coin.style.transform = 'translate(' + (dx * 0.72) + 'px,' + (dy * 0.72) + 'px) scale(.9)';
-      await wait(620);
+      coin.style.transform = 'translate(' + (dx * 0.72) + 'px,' + (dy * 0.72) + 'px) scale(1)';
+      await wait(FLY_MS);
       coin.style.transform = 'translate(0px,0px) scale(.9)';
       coin.style.opacity = '0.3';
-      await wait(640);
+      await wait(FLY_MS * 0.9);
     }else{
-      coin.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(.72)';
-      coin.style.opacity = '0.15';
-      await wait(680);
+      coin.style.transform = 'translate(' + dx + 'px,' + dy + 'px) scale(.85)';
+      await wait(FLY_MS);
+      coin.style.opacity = '0';
+      await wait(200);
     }
+    fromEl.classList.remove('g04-src-pulse');
     if(coin.parentNode) coin.parentNode.removeChild(coin);
   }
 
@@ -578,11 +688,16 @@ var G04Kit = (function(){
   }
 
   /* 오버레이 엘리먼트(✕·스탬프) 잠깐 표시 */
-  async function flashOverlay(layer, ms){
+  async function flashOverlay(layer, ms, softOut){
     showElement(layer);
     layer.classList.add('g04-fade');
     await wait(ms || 900);
     layer.classList.remove('g04-fade');
+    if(softOut){
+      layer.classList.add('g04-leave');
+      await wait(softOut);
+      layer.classList.remove('g04-leave');
+    }
     layer.classList.add('is-hidden');
   }
 
@@ -683,10 +798,10 @@ var G04Kit = (function(){
 
   return {
     el: el, grow: grow, scaleOf: scaleOf,
-    member: member, dock: dock, medal: medal, mark: mark, compact: compact,
+    member: member, under: under, dock: dock, medal: medal, mark: mark, compact: compact,
     tag: tag, tagSet: tagSet, tagCount: tagCount, tagLabel: tagLabel,
     product: product, chip: chip, infoBadge: infoBadge,
-    svgLayer: svgLayer, addPaths: addPaths, drawLines: drawLines, pointIn: pointIn,
+    svgLayer: svgLayer, addPaths: addPaths, drawLines: drawLines, drawLine: drawLine, pointIn: pointIn,
     reveal: reveal, fadeIn: fadeIn, leave: leave, open: open, closeSlot: closeSlot,
     unfold: unfold, foldAway: foldAway, fly: fly,
     cursorTo: cursorTo, flashOverlay: flashOverlay, overlay: overlay,

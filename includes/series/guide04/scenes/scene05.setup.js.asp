@@ -6,99 +6,95 @@ function setupGuide04Scene05(canvas){
   var m = K.mountStack(canvas, Guide04Scene05Config.layout.anchorZone);
   var badge = K.titleBadge('recommend_bonus_icon', 'g04-s05-badge');
   var board = K.el('div', 'g04-board g04-slot is-hidden');
+  var tree = K.el('div', 'g04-phase g04-tree');
+  var svg = K.svgLayer();
+  var paths = K.addPaths(svg, 3);
   var i;
 
-  /* ① BASE 자격 */
-  var p1 = K.el('div', 'g04-phase g04-s05-base');
-  var cond = K.chip('첫 번째 조건', 'is-red');
-  var baseRow = K.el('div', 'g04-s05-baserow');
-  var baseWrap = K.titleBadge('base_business_icon', 'g04-s05-base');
-  var check = Guide04.cloneTemplate('status_check_icon');
-  var checkWrap = K.el('div', 'g04-slot is-hidden');
-
-  /* ② 포인트 기준 카드 */
-  var p2 = K.el('div', 'g04-phase is-hidden');
-  var cardRow = K.el('div', 'g04-s05-cards');
-  var cardA = K.el('div', 'g04-info-card g04-slot is-hidden');
-  var cardB = K.el('div', 'g04-info-card g04-slot is-hidden');
-  var calNode = Guide04.cloneTemplate('calendar_month_card');
-
-  /* ③ 회원 증가 */
-  var p3 = K.el('div', 'g04-phase is-hidden');
-  var selfRow = K.el('div', 'g04-selfrow');
-  var self = K.member({ id: 'g04-s05-self', label: '본인', cap: 'BASE사업자', kind: 'self' });
+  /* 본인 멤버 — 전체 씬에서 유지 */
+  var selfRow = K.el('div', 'g04-selfrow g04-s05-selfrow');
+  var self = K.member({ id: 'g04-s05-self', label: '본인', cap: 'Base 사업자', kind: 'self' });
+  var baseDock = K.dock(self.fig, 'g04-s05-base', 'base_business_icon', true);
+  var checkMark = K.mark(self.fig, 'check');
   var tag = K.tag(0);
-  var tagSlot = K.grow(tag);
-  var capNode = K.infoBadge('적립 상한 없음', 'R', 'is_green');
-  var capSlot = K.grow(capNode || K.chip('적립 상한 없음'));
+  var tagSlot = K.under(self, K.grow(tag));
+  var cashBox = K.el('div', 'g04-cashbox', '1P = 최대 10,000원');
+  var cashSlot = K.grow(cashBox);
+
+  /* ② 추천 회원 A(오토십 · 매월 1P) / B(스타트팩 · 최초 1회 5P) */
+  var stageA = K.el('div', 'g04-cols g04-s05-ab g04-slot is-hidden');
+  var colA = K.el('div', 'g04-col');
+  var memA = K.member({ id: 'g04-s05-a', label: '추천', cap: '추천 회원', kind: 'plain', size: 'sm' });
+  var prodA = K.grow(K.product('auto', { hidden: false, text: '오토십' }));
+  var monthRow = K.el('div', 'g04-s05-months');
+  var monthSlots = ['1개월', '2개월', '3개월'].map(function(label){
+    var chip = K.grow(K.el('div', 'g04-monthchip', label));
+    monthRow.appendChild(chip);
+    return chip;
+  });
+  var noteA = K.grow(K.el('div', 'g04-monthnote', '매월 1P'));
+  var colB = K.el('div', 'g04-col');
+  var memB = K.member({ id: 'g04-s05-b', label: '추천', cap: '추천 회원', kind: 'plain', size: 'sm' });
+  var prodB = K.grow(K.product('pack', { hidden: false }));
+  var noteB = K.grow(K.el('div', 'g04-monthnote', '등록 후 3개월 이내 · 최초 1회 5P'));
+
+  /* ③ 추천 회원 증가 */
+  var gridWrap = K.el('div', 'g04-slot is-hidden');
   var grid = K.el('div', 'g04-s05-grid');
   var gridMembers = [];
 
-  /* ④ 1P = 최대 1만원 */
-  var p4 = K.el('div', 'g04-phase g04-s05-cash is-hidden');
-  var cashNode = Guide04.cloneTemplate('point_to_cash_card');
-
-  /* ⑤ 핵심 3가지 */
-  var three = K.threeSlots([
-    { text: 'BASE사업자 자격 유지', build: function(body){ body.appendChild(K.compact('base_business_icon')); } },
-    { text: '신규 회원 추천', build: function(body){ body.appendChild(K.member({ label: '신규', kind: 'new' }).wrap); } },
-    { text: '추천 회원의 제품 이용 지원', build: function(body){
-        body.appendChild(K.compact('autoship_icon'));
-        body.appendChild(K.product('pack', { hidden: false, mini: true }));
-      } }
-  ], 'g04-three g04-phase is-hidden');
+  /* ⑤ 핵심 3가지 — 좌측 번호 + 구분선 행 */
+  var sum = K.el('div', 'g04-s05-sum g04-slot is-hidden');
+  var sumRows = [];
+  function sumRow(n, build){
+    var inner = K.el('div', 'g04-s05-sumrow');
+    inner.appendChild(K.el('div', 'g04-num', String(n)));
+    var body = K.el('div', 'g04-s05-sumbody');
+    build(body);
+    inner.appendChild(body);
+    var slot = K.grow(inner);
+    sum.appendChild(slot);
+    sumRows.push(slot);
+  }
+  sumRow(1, function(body){
+    var mm = K.member({ label: '본인', cap: 'x', kind: 'self', size: 'sm' });
+    var oldCap = mm.wrap.querySelector('.g04-cap');
+    if(oldCap) oldCap.parentNode.removeChild(oldCap);
+    var ck = K.mark(mm.fig, 'check');
+    ck.classList.remove('is-hidden');
+    var col1 = K.el('div', 'g04-s05-col1');
+    col1.appendChild(mm.wrap);
+    col1.appendChild(Guide04.cloneTemplate('base_business_icon'));
+    body.appendChild(col1);
+  });
+  sumRow(2, function(body){
+    var me = K.member({ label: '본인', cap: '본인(추천인)', kind: 'self', size: 'sm' });
+    var link = K.el('div', 'g04-s05-link');
+    var nw = K.member({ label: '신규', cap: '신규 추천 회원', kind: 'new', size: 'sm' });
+    body.appendChild(me.wrap);
+    body.appendChild(link);
+    body.appendChild(nw.wrap);
+  });
+  sumRow(3, function(body){
+    var nm = K.member({ label: '신규', cap: '신규 추천 회원', kind: 'new', size: 'sm' });
+    var prods = K.el('div', 'g04-s05-sumprods');
+    prods.appendChild(K.product('auto', { hidden: false, text: '오토십' }));
+    prods.appendChild(K.product('pack', { hidden: false }));
+    body.appendChild(nm.wrap);
+    body.appendChild(prods);
+  });
 
   board.id = 'g04-s05-board';
 
-  if(check) checkWrap.appendChild(check);
-  baseRow.appendChild(baseWrap);
-  baseRow.appendChild(checkWrap);
-  p1.appendChild(cond);
-  p1.appendChild(baseRow);
-
-  /* 카드 A — 오토십 */
-  var aRow = K.el('div', 'g04-info-row');
-  var aBadge = Guide04.cloneTemplate('autoship_icon');
-  if(aBadge){
-    var aText = aBadge.querySelector('.autoship_text');
-    if(aText) aText.textContent = '오토십';
-    aRow.appendChild(aBadge);
-  }
-  if(calNode){
-    var h = calNode.querySelector('.calendar_header');
-    var t = calNode.querySelector('.calendar_title');
-    if(h) h.textContent = 'M1';
-    if(t) t.innerHTML = '매월';
-    calNode.setAttribute('aria-label', '매월');
-    aRow.appendChild(calNode);
-  }
-  cardA.appendChild(aRow);
-  cardA.appendChild(K.el('div', 'g04-info-main', '회원 1명당'));
-  var aMain = K.el('div', 'g04-info-main');
-  aMain.innerHTML = '<b>매월 1P</b>';
-  cardA.appendChild(aMain);
-
-  /* 카드 B — 스타트팩 */
-  var bRow = K.el('div', 'g04-info-row');
-  bRow.appendChild(K.product('pack', { hidden: false }));
-  var onceNode = Guide04.cloneTemplate('startpack_once_badge');
-  var onceHost = K.el('div', 'g04-once');
-  if(onceNode){
-    var ot = onceNode.querySelector('.g02_once_text');
-    if(ot) ot.textContent = '최초 1회';
-    onceNode.setAttribute('aria-label', '최초 1회');
-    onceHost.appendChild(onceNode);
-  }
-  bRow.appendChild(onceHost);
-  cardB.appendChild(bRow);
-  cardB.appendChild(K.el('div', 'g04-info-main', '3개월 이내'));
-  var bMain = K.el('div', 'g04-info-main');
-  bMain.innerHTML = '<b>최초 1회 5P</b>';
-  cardB.appendChild(bMain);
-
-  cardRow.appendChild(cardA);
-  cardRow.appendChild(cardB);
-  p2.appendChild(cardRow);
+  colA.appendChild(memA.slot);
+  colA.appendChild(prodA);
+  colA.appendChild(monthRow);
+  colA.appendChild(noteA);
+  colB.appendChild(memB.slot);
+  colB.appendChild(prodB);
+  colB.appendChild(noteB);
+  stageA.appendChild(colA);
+  stageA.appendChild(colB);
 
   for(i = 0; i < 9; i++){
     var gm = K.member({ label: '추천', kind: 'plain', size: 'xs' });
@@ -109,19 +105,18 @@ function setupGuide04Scene05(canvas){
     grid.appendChild(gm.wrap);
     gridMembers.push(gm);
   }
-  selfRow.appendChild(capSlot);
+  gridWrap.appendChild(grid);
+
+
   selfRow.appendChild(self.slot);
-  selfRow.appendChild(tagSlot);
-  p3.appendChild(selfRow);
-  p3.appendChild(grid);
+  selfRow.appendChild(cashSlot);
+  tree.appendChild(svg);
+  tree.appendChild(selfRow);
+  tree.appendChild(stageA);
+  tree.appendChild(gridWrap);
 
-  if(cashNode) p4.appendChild(cashNode);
-
-  board.appendChild(p1);
-  board.appendChild(p2);
-  board.appendChild(p3);
-  board.appendChild(p4);
-  board.appendChild(three.host);
+  board.appendChild(tree);
+  board.appendChild(sum);
   m.stage.appendChild(badge);
   m.stage.appendChild(board);
 
@@ -129,11 +124,13 @@ function setupGuide04Scene05(canvas){
   Guide04Scene05Layout.schedule();
 
   return {
-    inner: m.inner, stage: m.stage, badge: badge, board: board,
-    p1: p1, baseWrap: baseWrap, checkWrap: checkWrap, cond: cond,
-    p2: p2, cardA: cardA, cardB: cardB,
-    p3: p3, self: self, tag: tag, tagSlot: tagSlot, capSlot: capSlot, gridMembers: gridMembers,
-    p4: p4, cashNode: cashNode, three: three
+    inner: m.inner, stage: m.stage, badge: badge, board: board, tree: tree, svg: svg, paths: paths,
+    self: self, baseDock: baseDock, checkMark: checkMark, tag: tag, tagSlot: tagSlot,
+    cashSlot: cashSlot,
+    stageA: stageA, memA: memA, prodA: prodA, monthSlots: monthSlots, noteA: noteA,
+    memB: memB, prodB: prodB, noteB: noteB,
+    gridWrap: gridWrap, gridMembers: gridMembers,
+    sum: sum, sumRows: sumRows
   };
 }
 </script>

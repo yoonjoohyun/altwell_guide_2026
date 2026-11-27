@@ -10,7 +10,7 @@ function guide04Scene01Lines(A, count, animateFrom){
   var icons = [];
   var i;
   for(i = 0; i < count; i++) icons.push(A.partners[i].mem.icon);
-  G04Kit.drawLines(A.tree, A.svg, A.paths, A.self.icon, icons, animateFrom, 0.94, 0.18);
+  G04Kit.drawLines(A.tree, A.svg, A.paths, A.self.wrap, icons, animateFrom, 1, 0.12);
 }
 
 async function guide04Scene01Coin(A, p){
@@ -70,20 +70,20 @@ async function runGuide04Scene01(tl, A, ctx){
 
   /* 권리소득 + 추천 회원이 늘어남 */
   if(await X(T.right)) return;
-  await K.open(A.chipSlot, sch);
   for(i = 0; i < T.more.length; i++){
     if(await X(T.more[i])) return;
     await Promise.all([K.open(A.partners[i + 2].mem.slot, sch), K.open(A.partners[i + 2].prod, sch)]);
     guide04Scene01Lines(A, i + 3, i + 2);
   }
   if(await X(T.coinsMore)) return;
+  var pending = [];
   for(i = 2; i < 6; i++){
-    guide04Scene01Coin(A, A.partners[i]);
-    await wait(260);
+    pending.push(guide04Scene01Coin(A, A.partners[i]));
+    await wait(420);
   }
-  await wait(700);
+  await Promise.all(pending);
 
-  /* 누구나 받는 것은 아님 — BASE 자격이 없으면 포인트가 닿지 않는다 */
+  /* 누구나 받는 것은 아님 — Base 사업자 자격이 없으면 포인트가 닿지 않는다 */
   if(await X(T.deny)) return;
   A.board.classList.add('is-muted');
   A.self.icon.classList.add('g04-nobase');
@@ -92,7 +92,7 @@ async function runGuide04Scene01(tl, A, ctx){
   await K.flashOverlay(A.deny, 900);
   A.board.classList.remove('is-muted');
 
-  /* BASE사업자 자격 유지 */
+  /* Base 사업자 자격 유지 */
   if(await X(T.base)) return;
   await guide04Scene01BaseOnto(A);
   guide04Scene01Lines(A, 6, false);

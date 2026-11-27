@@ -4,7 +4,7 @@ var Guide04Scene04Layout = G04Kit.makeLayout();
 function setupGuide04Scene04(canvas){
   var K = G04Kit;
   var m = K.mountStack(canvas, Guide04Scene04Config.layout.anchorZone);
-  var badge = K.titleBadge('recommend_bonus_icon', 'g04-s04-badge');
+  var badge = K.titleBadge('recommend_bonus_icon', 'g04-s04-badge', '추천 보너스 기준');
   var board = K.el('div', 'g04-board g04-slot is-hidden');
 
   /* 무대A: 추천관계 등록 */
@@ -13,7 +13,9 @@ function setupGuide04Scene04(canvas){
   var ghostSlot = K.grow(ghost);
   var frameNode = Guide04.cloneTemplate('rf_group_frame');
   var frameBody = frameNode ? frameNode.querySelector('.rf_group_frame_body') : null;
-  var frameSlot = K.grow(frameNode || K.el('div'));
+  var frameWrap = K.el('div', 'g04-rfwrap');
+  if(frameNode) frameWrap.appendChild(frameNode);
+  var frameSlot = K.grow(frameWrap);
   var cands = [];
   var linkNode = Guide04.cloneTemplate('referral_link_line');
   var linkSlot = K.grow(linkNode || K.el('div'));
@@ -49,6 +51,9 @@ function setupGuide04Scene04(canvas){
   var tagUpSlot = K.grow(tagUp);
   var tagMeSlot = K.grow(tagMe);
   var tagLowSlot = K.grow(tagLow);
+  var baseUp = K.dock(upper.fig, null, 'base_business_icon', true);
+  var baseMe = K.dock(me.fig, null, 'base_business_icon', true);
+  var baseLow = K.dock(low.fig, null, 'base_business_icon', true);
   var i;
 
   board.id = 'g04-s04-board';
@@ -111,6 +116,7 @@ function setupGuide04Scene04(canvas){
     inner: m.inner, stage: m.stage, badge: badge, board: board,
     stageA: stageA, ghostSlot: ghostSlot, frameSlot: frameSlot, cands: cands, linkSlot: linkSlot, linkNode: linkNode,
     newMember: newMember, stamp: stamp, cursor: cursorHost, pickedMark: pickedMark, crossMark: crossMark, pickedLabel: pickedLabel,
+    baseUp: baseUp, baseMe: baseMe, baseLow: baseLow,
     stageB: stageB, chain: chain, upper: upper, me: me, low: low, tagUp: tagUp, tagMe: tagMe, tagLow: tagLow,
     tagUpSlot: tagUpSlot, tagMeSlot: tagMeSlot, tagLowSlot: tagLowSlot,
     myProds: myProds, lowProds: lowProds, linkSlot1: linkSlot1, linkSlot2: linkSlot2, link1: link1, link2: link2, denyB: denyB
