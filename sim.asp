@@ -86,6 +86,23 @@ ListSectionActive = "sim"
           </div>
         </div>
       </div>
+      <div class="sc-card entry-nav-card" data-entry-href="<%=GuideAppRoot()%>/guide04_simulator.asp">
+        <div class="sc-thumb t4">
+          <div class="sc-thumb-glow"></div>
+          <div class="sc-thumb-icon">RECOMMEND<br>BONUS<br>SIM</div>
+          <div class="sc-badge">NEW</div>
+        </div>
+        <div class="sc-body">
+          <div class="sc-label">Interactive Content</div>
+          <div class="sc-title">추천보너스 알아보기</div>
+          <div class="sc-desc">추천보너스의 핵심을 퀴즈로 복습한 뒤, 가상 피라미드에서 멤버별 조건을 직접 선택해 추천포인트를 만들어 보는 실습 콘텐츠입니다.</div>
+          <div class="sc-meta-list">챕터 7개</div>
+          <div class="sc-footer">
+            <span class="sc-meta">조건 선택</span>
+            <button type="button" class="sc-go">시작하기 ▶</button>
+          </div>
+        </div>
+      </div>
     </div>
     </div>
     </div>

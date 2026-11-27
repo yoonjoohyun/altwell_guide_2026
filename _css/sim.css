@@ -111,6 +111,7 @@
 .sc-thumb.t1{background:linear-gradient(135deg,#1e3a5f,#1e40af)}
 .sc-thumb.t2{background:linear-gradient(135deg,#640740,#bd2076)}
 .sc-thumb.t3{background:linear-gradient(135deg,#06494e,#065f46)}
+.sc-thumb.t4{background:linear-gradient(135deg,#1034ac,#3b5bdb)}
 .sc-thumb-glow{
   position:absolute;width:110px;height:110px;border-radius:50%;
   background:radial-gradient(circle,rgba(238,51,56,.28),transparent 0%);
